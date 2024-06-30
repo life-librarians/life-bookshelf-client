@@ -19,7 +19,7 @@ class MainApp extends StatelessWidget {
     FlutterNativeSplash.remove();
 
     return GetMaterialApp(
-      title: "Nightary",
+      title: "Life Bookshelf",
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
