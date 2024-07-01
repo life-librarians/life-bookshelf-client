@@ -123,6 +123,13 @@ abstract class FontSystem {
     color: Colors.black,
   );
 
+  static const TextStyle KR21SB = TextStyle(
+    fontSize: 21,
+    fontWeight: FontWeight.w600,
+    fontFamily: 'Pretendard',
+    color: Colors.black,
+  );
+
   static const TextStyle KR20EB = TextStyle(
     fontSize: 20,
     fontWeight: FontWeight.w800,
@@ -136,6 +143,14 @@ abstract class FontSystem {
     fontFamily: 'Pretendard',
     color: Colors.black,
   );
+
+  static const TextStyle KR20SB = TextStyle(
+    fontSize: 20,
+    fontWeight: FontWeight.w600,
+    fontFamily: 'Pretendard',
+    color: Colors.black,
+  );
+
 
   static const TextStyle KR20M = TextStyle(
     fontSize: 20,
@@ -269,6 +284,48 @@ abstract class FontSystem {
     fontFamily: 'Pretendard',
     color: Colors.black,
   );
+
+
+
+
+  static const TextStyle KR13EB = TextStyle(
+    fontSize: 13,
+    fontWeight: FontWeight.w800,
+    fontFamily: 'Pretendard',
+    color: Colors.black,
+  );
+
+  static const TextStyle KR13B = TextStyle(
+    fontSize: 13,
+    fontWeight: FontWeight.w700,
+    fontFamily: 'Pretendard',
+    color: Colors.black,
+  );
+
+  static const TextStyle KR13SB = TextStyle(
+    fontSize: 13,
+    fontWeight: FontWeight.w600,
+    fontFamily: 'Pretendard',
+    color: Colors.black,
+  );
+
+  static const TextStyle KR13M = TextStyle(
+    fontSize: 13,
+    fontWeight: FontWeight.w500,
+    fontFamily: 'Pretendard',
+    color: Colors.black,
+  );
+
+  static const TextStyle KR13R = TextStyle(
+    fontSize: 13,
+    fontWeight: FontWeight.w400,
+    fontFamily: 'Pretendard',
+    color: Colors.black,
+  );
+
+
+
+
 
   static const TextStyle KR10EB = TextStyle(
     fontSize: 10,
