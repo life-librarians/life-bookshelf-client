@@ -5,4 +5,5 @@ abstract class Routes {
   static const WHITE_NOISE = '/pulish';
   static const SETTING = '/mypage';
   static const ONBOARDING = '/onboarding';
+  static const AUTOBIOGRAPHY_DETAIL_CHAPTER = '/autobiography-detail-chapter';
 }
