@@ -10,7 +10,6 @@ class AutobiographyDetailScreen extends BaseScreen<AutobiographyViewModel> {
 
   @override
   PreferredSizeWidget? buildAppBar(BuildContext context) {
-
     return AppBar(
       backgroundColor: Colors.white,
       leading: Padding(
@@ -35,38 +34,63 @@ class AutobiographyDetailScreen extends BaseScreen<AutobiographyViewModel> {
     final AutobiographyViewModel viewModel = Get.find<AutobiographyViewModel>();
     viewModel.fetchAutobiography(autobiographyId);
 
-    return SingleChildScrollView(
-      child: Container(
-        color: Colors.white,
-        height: Get.height,
-        padding: const EdgeInsets.fromLTRB(27, 5, 27, 27),
-        child: Obx(() {
-          if (viewModel.isLoading.value) {
-            return Center(child: CircularProgressIndicator());
-          } else if (viewModel.errorMessage.isNotEmpty) {
-            return Center(child: Text(viewModel.errorMessage.value));
-          } else if (viewModel.autobiography.value != null) {
-            final autobiography = viewModel.autobiography.value!;
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _TopBuild(),
-                SizedBox(height: 22,),
-                _ImageBuild(),
-                SizedBox(height: 19.87,),
-                _ContentPreviewBuild(),
-                SizedBox(height: 22,),
-                _FirstContentBuild(),
-                SizedBox(height: 22,),
-                _RestContentBuild(),
-              ],
-            );
-          } else {
-            return Center(child: Text('No Data'));
-          }
-        }),
-      ),
+    return GetBuilder<AutobiographyDetailController>(
+      init: AutobiographyDetailController(),
+      builder: (controller) {
+        return SingleChildScrollView(
+          child: Container(
+            color: Colors.white,
+            height: Get.height,
+            padding: const EdgeInsets.fromLTRB(27, 5, 27, 27),
+            child: Obx(() {
+              if (viewModel.isLoading.value) {
+                return Center(child: CircularProgressIndicator());
+              } else if (viewModel.errorMessage.isNotEmpty) {
+                return Center(child: Text(viewModel.errorMessage.value));
+              } else if (viewModel.autobiography.value != null) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: controller.isFixMode.value
+                      ? [
+                    _TopBuild(),
+                    SizedBox(height: 5),
+                    _TopHelpBuild(),
+                    SizedBox(height: 35),
+                    _FixContentBuild(),
+                        ]
+                      : [
+                    _TopBuild(),
+                    SizedBox(height: 22),
+                    _ImageBuild(),
+                    SizedBox(height: 19.87),
+                    _ContentPreviewBuild(
+                      onFixPressed: () {
+                        controller.toggleFixMode();
+                      },
+                    ),
+                    SizedBox(height: 22),
+                    _FirstContentBuild(),
+                    SizedBox(height: 22),
+                    _RestContentBuild(),
+                  ],
+                );
+              } else {
+                return Center(child: Text('No Data'));
+              }
+            }),
+          ),
+        );
+      },
     );
+  }
+}
+
+// 수정하기 버튼 컨트롤러
+class AutobiographyDetailController extends GetxController {
+  var isFixMode = false.obs;
+
+  void toggleFixMode() {
+    isFixMode.value = !isFixMode.value;
   }
 }
 
@@ -128,8 +152,9 @@ class _ImageBuild extends StatelessWidget {
 }
 
 class _ContentPreviewBuild extends StatelessWidget {
-  _ContentPreviewBuild({Key? key}) : super(key: key);
+  _ContentPreviewBuild({Key? key, required this.onFixPressed}) : super(key: key);
   final AutobiographyViewModel viewModel = Get.find<AutobiographyViewModel>();
+  final VoidCallback onFixPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -141,13 +166,11 @@ class _ContentPreviewBuild extends StatelessWidget {
         ),
         Spacer(),
         GestureDetector(
-          onTap: () {
-            // 버튼 클릭 시 동작 추가
-          },
+          onTap: onFixPressed,
           child: Image.asset(
             'assets/images/detail-chapter-fixbutton.png',
-            width: 35, // 이미지 너비
-            height: 45, // 이미지 높이
+            width: 35,
+            height: 45,
           ),
         ),
       ],
@@ -228,16 +251,6 @@ class _FixContentBuild extends StatelessWidget {
         Text(
           viewModel.autobiography.value!.contentPreview ?? "content preview",
           style: FontSystem.KR20_72SB.copyWith(color: Color(0xFF192252)),
-        ),
-        GestureDetector(
-          onTap: () {
-            // 버튼 클릭 시 동작 추가
-          },
-          child: Image.asset(
-            'assets/images/detail-chapter-fixbutton.png',
-            width: 35, // 이미지 너비
-            height: 45, // 이미지 높이
-          ),
         ),
       ],
     );
