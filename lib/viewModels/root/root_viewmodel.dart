@@ -9,7 +9,6 @@ class RootViewModel extends GetxController {
   @override
   void onInit() {
     super.onInit();
-
     _selectedIndex = 0.obs;
   }
 
