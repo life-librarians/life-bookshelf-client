@@ -220,8 +220,9 @@ class _ChapterBox extends StatelessWidget {
     final viewmodel = Get.find<HomeViewModel>();
     String timeAgo = viewmodel.getTimeAge(autobiography.updatedAt);
 
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 17),
+    return Container(
+      margin: EdgeInsets.only(bottom: 17),
+
       child: Row(
         children: [
           ClipRRect(
@@ -274,7 +275,10 @@ class _ChapterBox extends StatelessWidget {
                     SizedBox(height: 3),
                     Text(
                       autobiography.contentPreview,
-                      style: FontSystem.KR14SB.copyWith(color: Color(0xFF192252)),),
+                      style: FontSystem.KR14SB.copyWith(color: Color(0xFF192252)),
+                      maxLines: 1,  // 텍스트를 한 줄로 제한
+                      overflow: TextOverflow.ellipsis,  // 너비를 초과하는 텍스트는 생략하고 말줄임표를 추가
+                    ),
                     SizedBox(height: 10),
                     Text(
                       timeAgo,
