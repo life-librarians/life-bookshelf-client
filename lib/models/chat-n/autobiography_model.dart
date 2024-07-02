@@ -1,4 +1,4 @@
-class Autobiography {
+class ChatAutobiography {
   final int id;
   final int chapterId;
   final int memberId;
@@ -9,7 +9,7 @@ class Autobiography {
   final DateTime createdAt;
   final DateTime updatedAt;
 
-  Autobiography({
+  ChatAutobiography({
     required this.id,
     required this.chapterId,
     required this.memberId,
@@ -22,8 +22,8 @@ class Autobiography {
   });
 
   // From JSON
-  factory Autobiography.fromJson(Map<String, dynamic> json) {
-    return Autobiography(
+  factory ChatAutobiography.fromJson(Map<String, dynamic> json) {
+    return ChatAutobiography(
       id: json['id'] as int,
       chapterId: json['chapterId'] as int,
       memberId: json['memberId'] as int,
