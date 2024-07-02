@@ -8,12 +8,13 @@ import 'package:life_bookshelf/views/root/custom_bottom_navigation_bar.dart';
 
 import '../../viewModels/root/root_viewmodel.dart';
 import '../base/base_screen.dart';
+import '../../utilities/color_system.dart';
 
 class RootScreen extends BaseScreen<RootViewModel> {
   const RootScreen({super.key});
 
   @override
-  Color? get screenBackgroundColor => Color(0xFFF7F7F7);
+  Color? get screenBackgroundColor => ColorSystem.screen.background;
 
   @override
   Widget buildBody(BuildContext context) {
@@ -28,6 +29,7 @@ class RootScreen extends BaseScreen<RootViewModel> {
       ),
     );
   }
+
   @override
   Widget? buildBottomNavigationBar(BuildContext context) {
     return const CustomBottomNavigationBar();
@@ -35,53 +37,52 @@ class RootScreen extends BaseScreen<RootViewModel> {
 
   @override
   Widget? get buildFloatingActionButton => Container(
-    width: 70,
-    decoration: const BoxDecoration(
-      boxShadow: [
-        BoxShadow(
-          blurRadius: 6,
-          color: Color(0xFFA1A1A1),
-          offset: Offset(0, 5),
+        width: 70,
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              blurRadius: 6,
+              color: ColorSystem.bottomNavigation.floatingButtonShadow,
+              offset: const Offset(0, 5),
+            ),
+          ],
+          shape: BoxShape.circle,
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              ColorSystem.bottomNavigation.floatingButton,
+              ColorSystem.bottomNavigation.floatingButton,
+              ColorSystem.bottomNavigation.floatingButton,
+            ],
+            stops: const [0, 0.5, 1],
+          ),
         ),
-      ],
-      shape: BoxShape.circle,
-      gradient: LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [
-          Color(0xFF567AF3),
-          Color(0xFF567AF3),
-          Color(0xFF567AF3),
-        ],
-        stops: [0, 0.5, 1],
-      ),
-    ),
-    child: FloatingActionButton.large(
-      onPressed: () {
-        final controller = Get.find<RootViewModel>();
-        controller.changeIndex(0);
-      },
-      elevation: 0,
-      highlightElevation: 2,
-      shape: const CircleBorder(),
-      backgroundColor: Colors.transparent,
-      splashColor: const Color(0xFF567AF3),
-      child: SvgPicture.asset(
-        'assets/icons/Home.svg',
-        fit: BoxFit.scaleDown,
-      ),
-    ),
-  );
+        child: FloatingActionButton.large(
+          onPressed: () {
+            final controller = Get.find<RootViewModel>();
+            controller.changeIndex(0);
+          },
+          elevation: 0,
+          highlightElevation: 2,
+          shape: const CircleBorder(),
+          backgroundColor: Colors.transparent,
+          splashColor: ColorSystem.mainBlue,
+          child: SvgPicture.asset(
+            'assets/icons/Home.svg',
+            fit: BoxFit.scaleDown,
+          ),
+        ),
+      );
 
   @override
-  FloatingActionButtonLocation? get floatingActionButtonLocation =>
-      FloatingActionButtonLocation.centerDocked;
+  FloatingActionButtonLocation? get floatingActionButtonLocation => FloatingActionButtonLocation.centerDocked;
 
   @override
   bool get extendBodyBehindAppBar => true;
 
   @override
-  Color? get unSafeAreaColor => const Color(0xFFFFFFFF);
+  Color? get unSafeAreaColor => ColorSystem.white;
 
   @override
   bool get setTopOuterSafeArea => false;
