@@ -25,6 +25,7 @@ class TopFixBuild extends StatelessWidget {
         ),
         Spacer(),
         ElevatedButton(
+          // Todo: 버튼에서 GPT 수정 맡기는 로직 연동 해야됨
           onPressed: onFixPressed,
           style: ElevatedButton.styleFrom(
             foregroundColor: Colors.white,

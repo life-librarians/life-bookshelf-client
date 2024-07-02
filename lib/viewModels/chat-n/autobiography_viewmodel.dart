@@ -18,7 +18,7 @@ class AutobiographyViewModel extends GetxController {
   var isFixMode = false.obs;
   var isAfterFixMode = false.obs;
 
-  // 수정된 텍스트와 원래 텍스트의 매핑
+  // Todo: 더미 데이터임. 수정된 텍스트와 원래 텍스트의 매핑
   RxList<Map<String, String>> textCorrections = <Map<String, String>>[
     {"original": "김도훈", "corrected": "도훈 김"},
     {"original": "1985년 3월 15일", "corrected": "March 15, 1985"},
@@ -40,6 +40,7 @@ class AutobiographyViewModel extends GetxController {
     }
   }
 
+  // Todo: 최종 교정교열 하는 로직으로 넘어가는 상태 토글
   void toggleAfterFixMode() {
     isAfterFixMode.value = !isAfterFixMode.value;
   }
@@ -79,6 +80,7 @@ class AutobiographyViewModel extends GetxController {
     }
   }
 
+  // Todo: 이거 model 추가 해야됨. 시원님한테 말하기. GPT가 수정한 텍스트 받기
   Future<void> fetchAfterFixContent(int autobiographyId) async {
     try {
       isLoading(true);
@@ -102,7 +104,7 @@ class AutobiographyViewModel extends GetxController {
     }
   }
 
-  // 수정된 텍스트를 백엔드로 전송
+  // 최종적으로 수정된 텍스트를 백엔드로 전송
   Future<void> submitCorrections() async {
     try {
       isLoading(true);
