@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
-import '../../models/home/autobiography_model.dart';
+import '../../models/chat-N/autobiography_model.dart';
 
 class AutobiographyService {
   // 특정 자서전 상세 정보 조회

@@ -3,7 +3,7 @@ import 'package:life_bookshelf/viewModels/home/home_viewmodel.dart';
 import 'package:life_bookshelf/views/base/base_screen.dart';
 import 'package:get/get.dart';
 import '../../utilities/app_routes.dart';
-import 'autobiography-detail-chapter_screen.dart';
+import '../chat-N/autobiography_detail_chapter_screen.dart';
 
 class HomeScreen extends BaseScreen<HomeViewModel> {
   const HomeScreen({super.key});

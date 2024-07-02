@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import '../../models/home/autobiography_model.dart';
-import '../../services/home/autobiography_service.dart';
+import '../../models/chat-N/autobiography_model.dart';
+import '../../services/chat-N/autobiography_service.dart';
 
 class AutobiographyViewModel extends GetxController {
   final AutobiographyService service;
@@ -13,6 +13,10 @@ class AutobiographyViewModel extends GetxController {
   RxString errorMessage = ''.obs;
   RxBool isEditing = false.obs;
   TextEditingController contentController = TextEditingController();
+
+  // 상태 관리 변수
+  var isFixMode = false.obs;
+  var isAfterFixMode = false.obs;
 
   // 특정 자서전 상세 정보 조회
   Future<void> fetchAutobiography(int autobiographyId) async {
@@ -39,6 +43,7 @@ class AutobiographyViewModel extends GetxController {
       );
 
       autobiography(result);
+      contentController.text = result.content ?? '';
     } catch (e) {
       errorMessage(e.toString());
     } finally {
@@ -48,5 +53,17 @@ class AutobiographyViewModel extends GetxController {
 
   void toggleEditing() {
     isEditing.value = !isEditing.value;
+  }
+
+  // 수정 모드 토글
+  void toggleFixMode() {
+    isFixMode.value = !isFixMode.value;
+    if (isFixMode.value == false) {
+      isAfterFixMode.value = true;
+    }
+  }
+
+  void toggleAfterFixMode() {
+    isAfterFixMode.value = !isAfterFixMode.value;
   }
 }

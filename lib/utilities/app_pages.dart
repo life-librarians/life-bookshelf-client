@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:life_bookshelf/views/home/autobiography-detail-chapter_screen.dart';
+import 'package:life_bookshelf/views/chat-N/autobiography_detail_chapter_screen.dart';
 import '../bindings/root_binding.dart';
 import '../views/home/home_screen.dart';
 import '../views/root/root_screen.dart';
