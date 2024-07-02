@@ -1,16 +1,16 @@
 import 'package:get/get.dart';
-import 'package:life_bookshelf/models/chapter.dart';
-import 'package:life_bookshelf/models/autobiography.dart';
-import 'package:life_bookshelf/services/chapter_service.dart';
-import 'package:life_bookshelf/services/autobiography_service.dart';
+import 'package:life_bookshelf/models/home/chapter.dart';
+import 'package:life_bookshelf/models/home/autobiography.dart';
+import 'package:life_bookshelf/services/home/chapter_service.dart';
+import 'package:life_bookshelf/services/home/autobiography_service.dart';
 
 class HomeViewModel extends GetxController {
-  final ChapterService chapterService;
-  final AutobiographyService autobiographyService;
+  final HomeChapterService chapterService;
+  final HomeAutobiographyService autobiographyService;
 
-  var chapters = <Chapter>[].obs;
-  var autobiographies = <int, List<Autobiography>>{}.obs;
-  var currentChapter = Rx<Chapter?>(null);
+  var chapters = <HomeChapter>[].obs;
+  var autobiographies = <int, List<HomeAutobiography>>{}.obs;
+  var currentChapter = Rx<HomeChapter?>(null);
   var isLoading = true.obs;
 
   HomeViewModel(this.chapterService, this.autobiographyService);
@@ -39,7 +39,7 @@ class HomeViewModel extends GetxController {
     chapters.value = fetchedChapters;
     print('Fetched chapters: $chapters');
     for (var chapter in fetchedChapters) {
-      autobiographies[chapter.chapterId] = <Autobiography>[];
+      autobiographies[chapter.chapterId] = <HomeAutobiography>[];
     }
   }
 

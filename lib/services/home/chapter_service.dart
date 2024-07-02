@@ -1,15 +1,14 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import '../models/chapter.dart';
+import '../../models/home/chapter.dart';
 
-
-class ChapterService {
+class HomeChapterService {
   final String baseUrl;
   int? currentChapterId;
 
-  ChapterService(this.baseUrl);
+  HomeChapterService(this.baseUrl);
 
-  Future<List<Chapter>> fetchChapters(int page, int size) async {
+  Future<List<HomeChapter>> fetchChapters(int page, int size) async {
     var url = Uri.parse('$baseUrl/chapters?page=$page&size=$size');
     var response = await http.get(url);
     /* Uncomment this block to use real API
@@ -53,7 +52,7 @@ class ChapterService {
     var data = jsonDecode(jsonString);
     currentChapterId = data['currentChapterId'];
     return (data['results'] as List)
-        .map((chapterJson) => Chapter.fromJson(chapterJson))
+        .map((chapterJson) => HomeChapter.fromJson(chapterJson))
         .toList();
   }
 }

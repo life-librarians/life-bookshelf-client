@@ -3,14 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:life_bookshelf/models/autobiography.dart';
-import 'package:life_bookshelf/models/chapter.dart';
+import 'package:life_bookshelf/models/home/autobiography.dart';
+import 'package:life_bookshelf/models/home/chapter.dart';
 import 'package:life_bookshelf/utilities/font_system.dart';
 import 'package:life_bookshelf/viewModels/home/home_viewmodel.dart';
 import 'package:life_bookshelf/views/base/base_screen.dart';
 import 'package:dotted_line/dotted_line.dart';
 import 'package:shimmer/shimmer.dart';
 
+import '../chat-n/autobiography_detail_chapter_screen.dart';
 
 class HomeScreen extends BaseScreen<HomeViewModel> {
   const HomeScreen({super.key});
@@ -155,7 +156,7 @@ class _TopCurrentPage extends StatelessWidget {
 
 
 class _Chapter extends StatelessWidget {
-  final Chapter chapter;
+  final HomeChapter chapter;
 
   const _Chapter({super.key, required this.chapter});
 
@@ -221,7 +222,7 @@ class _ChapterBoxs extends StatelessWidget {
 
 
 class _ChapterBox extends StatelessWidget {
-  final Autobiography autobiography;
+  final HomeAutobiography autobiography;
 
   const _ChapterBox({super.key, required this.autobiography});
 
@@ -234,8 +235,10 @@ class _ChapterBox extends StatelessWidget {
       onTap: () {
         final currentChapterId = viewmodel.currentChapter.value?.chapterId;
         final currentAutobiographies = viewmodel.autobiographies[currentChapterId ?? 0];
-        //Get.toName으로 스크린 이동하게 수정해주면 됨.
-        print("수정 및 교정 교열 페이지로 이동");
+        //일단 0번째로 가도록. 시원님 API 수정 받으면 0번째가 아니라 현재 사용자 번째를 넣어 수정합니다.
+        //그리고 이거 currentChapterId도 받도록 수정하셔야 합니다. 몇번째 챕터의 몇번째 소챕터... 와같이 인덱싱 될 예정입니다.
+        Get.to(() => AutobiographyDetailScreen(autobiographyId: currentAutobiographies![0].autobiographyId));
+
       },
       child: Container(
         margin: EdgeInsets.only(bottom: 17),

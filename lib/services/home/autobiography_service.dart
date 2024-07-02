@@ -1,13 +1,13 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import '../models/autobiography.dart';
+import '../../models/home/autobiography.dart';
 
-class AutobiographyService {
+class HomeAutobiographyService {
   final String baseUrl;
 
-  AutobiographyService(this.baseUrl);
+  HomeAutobiographyService(this.baseUrl);
 
-  Future<List<Autobiography>> fetchAutobiographies(int chapterId) async {
+  Future<List<HomeAutobiography>> fetchAutobiographies(int chapterId) async {
     var url = Uri.parse('$baseUrl/autobiographies/$chapterId');
     var response = await http.get(url);
     /* Uncomment this block to use real API
@@ -46,7 +46,7 @@ class AutobiographyService {
     await Future.delayed(Duration(milliseconds: 100)); // Simulate network delay
     var data = jsonDecode(jsonString);
     return (data['results'] as List)
-        .map((autoJson) => Autobiography.fromJson(autoJson))
+        .map((autoJson) => HomeAutobiography.fromJson(autoJson))
         .toList();
   }
 }
