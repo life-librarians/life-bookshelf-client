@@ -16,7 +16,7 @@ class AutobiographyDetailScreen extends BaseScreen<AutobiographyViewModel> {
       leading: Padding(
         padding: const EdgeInsets.only(left: 27.0),
         child: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: Colors.black),
+          icon: Icon(Icons.arrow_back_ios, color: Colors.black, size: 16),
           onPressed: () {
             Get.back();
           },
@@ -50,13 +50,15 @@ class AutobiographyDetailScreen extends BaseScreen<AutobiographyViewModel> {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                TopBuild(),
-                SizedBox(height: 27,),
-                ImageBuild(),
-                SizedBox(height: 24.87,),
-                ContentPreviewBuild(),
-                SizedBox(height: 27,),
-                ContentBuild(),
+                _TopBuild(),
+                SizedBox(height: 22,),
+                _ImageBuild(),
+                SizedBox(height: 19.87,),
+                _ContentPreviewBuild(),
+                SizedBox(height: 22,),
+                _FirstContentBuild(),
+                SizedBox(height: 22,),
+                _RestContentBuild(),
               ],
             );
           } else {
@@ -68,8 +70,8 @@ class AutobiographyDetailScreen extends BaseScreen<AutobiographyViewModel> {
   }
 }
 
-class TopBuild extends StatelessWidget {
-  TopBuild({Key? key}) : super(key: key);
+class _TopBuild extends StatelessWidget {
+  _TopBuild({Key? key}) : super(key: key);
   final AutobiographyViewModel viewModel = Get.find<AutobiographyViewModel>();
 
   @override
@@ -110,8 +112,8 @@ class TopBuild extends StatelessWidget {
   }
 }
 
-class ImageBuild extends StatelessWidget {
-  ImageBuild({Key? key}) : super(key: key);
+class _ImageBuild extends StatelessWidget {
+  _ImageBuild({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -125,8 +127,8 @@ class ImageBuild extends StatelessWidget {
   }
 }
 
-class ContentPreviewBuild extends StatelessWidget {
-  ContentPreviewBuild({Key? key}) : super(key: key);
+class _ContentPreviewBuild extends StatelessWidget {
+  _ContentPreviewBuild({Key? key}) : super(key: key);
   final AutobiographyViewModel viewModel = Get.find<AutobiographyViewModel>();
 
   @override
@@ -135,7 +137,7 @@ class ContentPreviewBuild extends StatelessWidget {
       children: [
         Text(
           viewModel.autobiography.value!.contentPreview ?? "content preview",
-          style: FontSystem.KR20_72SB.copyWith(color: Colors.black),
+          style: FontSystem.KR20_72SB.copyWith(color: Color(0xFF192252)),
         ),
         Spacer(),
         GestureDetector(
@@ -153,8 +155,8 @@ class ContentPreviewBuild extends StatelessWidget {
   }
 }
 
-class ContentBuild extends StatelessWidget {
-  ContentBuild({Key? key}) : super(key: key);
+class _FirstContentBuild extends StatelessWidget {
+  _FirstContentBuild({Key? key}) : super(key: key);
   final AutobiographyViewModel viewModel = Get.find<AutobiographyViewModel>();
 
   @override
@@ -168,17 +170,73 @@ class ContentBuild extends StatelessWidget {
             fontSize: 40,
             color: Colors.black,
             fontWeight: FontWeight.bold,
-            height: 1.1, // 텍스트 높이를 조정하여 라인 높이를 맞춤
+            height: 1.1,
           ),
         ),
-        SizedBox(width: 8), // 첫 글자와 나머지 텍스트 사이의 간격
+        SizedBox(width: 6),
         Expanded(
-          child: Text(
-            viewModel.autobiography.value!.content!.substring(1),
-            style: TextStyle(
-              fontSize: 14.51,
-              color: Colors.black,
+          child: Padding(
+            padding: const EdgeInsets.only(right: 10.0),
+            child: Text(
+              viewModel.autobiography.value!.content!.substring(1),
+              style: FontSystem.KR14_51M.copyWith(color: Color(0xFF838999)),
             ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// Todo: 회의 때 얘기하기 -> 단락을 어떻게 나눌 것인가?
+class _RestContentBuild extends StatelessWidget {
+  _RestContentBuild({Key? key}) : super(key: key);
+  final AutobiographyViewModel viewModel = Get.find<AutobiographyViewModel>();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+      child: Text(
+        viewModel.autobiography.value!.content!.substring(1),
+        style: FontSystem.KR14_51M.copyWith(color: Color(0xFF838999)),
+      ),
+    );
+  }
+}
+
+class _TopHelpBuild extends StatelessWidget {
+  _TopHelpBuild({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      "최대한 주제에 어긋나지 않는 한에서 수정 해주신 뒤, 수정완료를 눌러주세요. 교정 교열은 저희가 도와드려요.",
+      style: FontSystem.KR12R.copyWith(color: Color(0xFF7B7B7B)),
+    );
+  }
+}
+
+class _FixContentBuild extends StatelessWidget {
+  _FixContentBuild({Key? key}) : super(key: key);
+  final AutobiographyViewModel viewModel = Get.find<AutobiographyViewModel>();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text(
+          viewModel.autobiography.value!.contentPreview ?? "content preview",
+          style: FontSystem.KR20_72SB.copyWith(color: Color(0xFF192252)),
+        ),
+        GestureDetector(
+          onTap: () {
+            // 버튼 클릭 시 동작 추가
+          },
+          child: Image.asset(
+            'assets/images/detail-chapter-fixbutton.png',
+            width: 35, // 이미지 너비
+            height: 45, // 이미지 높이
           ),
         ),
       ],
