@@ -73,72 +73,82 @@ class _TopCurrentPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final viewmodel = Get.find<HomeViewModel>();
-    return Column(
-      children : [
-        Stack(
-        alignment: Alignment.bottomLeft,
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.only(
-                topRight: Radius.circular(12.72), // 오른쪽 위 모서리
-                topLeft: Radius.circular(12.72),  // 왼쪽 위 모서리
-                bottomRight: Radius.circular(12.72), // 오른쪽 아래 모서리
+    return GestureDetector(
+      onTap: () {
+        //시원님 API 수정된 다음에 autobioID로 이동하게 수정해놓을게요
+        //지금은 현재 챕터의 맨 위 소챕터로 세팅해놨어요
+        final currentChapterId = viewmodel.currentChapter.value?.chapterId;
+        final currentAutobiographies = viewmodel.autobiographies[currentChapterId ?? 0];
+        //스크린 명 모르는 관계로 위의 변수 넣어서 Get.toName으로 스크린 이동하게 수정해주시면 됩니다!
+        print("현재 인터뷰로 이동");
+      },
+      child: Column(
+        children : [
+          Stack(
+          alignment: Alignment.bottomLeft,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(12.72), // 오른쪽 위 모서리
+                  topLeft: Radius.circular(12.72),  // 왼쪽 위 모서리
+                  bottomRight: Radius.circular(12.72), // 오른쪽 아래 모서리
+                ),
+                child: Image.asset("assets/icons/main/example.png",
+                width: Get.width * 0.88,
+                height: Get.height * 0.1,
+                fit: BoxFit.cover,),
               ),
-              child: Image.asset("assets/icons/main/example.png",
-              width: Get.width * 0.88,
-              height: Get.height * 0.1,
-              fit: BoxFit.cover,),
-            ),
-            ClipRRect(
-              borderRadius: BorderRadius.only(
-                topRight: Radius.circular(8.48), // 오른쪽 위 모서리
-              ),
-              child: Container(
-                height: 35.0,
-                color: Color(0xFFE6E6E6).withOpacity(0.5),
-                alignment: Alignment.centerLeft,
-                width: Get.width * 0.74,
+              ClipRRect(
+                borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(8.48), // 오른쪽 위 모서리
+                ),
                 child: Container(
-                  margin: EdgeInsets.only(left: 17),
-                  child: Text("현재 진행하고있는 페이지",
-                    style: FontSystem.KR13R.copyWith(color: Colors.white),),
+                  height: 35.0,
+                  color: Color(0xFFE6E6E6).withOpacity(0.5),
+                  alignment: Alignment.centerLeft,
+                  width: Get.width * 0.74,
+                  child: Container(
+                    margin: EdgeInsets.only(left: 17),
+                    child: Text("현재 진행하고있는 페이지",
+                      style: FontSystem.KR13R.copyWith(color: Colors.white),),
+                  ),
                 ),
               ),
-            ),
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Container(
-              alignment: Alignment.centerLeft,
-              margin: EdgeInsets.only(left: 28),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8.48),
-                color: Colors.white,
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                alignment: Alignment.centerLeft,
+                margin: EdgeInsets.only(left: 28),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8.48),
+                  color: Colors.white,
+                ),
+                width: Get.width * 0.74,
+                height: 39.0,
+                child: Container(
+                  margin: EdgeInsets.only(left: 17),
+                  child: Text(viewmodel.currentChapter.value?.chapterName ?? "진행하고 있는 챕터가 없습니다",
+                  style: FontSystem.KR16SB.copyWith(color: Color(0xFF192252)),),
+                ),
               ),
-              width: Get.width * 0.74,
-              height: 39.0,
-              child: Container(
-                margin: EdgeInsets.only(left: 17),
-                child: Text(viewmodel.currentChapter.value?.chapterName ?? "진행하고 있는 챕터가 없습니다",
-                style: FontSystem.KR16SB.copyWith(color: Color(0xFF192252)),),
-              ),
-            ),
-            Container(
-              margin: EdgeInsets.only(right: 25, top: 4.6),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(7),
-                color: Color(0xFFFFFFFF),
-              ),
-              width: Get.width * 0.089,
-              height: Get.width * 0.089,
-              padding: EdgeInsets.all(7),
-              child: SvgPicture.asset("assets/icons/main/send.svg"),
-            )
-          ],
-        ),
-      ]
+              Container(
+                margin: EdgeInsets.only(right: 25, top: 4.6),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(7),
+                  color: Color(0xFFFFFFFF),
+                ),
+                width: Get.width * 0.089,
+                height: Get.width * 0.089,
+                padding: EdgeInsets.all(7),
+                child: SvgPicture.asset("assets/icons/main/send.svg"),
+              )
+            ],
+          ),
+        ]
+      ),
     );
   }
 }
@@ -220,75 +230,83 @@ class _ChapterBox extends StatelessWidget {
     final viewmodel = Get.find<HomeViewModel>();
     String timeAgo = viewmodel.getTimeAge(autobiography.updatedAt);
 
-    return Container(
-      margin: EdgeInsets.only(bottom: 17),
-
-      child: Row(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(7.78),
-              bottomLeft: Radius.circular(7.78),
+    return GestureDetector(
+      onTap: () {
+        final currentChapterId = viewmodel.currentChapter.value?.chapterId;
+        final currentAutobiographies = viewmodel.autobiographies[currentChapterId ?? 0];
+        //Get.toName으로 스크린 이동하게 수정해주면 됨.
+        print("수정 및 교정 교열 페이지로 이동");
+      },
+      child: Container(
+        margin: EdgeInsets.only(bottom: 17),
+      
+        child: Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(7.78),
+                bottomLeft: Radius.circular(7.78),
+              ),
+              child: Image.network(
+                autobiography.coverImageUrl,
+                width: Get.width * 0.22,
+                height: 86,
+                fit: BoxFit.cover,
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) {
+                      return child;
+                    } else {
+                      return Shimmer.fromColors(
+                        baseColor: Colors.grey[300]!,
+                        highlightColor: Colors.grey[100]!,
+                        child: Container(
+                          width: Get.width * 0.22,
+                          height: 86,
+                          color: Colors.grey[300],
+                        ),
+                      );
+                    }
+                  },
+      
+      
+              ),
             ),
-            child: Image.network(
-              autobiography.coverImageUrl,
-              width: Get.width * 0.22,
-              height: 86,
-              fit: BoxFit.cover,
-                loadingBuilder: (context, child, loadingProgress) {
-                  if (loadingProgress == null) {
-                    return child;
-                  } else {
-                    return Shimmer.fromColors(
-                      baseColor: Colors.grey[300]!,
-                      highlightColor: Colors.grey[100]!,
-                      child: Container(
-                        width: Get.width * 0.22,
-                        height: 86,
-                        color: Colors.grey[300],
+            ClipRRect(
+              borderRadius: BorderRadius.only(
+                topRight: Radius.circular(7.78),
+                bottomRight: Radius.circular(7.78),
+              ),
+              child: Container(
+                color: Colors.white,
+                width: Get.width * 0.59,
+                height: 84,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 11),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 12),
+                      Text(
+                        autobiography.title,
+                        style: FontSystem.KR12SB.copyWith(color: Color(0xFF848FAC)),),
+                      SizedBox(height: 3),
+                      Text(
+                        autobiography.contentPreview,
+                        style: FontSystem.KR14SB.copyWith(color: Color(0xFF192252)),
+                        maxLines: 1,  // 텍스트를 한 줄로 제한
+                        overflow: TextOverflow.ellipsis,  // 너비를 초과하는 텍스트는 생략하고 말줄임표를 추가
                       ),
-                    );
-                  }
-                },
-
-
-            ),
-          ),
-          ClipRRect(
-            borderRadius: BorderRadius.only(
-              topRight: Radius.circular(7.78),
-              bottomRight: Radius.circular(7.78),
-            ),
-            child: Container(
-              color: Colors.white,
-              width: Get.width * 0.59,
-              height: 84,
-              child: Padding(
-                padding: const EdgeInsets.only(left: 11),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: 12),
-                    Text(
-                      autobiography.title,
-                      style: FontSystem.KR12SB.copyWith(color: Color(0xFF848FAC)),),
-                    SizedBox(height: 3),
-                    Text(
-                      autobiography.contentPreview,
-                      style: FontSystem.KR14SB.copyWith(color: Color(0xFF192252)),
-                      maxLines: 1,  // 텍스트를 한 줄로 제한
-                      overflow: TextOverflow.ellipsis,  // 너비를 초과하는 텍스트는 생략하고 말줄임표를 추가
-                    ),
-                    SizedBox(height: 10),
-                    Text(
-                      timeAgo,
-                      style: FontSystem.KR12L.copyWith(color: Color(0xFF848FAC)),),
-                  ],
+                      SizedBox(height: 10),
+                      Text(
+                        timeAgo,
+                        style: FontSystem.KR12L.copyWith(color: Color(0xFF848FAC)),),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
