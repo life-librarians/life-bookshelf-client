@@ -20,6 +20,7 @@ dependencies:
   get: ^4.6.6
   flutter_svg: ^2.0.9
   intl: ^0.18.1
+  dotted_line: ^3.2.2
 
 dev_dependencies:
   flutter_test:

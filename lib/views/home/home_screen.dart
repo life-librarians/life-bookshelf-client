@@ -1,10 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:life_bookshelf/utilities/font_system.dart';
 import 'package:life_bookshelf/viewModels/home/home_viewmodel.dart';
 import 'package:life_bookshelf/views/base/base_screen.dart';
+import 'package:dotted_line/dotted_line.dart';
+
+
 
 class HomeScreen extends BaseScreen<HomeViewModel> {
   const HomeScreen({super.key});
@@ -15,6 +19,7 @@ class HomeScreen extends BaseScreen<HomeViewModel> {
       child: Column(
         children: [
           _Header(),
+          SizedBox(height: 25),
           _TopCurrentPage(),
         ],
       ),
@@ -120,8 +125,102 @@ class _TopCurrentPage extends StatelessWidget {
               child: SvgPicture.asset("assets/icons/main/send.svg"),
             )
           ],
-        )
+        ),
+        _Chapter(),
       ]
     );
   }
 }
+class _Chapter extends StatelessWidget {
+  const _Chapter({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final exampleNum = 2;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 25,top:61),
+          child: Text("Chapter 1 : 나를 만든 내 어릴 적",
+          style: FontSystem.KR17SB.copyWith(color: Color(0xFF192252))),
+        ),
+        SizedBox(height: 8),
+        Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 26, right: 12.5),
+              child: Column(
+                children:[
+                  SvgPicture.asset("assets/icons/main/circle.svg"),
+                  SizedBox(height: 8),
+                  SvgPicture.asset("assets/icons/main/line.svg"),
+                  SizedBox(height: 8),
+                  SvgPicture.asset("assets/icons/main/circle.svg"),
+                ]
+              ),
+            ),
+            Column(
+              children: [
+                _ChapterBox(),
+                SizedBox(height: 17),
+                _ChapterBox(),
+              ],
+            ),
+          ],
+        )
+      ],
+    );
+  }
+}
+
+class _ChapterBox extends StatelessWidget {
+  const _ChapterBox({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(7.78),  // 왼쪽 위 모서리
+            bottomLeft: Radius.circular(7.78), // 오른쪽 아래 모서리
+          ),
+          child: Image.asset("assets/icons/main/example.png",
+          width: Get.width * 0.22,
+          height: 86,
+          fit: BoxFit.cover),
+        ),
+        ClipRRect(
+          borderRadius: BorderRadius.only(
+            topRight: Radius.circular(7.78),  // 왼쪽 위 모서리
+            bottomRight: Radius.circular(7.78), // 오른쪽 아래 모서리
+          ),
+          child: Container(
+            color: Colors.white,
+            width: Get.width * 0.59,
+            height: 84,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 11),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 12),
+                  Text("나의 가정환경",
+                  style: FontSystem.KR12SB.copyWith(color: Color(0xFF848FAC)),),
+                  SizedBox(height: 3),
+                  Text("내가 태어났을때, 나의 가족은",
+                    style: FontSystem.KR14SB.copyWith(color: Color(0xFF192252)),),
+                  SizedBox(height: 10),
+                  Text("36 minutes a go",
+                  style: FontSystem.KR12L.copyWith(color: Color(0xFF848FAC)),),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+

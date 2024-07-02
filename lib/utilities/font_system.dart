@@ -194,6 +194,13 @@ abstract class FontSystem {
     color: Colors.black,
   );
 
+  static const TextStyle KR17SB = TextStyle(
+    fontSize: 17,
+    fontWeight: FontWeight.w600,
+    fontFamily: 'Pretendard',
+    color: Colors.black,
+  );
+
   static const TextStyle KR16B = TextStyle(
     fontSize: 16,
     fontWeight: FontWeight.w700,
@@ -281,6 +288,13 @@ abstract class FontSystem {
   static const TextStyle KR12R = TextStyle(
     fontSize: 12,
     fontWeight: FontWeight.w400,
+    fontFamily: 'Pretendard',
+    color: Colors.black,
+  );
+
+  static const TextStyle KR12L = TextStyle(
+    fontSize: 12,
+    fontWeight: FontWeight.w300,
     fontFamily: 'Pretendard',
     color: Colors.black,
   );
