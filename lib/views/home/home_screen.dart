@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:life_bookshelf/models/autobiography.dart';
+import 'package:life_bookshelf/models/chapter.dart';
 import 'package:life_bookshelf/utilities/font_system.dart';
 import 'package:life_bookshelf/viewModels/home/home_viewmodel.dart';
 import 'package:life_bookshelf/views/base/base_screen.dart';
 import 'package:dotted_line/dotted_line.dart';
-
+import 'package:shimmer/shimmer.dart';
 
 
 class HomeScreen extends BaseScreen<HomeViewModel> {
@@ -15,18 +17,27 @@ class HomeScreen extends BaseScreen<HomeViewModel> {
 
   @override
   Widget buildBody(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          _Header(),
-          SizedBox(height: 25),
-          _TopCurrentPage(),
-        ],
-      ),
-    );
+    return Obx(() {
+      if (viewModel.isLoading.value) {
+        return Center(child: CircularProgressIndicator());
+      } else {
+        return SingleChildScrollView(
+          child: Column(
+            children: [
+              _Header(),
+              SizedBox(height: 25),
+              _TopCurrentPage(),
+              SizedBox(height: 38),
+              Column(
+                children: viewModel.chapters.map((chapter) => _Chapter(chapter: chapter)).toList(),
+              ),
+            ],
+          ),
+        );
+      }
+    });
   }
 }
-
 class _Header extends StatelessWidget {
   const _Header({super.key});
 
@@ -127,26 +138,28 @@ class _TopCurrentPage extends StatelessWidget {
             )
           ],
         ),
-        SizedBox(height: 38),
-        _Chapter(),
-        _Chapter(),
       ]
     );
   }
 }
+
+
 class _Chapter extends StatelessWidget {
-  const _Chapter({super.key});
+  final Chapter chapter;
+
+  const _Chapter({super.key, required this.chapter});
 
   @override
   Widget build(BuildContext context) {
-    final exampleNum = 2;
+    final viewmodel = Get.find<HomeViewModel>();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(left: 25,top:23),
-          child: Text("Chapter 1 : 나를 만든 내 어릴 적",
-          style: FontSystem.KR17SB.copyWith(color: Color(0xFF192252))),
+          padding: const EdgeInsets.only(left: 25, top: 6),
+          child: Text(
+            "${chapter.chapterName}",
+              style: FontSystem.KR17SB.copyWith(color: Color(0xFF192252)))
         ),
         SizedBox(height: 8),
         Row(
@@ -154,76 +167,125 @@ class _Chapter extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(left: 26, right: 12.5),
               child: Column(
-                children:[
-                  SvgPicture.asset("assets/icons/main/circle.svg"),
-                  SizedBox(height: 8),
-                  SvgPicture.asset("assets/icons/main/line.svg"),
-                  SizedBox(height: 8),
-                  SvgPicture.asset("assets/icons/main/circle.svg"),
-                ]
+                children: List.generate(viewmodel.autobiographies.length * 2 - 1, (index) {
+                  if (viewmodel.autobiographies.length == 1 && index == 0) {
+                    return Container(
+                      child: SvgPicture.asset("assets/icons/main/circle.svg"),
+                    );
+                  } else if (index.isEven) {
+                    return Container(
+                      margin: EdgeInsets.symmetric(vertical: 8),
+                      child: SvgPicture.asset("assets/icons/main/circle.svg"),
+                    );
+                  } else {
+                    return SvgPicture.asset("assets/icons/main/line.svg");
+                  }
+                }),
               ),
             ),
-            Column(
-              children: [
-                _ChapterBox(),
-                SizedBox(height: 17),
-                _ChapterBox(),
-              ],
-            ),
+            _ChapterBoxs(chapterId: chapter.chapterId),
           ],
-        )
+        ),
       ],
     );
   }
 }
 
-class _ChapterBox extends StatelessWidget {
-  const _ChapterBox({super.key});
+class _ChapterBoxs extends StatelessWidget {
+  final int chapterId;
+
+  const _ChapterBoxs({super.key, required this.chapterId});
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        ClipRRect(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(7.78),  // 왼쪽 위 모서리
-            bottomLeft: Radius.circular(7.78), // 오른쪽 아래 모서리
-          ),
-          child: Image.asset("assets/icons/main/example.png",
-          width: Get.width * 0.22,
-          height: 86,
-          fit: BoxFit.cover),
-        ),
-        ClipRRect(
-          borderRadius: BorderRadius.only(
-            topRight: Radius.circular(7.78),  // 왼쪽 위 모서리
-            bottomRight: Radius.circular(7.78), // 오른쪽 아래 모서리
-          ),
-          child: Container(
-            color: Colors.white,
-            width: Get.width * 0.59,
-            height: 84,
-            child: Padding(
-              padding: const EdgeInsets.only(left: 11),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(height: 12),
-                  Text("나의 가정환경",
-                  style: FontSystem.KR12SB.copyWith(color: Color(0xFF848FAC)),),
-                  SizedBox(height: 3),
-                  Text("내가 태어났을때, 나의 가족은",
-                    style: FontSystem.KR14SB.copyWith(color: Color(0xFF192252)),),
-                  SizedBox(height: 10),
-                  Text("36 minutes a go",
-                  style: FontSystem.KR12L.copyWith(color: Color(0xFF848FAC)),),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ],
+    print("ChapterId: $chapterId");
+    final viewmodel = Get.find<HomeViewModel>();
+    final autobiographies = viewmodel.autobiographies[chapterId] ?? [];
+
+    return Column(
+      children: autobiographies.map((auto) => _ChapterBox(autobiography: auto)).toList(),
     );
   }
 }
 
+
+
+class _ChapterBox extends StatelessWidget {
+  final Autobiography autobiography;
+
+  const _ChapterBox({super.key, required this.autobiography});
+
+  @override
+  Widget build(BuildContext context) {
+    final viewmodel = Get.find<HomeViewModel>();
+    String timeAgo = viewmodel.getTimeAge(autobiography.updatedAt);
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 17),
+      child: Row(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(7.78),
+              bottomLeft: Radius.circular(7.78),
+            ),
+            child: Image.network(
+              autobiography.coverImageUrl,
+              width: Get.width * 0.22,
+              height: 86,
+              fit: BoxFit.cover,
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) {
+                    return child;
+                  } else {
+                    return Shimmer.fromColors(
+                      baseColor: Colors.grey[300]!,
+                      highlightColor: Colors.grey[100]!,
+                      child: Container(
+                        width: Get.width * 0.22,
+                        height: 86,
+                        color: Colors.grey[300],
+                      ),
+                    );
+                  }
+                },
+
+
+            ),
+          ),
+          ClipRRect(
+            borderRadius: BorderRadius.only(
+              topRight: Radius.circular(7.78),
+              bottomRight: Radius.circular(7.78),
+            ),
+            child: Container(
+              color: Colors.white,
+              width: Get.width * 0.59,
+              height: 84,
+              child: Padding(
+                padding: const EdgeInsets.only(left: 11),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 12),
+                    Text(
+                      autobiography.title,
+                      style: FontSystem.KR12SB.copyWith(color: Color(0xFF848FAC)),),
+                    SizedBox(height: 3),
+                    Text(
+                      autobiography.contentPreview,
+                      style: FontSystem.KR14SB.copyWith(color: Color(0xFF192252)),),
+                    SizedBox(height: 10),
+                    Text(
+                      timeAgo,
+                      style: FontSystem.KR12L.copyWith(color: Color(0xFF848FAC)),),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

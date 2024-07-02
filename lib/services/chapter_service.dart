@@ -49,7 +49,7 @@ class ChapterService {
         "hasPreviousPage": false
     }
     ''';
-    await Future.delayed(Duration(seconds: 1)); // Simulate network delay
+    await Future.delayed(Duration(milliseconds: 100)); // Simulate network delay
     var data = jsonDecode(jsonString);
     currentChapterId = data['currentChapterId'];
     return (data['results'] as List)

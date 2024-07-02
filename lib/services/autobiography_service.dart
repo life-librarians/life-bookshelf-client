@@ -28,7 +28,7 @@ class AutobiographyService {
                 "autobiographyId": 1,
                 "title": "My Early Life",
                 "contentPreview": "This is the story of my early life...",
-                "coverImageUrl": "http://example.com/image1.jpg",
+                "coverImageUrl": "https://i.postimg.cc/SKqL3HL3/example.png",
                 "createdAt": "2023-01-01T00:00:00Z",
                 "updatedAt": "2023-01-02T00:00:00Z"
             },
@@ -36,14 +36,14 @@ class AutobiographyService {
                 "autobiographyId": 2,
                 "title": "My Education",
                 "contentPreview": "This is the story of my education...",
-                "coverImageUrl": "http://example.com/image2.jpg",
+                "coverImageUrl": "https://i.postimg.cc/SKqL3HL3/example.png",
                 "createdAt": "2023-01-02T00:00:00Z",
                 "updatedAt": "2023-01-03T00:00:00Z"
             }
         ]
     }
     ''';
-    await Future.delayed(Duration(seconds: 1)); // Simulate network delay
+    await Future.delayed(Duration(milliseconds: 100)); // Simulate network delay
     var data = jsonDecode(jsonString);
     return (data['results'] as List)
         .map((autoJson) => Autobiography.fromJson(autoJson))
