@@ -14,6 +14,7 @@ class _General {
   const _General();
 
   final Color white = ColorSystem.white;
+  final Color mainBlue = ColorSystem.mainBlue;
 }
 
 class _Screen {
