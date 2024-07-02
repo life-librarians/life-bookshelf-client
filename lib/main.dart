@@ -7,6 +7,5 @@ void main() async {
   /* Open .env file */
   await dotenv.load(fileName: "assets/config/.env");
   await initializeDateFormatting();
-
   runApp(const MainApp(initialRoute: "/"));
 }
