@@ -15,6 +15,7 @@ class RootBinding extends Bindings {
 
     // ChildViewModel is singleton
     Get.put(HomeViewModel());
+    Get.put(AutobiographyService());
     Get.put(AutobiographyViewModel(AutobiographyService()));
 
     Get.put(MypageViewModel());

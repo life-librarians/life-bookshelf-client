@@ -12,6 +12,11 @@ List<GetPage> appPages = [
     binding: RootBinding(),
   ),
   GetPage(
+    name: Routes.HOME,
+    page: () => const HomeScreen(),
+    binding: RootBinding(),
+  ),
+  GetPage(
     name: Routes.AUTOBIOGRAPHY_DETAIL_CHAPTER,
     page: () => const AutobiographyDetailScreen(autobiographyId: 0,),
     binding: RootBinding(),

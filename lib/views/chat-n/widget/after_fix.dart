@@ -1,7 +1,11 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:life_bookshelf/utilities/app_routes.dart';
 import '../../../utilities/font_system.dart';
 import '../../../viewModels/chat-N/autobiography_viewmodel.dart';
+import '../../../viewModels/root/root_viewmodel.dart';
+import '../../home/home_screen.dart';
 
 // 수정 후 Top
 class TopAfterFixBuild extends StatelessWidget {
@@ -24,11 +28,13 @@ class TopAfterFixBuild extends StatelessWidget {
         ),
         Spacer(),
         ElevatedButton(
-          onPressed: () {
-            // 버튼 클릭 시 동작 추가
+          onPressed: () async {
+            // Todo: 연동하기
+            // await viewModel.submitCorrections();
+            Get.toNamed(Routes.HOME);
           },
           style: ElevatedButton.styleFrom(
-            foregroundColor: Colors.black,
+            foregroundColor: Colors.white,
             backgroundColor: Color(0xFF567AF3), // 버튼 색상 설정
             minimumSize: Size(103, 32),
             elevation: 0,
@@ -74,40 +80,63 @@ class AfterFixContentBuild extends StatelessWidget {
           '내 텍스트',
           style: FontSystem.KR15R.copyWith(color: Colors.black),
         ),
-        GestureDetector(
-          onTap: () {
-            viewModel.toggleEditing();
-            if (viewModel.isEditing.value) {
-              viewModel.contentController.text = viewModel.autobiography.value!.content ?? '';
-            }
-          },
-          child: Obx(() {
-            return Container(
-              padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 18.0),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12.0),
+        Obx(() {
+          return Container(
+            padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 18.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12.0),
+            ),
+            child: RichText(
+              text: TextSpan(
+                children: _buildTextSpans(viewModel),
               ),
-              child: viewModel.isEditing.value
-                  ? TextField(
-                controller: viewModel.contentController,
-                style: FontSystem.KR14_51M.copyWith(color: Color(0xFF838999)),
-                maxLines: null,
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  isDense: true,
-                  contentPadding: EdgeInsets.zero,
-                ),
-              )
-                  : Text(
-                viewModel.autobiography.value!.content ?? "No content",
-                style: FontSystem.KR14_51M.copyWith(color: Color(0xFF838999)),
-                textAlign: TextAlign.start,
-              ),
-            );
-          }),
-        ),
+            ),
+          );
+        }),
       ],
     );
+  }
+
+  List<TextSpan> _buildTextSpans(AutobiographyViewModel viewModel) {
+    List<TextSpan> spans = [];
+    String content = viewModel.autobiography.value!.content!;
+    List<Map<String, String>> corrections = viewModel.textCorrections;
+
+    int lastIndex = 0;
+
+    for (int i = 0; i < corrections.length; i++) {
+      String original = corrections[i]["original"]!;
+      String corrected = corrections[i]["corrected"]!;
+      int index = content.indexOf(original, lastIndex);
+
+      if (index != -1) {
+        if (lastIndex != index) {
+          spans.add(TextSpan(
+            text: content.substring(lastIndex, index),
+            style: FontSystem.KR14_51M.copyWith(color: Color(0xFF838999)),
+          ));
+        }
+
+        spans.add(TextSpan(
+          text: viewModel.correctionStates[i] == true ? corrected : original,
+          style: FontSystem.KR14_51M.copyWith(
+            color: viewModel.correctionStates[i] == true ? Colors.green : Colors.red,
+          ),
+          recognizer: TapGestureRecognizer()
+            ..onTap = () {
+              viewModel.toggleCorrectionState(i);
+            },
+        ));
+        lastIndex = index + original.length;
+      }
+    }
+    if (lastIndex < content.length) {
+      spans.add(TextSpan(
+        text: content.substring(lastIndex),
+        style: FontSystem.KR14_51M.copyWith(color: Color(0xFF838999)),
+      ));
+    }
+    return spans;
   }
 }

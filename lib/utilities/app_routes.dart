@@ -2,6 +2,7 @@
 
 abstract class Routes {
   static const ROOT = '/';
+  static const HOME = '/home';
   static const WHITE_NOISE = '/pulish';
   static const SETTING = '/mypage';
   static const ONBOARDING = '/onboarding';

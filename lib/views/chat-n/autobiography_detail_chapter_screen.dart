@@ -4,15 +4,14 @@ import 'package:get/get.dart';
 import 'package:life_bookshelf/views/chat-N/widget/after_fix.dart';
 import 'package:life_bookshelf/views/chat-N/widget/before_fix.dart';
 import 'package:life_bookshelf/views/chat-N/widget/during_fix.dart';
+import '../../services/chat-N/autobiography_service.dart';
 import '../../utilities/font_system.dart';
 import '../../viewModels/chat-N/autobiography_viewmodel.dart';
-import '../chat-N/controllers/autobiography_detail_controller.dart';
 
 class AutobiographyDetailScreen extends BaseScreen<AutobiographyViewModel> {
   final int autobiographyId;
   const AutobiographyDetailScreen({Key? key, required this.autobiographyId}) : super(key: key);
 
-  // App Bar
   @override
   PreferredSizeWidget? buildAppBar(BuildContext context) {
     return AppBar(
@@ -33,16 +32,19 @@ class AutobiographyDetailScreen extends BaseScreen<AutobiographyViewModel> {
     );
   }
 
-  // Body
   @override
   Widget buildBody(BuildContext context) {
-    // ViewModel 인스턴스를 가져오고 초기화
-    final AutobiographyViewModel viewModel = Get.find<AutobiographyViewModel>();
-    viewModel.fetchAutobiography(autobiographyId);
+    final AutobiographyViewModel viewModel = Get.put(AutobiographyViewModel(Get.find<AutobiographyService>()));
 
-    return GetBuilder<AutobiographyDetailController>(
-      init: AutobiographyDetailController(),
-      builder: (controller) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      viewModel.fetchAutobiography(autobiographyId);
+      viewModel.isFixMode.value = false;
+      viewModel.isAfterFixMode.value = false;
+    });
+
+    return GetBuilder<AutobiographyViewModel>(
+      init: viewModel,
+      builder: (viewModel) {
         return SingleChildScrollView(
           child: Container(
             color: Color(0xFFF7F7F7),
@@ -53,52 +55,7 @@ class AutobiographyDetailScreen extends BaseScreen<AutobiographyViewModel> {
               } else if (viewModel.errorMessage.isNotEmpty) {
                 return Center(child: Text(viewModel.errorMessage.value));
               } else if (viewModel.autobiography.value != null) {
-                if (controller.isAfterFixMode.value) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      TopAfterFixBuild(),
-                      SizedBox(height: 5),
-                      TopAfterFixHelpBuild(),
-                      SizedBox(height: 35),
-                      AfterFixContentBuild(),
-                    ],
-                  );
-                } else if (controller.isFixMode.value) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      TopFixBuild(
-                        onFixPressed: () {
-                          controller.toggleFixMode();
-                        },
-                      ),
-                      SizedBox(height: 5),
-                      TopHelpBuild(),
-                      SizedBox(height: 35),
-                      FixContentBuild(),
-                    ],
-                  );
-                } else {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      TopBuild(),
-                      SizedBox(height: 22),
-                      ImageBuild(),
-                      SizedBox(height: 19.87),
-                      ContentPreviewBuild(
-                        onFixPressed: () {
-                          controller.toggleFixMode();
-                        },
-                      ),
-                      SizedBox(height: 22),
-                      FirstContentBuild(),
-                      SizedBox(height: 22),
-                      RestContentBuild(),
-                    ],
-                  );
-                }
+                return _buildContentBasedOnMode(viewModel);
               } else {
                 return Center(child: Text('No Data'));
               }
@@ -107,5 +64,54 @@ class AutobiographyDetailScreen extends BaseScreen<AutobiographyViewModel> {
         );
       },
     );
+  }
+
+  Widget _buildContentBasedOnMode(AutobiographyViewModel viewModel) {
+    if (viewModel.isAfterFixMode.value) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          TopAfterFixBuild(),
+          SizedBox(height: 5),
+          TopAfterFixHelpBuild(),
+          SizedBox(height: 35),
+          AfterFixContentBuild(),
+        ],
+      );
+    } else if (viewModel.isFixMode.value) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          TopFixBuild(
+            onFixPressed: () {
+              viewModel.toggleFixMode();
+            },
+          ),
+          SizedBox(height: 5),
+          TopHelpBuild(),
+          SizedBox(height: 35),
+          FixContentBuild(),
+        ],
+      );
+    } else {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          TopBuild(),
+          SizedBox(height: 22),
+          ImageBuild(),
+          SizedBox(height: 19.87),
+          ContentPreviewBuild(
+            onFixPressed: () {
+              viewModel.toggleFixMode();
+            },
+          ),
+          SizedBox(height: 22),
+          FirstContentBuild(),
+          SizedBox(height: 22),
+          RestContentBuild(),
+        ],
+      );
+    }
   }
 }

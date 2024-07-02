@@ -18,14 +18,42 @@ class AutobiographyViewModel extends GetxController {
   var isFixMode = false.obs;
   var isAfterFixMode = false.obs;
 
+  // 수정된 텍스트와 원래 텍스트의 매핑
+  RxList<Map<String, String>> textCorrections = <Map<String, String>>[
+    {"original": "김도훈", "corrected": "도훈 김"},
+    {"original": "1985년 3월 15일", "corrected": "March 15, 1985"},
+    {"original": "과학자가 되는 꿈", "corrected": "과학자의 꿈"},
+  ].obs;
+
+  // 수정된 부분의 상태 관리
+  RxMap<int, bool> correctionStates = <int, bool>{}.obs;
+
+  void toggleEditing() {
+    isEditing.value = !isEditing.value;
+  }
+
+  // 수정 모드 토글
+  void toggleFixMode() {
+    isFixMode.value = !isFixMode.value;
+    if (isFixMode.value == false) {
+      isAfterFixMode.value = true;
+    }
+  }
+
+  void toggleAfterFixMode() {
+    isAfterFixMode.value = !isAfterFixMode.value;
+  }
+
+  // 텍스트 수정 상태 토글
+  void toggleCorrectionState(int index) {
+    correctionStates[index] = !(correctionStates[index] ?? false);
+  }
+
   // 특정 자서전 상세 정보 조회
   Future<void> fetchAutobiography(int autobiographyId) async {
     try {
       isLoading(true);
       errorMessage('');
-
-      // Todo: 실제 API 호출 부분
-      // final result = await service.fetchAutobiography(autobiographyId);
 
       // 더미 데이터
       final result = Autobiography(
@@ -51,19 +79,55 @@ class AutobiographyViewModel extends GetxController {
     }
   }
 
-  void toggleEditing() {
-    isEditing.value = !isEditing.value;
-  }
+  Future<void> fetchAfterFixContent(int autobiographyId) async {
+    try {
+      isLoading(true);
+      errorMessage('');
 
-  // 수정 모드 토글
-  void toggleFixMode() {
-    isFixMode.value = !isFixMode.value;
-    if (isFixMode.value == false) {
-      isAfterFixMode.value = true;
+      // 더미 데이터: GPT가 수정한 텍스트
+      final corrections = [
+        {"original": "김도훈", "corrected": "도훈 김"},
+        {"original": "1985년 3월 15일", "corrected": "March 15, 1985"},
+        {"original": "과학자가 되는 꿈", "corrected": "과학자의 꿈"},
+      ];
+
+      textCorrections.assignAll(corrections);
+      for (int i = 0; i < corrections.length; i++) {
+        correctionStates[i] = true; // 기본적으로 수정된 텍스트가 보이도록 설정
+      }
+    } catch (e) {
+      errorMessage(e.toString());
+    } finally {
+      isLoading(false);
     }
   }
 
-  void toggleAfterFixMode() {
-    isAfterFixMode.value = !isAfterFixMode.value;
+  // 수정된 텍스트를 백엔드로 전송
+  Future<void> submitCorrections() async {
+    try {
+      isLoading(true);
+      errorMessage('');
+
+      List<Map<String, String>> selectedCorrections = [];
+      for (int i = 0; i < textCorrections.length; i++) {
+        if (correctionStates[i] == true) {
+          selectedCorrections.add(textCorrections[i]);
+        }
+      }
+      // 현재 내용을 텍스트로 변환
+      String updatedContent = contentController.text;
+      // 서비스로 백엔드에 전송
+      await service.updateAutobiography(
+        autobiography.value!.id!,
+        autobiography.value!.title!,
+        updatedContent,
+        autobiography.value!.coverImageUrl!,
+      );
+
+    } catch (e) {
+      errorMessage(e.toString());
+    } finally {
+      isLoading(false);
+    }
   }
 }

@@ -20,4 +20,22 @@ class AutobiographyService {
       throw Exception('Failed to load autobiography');
     }
   }
+
+  Future<void> updateAutobiography(int id, String title, String content, String coverImageUrl) async {
+    String apiUrl = '${dotenv.env['API']}/api/v1/autobiographies/$id';
+    final response = await http.post(
+      Uri.parse(apiUrl),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        'title': title,
+        'content': content,
+        'prisignedCoverImageUrl': coverImageUrl,
+      }),
+    );
+    if (response.statusCode != 200) {
+      throw Exception('Failed to update autobiography');
+    }
+  }
 }
