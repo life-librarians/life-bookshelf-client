@@ -61,6 +61,7 @@ class _TopCurrentPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final viewmodel = Get.find<HomeViewModel>();
     return Column(
       children : [
         Stack(
@@ -109,7 +110,7 @@ class _TopCurrentPage extends StatelessWidget {
               height: 39.0,
               child: Container(
                 margin: EdgeInsets.only(left: 17),
-                child: Text("20살 이후, 그때의 나는",
+                child: Text(viewmodel.currentChapter.value?.chapterName ?? "진행하고 있는 챕터가 없습니다",
                 style: FontSystem.KR16SB.copyWith(color: Color(0xFF192252)),),
               ),
             ),
@@ -126,6 +127,8 @@ class _TopCurrentPage extends StatelessWidget {
             )
           ],
         ),
+        SizedBox(height: 38),
+        _Chapter(),
         _Chapter(),
       ]
     );
@@ -141,7 +144,7 @@ class _Chapter extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(left: 25,top:61),
+          padding: const EdgeInsets.only(left: 25,top:23),
           child: Text("Chapter 1 : 나를 만든 내 어릴 적",
           style: FontSystem.KR17SB.copyWith(color: Color(0xFF192252))),
         ),
