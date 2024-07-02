@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:life_bookshelf/views/base/base_screen.dart';
 import 'package:get/get.dart';
-import 'package:life_bookshelf/views/chat-N/widget/after_fix.dart';
-import 'package:life_bookshelf/views/chat-N/widget/before_fix.dart';
-import 'package:life_bookshelf/views/chat-N/widget/during_fix.dart';
-import '../../services/chat-N/autobiography_service.dart';
+import 'package:life_bookshelf/views/chat-n/widget/after_fix.dart';
+import 'package:life_bookshelf/views/chat-n/widget/before_fix.dart';
+import 'package:life_bookshelf/views/chat-n/widget/during_fix.dart';
+import '../../services/chat-n/autobiography_service.dart';
 import '../../utilities/font_system.dart';
-import '../../viewModels/chat-N/autobiography_viewmodel.dart';
+import '../../viewModels/chat-n/autobiography_viewmodel.dart';
 
 class AutobiographyDetailScreen extends BaseScreen<AutobiographyViewModel> {
   final int autobiographyId;
@@ -34,7 +34,7 @@ class AutobiographyDetailScreen extends BaseScreen<AutobiographyViewModel> {
 
   @override
   Widget buildBody(BuildContext context) {
-    final AutobiographyViewModel viewModel = Get.put(AutobiographyViewModel(Get.find<AutobiographyService>()));
+    final AutobiographyViewModel viewModel = Get.put(AutobiographyViewModel(Get.find<ChatAutobiographyService>()));
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       viewModel.fetchAutobiography(autobiographyId);

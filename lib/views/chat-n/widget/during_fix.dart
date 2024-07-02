@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../utilities/font_system.dart';
-import '../../../viewModels/chat-N/autobiography_viewmodel.dart';
+import '../../../viewModels/chat-n/autobiography_viewmodel.dart';
 
 // 수정 중인 Top
 class TopFixBuild extends StatelessWidget {
