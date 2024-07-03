@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:life_bookshelf/utilities/color_system.dart';
+import 'package:life_bookshelf/utilities/font_system.dart';
+import 'package:life_bookshelf/utilities/screen_utils.dart';
 
 class ChatBubble extends StatelessWidget {
   final String message;
@@ -8,14 +11,14 @@ class ChatBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.all(8),
+      margin: EdgeInsets.all(8.w),
       child: CustomPaint(
         painter: UserBubblePainter(),
         child: Container(
-          padding: const EdgeInsets.only(left: 20, top: 15, right: 20, bottom: 15),
+          padding: EdgeInsets.only(left: 20.w, top: 15.w, right: 20.w, bottom: 15.w),
           child: Text(
             message,
-            style: const TextStyle(color: Colors.white, fontSize: 16),
+            style: FontSystem.KR16R.copyWith(color: ColorSystem.white),
           ),
         ),
       ),
@@ -29,10 +32,9 @@ class UserBubblePainter extends CustomPainter {
     final Paint paint = Paint()
       ..color = const Color(0xFF6E8EFA)
       ..style = PaintingStyle.fill;
-
     const double radius = 12;
-    const double tailWidth = 30;
-    const double tailHeight = 15;
+    double tailWidth = size.width * (1 / 10);
+    double tailHeight = size.width * (1 / 20);
     final Path path = Path()
       ..moveTo(radius, 0) // 좌상단 코너 시작
       ..lineTo(size.width - radius, 0) // 상단 직선

@@ -3,6 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:get/get.dart';
 import 'package:life_bookshelf/bindings/root_binding.dart';
+import 'package:life_bookshelf/utilities/screen_utils.dart';
 import 'views/root/root_screen.dart';
 
 class MainApp extends StatelessWidget {
@@ -17,6 +18,7 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     // Remove splash
     FlutterNativeSplash.remove();
+    ScreenUtils().init(context);
 
     return GetMaterialApp(
       title: "Life Bookshelf",
@@ -36,8 +38,7 @@ class MainApp extends StatelessWidget {
       ),
       initialRoute: initialRoute,
       getPages: [
-        GetPage(
-            name: '/', page: () => const RootScreen(), binding: RootBinding()),
+        GetPage(name: '/', page: () => const RootScreen(), binding: RootBinding()),
       ],
     );
   }
