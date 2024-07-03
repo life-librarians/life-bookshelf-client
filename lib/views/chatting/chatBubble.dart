@@ -41,7 +41,7 @@ class UserBubblePainter extends CustomPainter {
         radius: const Radius.circular(radius),
       ) // 우상단 코너
       ..lineTo(size.width, size.height) // 우측 직선
-      ..conicTo(size.width, size.height + tailHeight * 2, size.width - tailWidth, size.height, 1) // 첫 번째 곡선
+      ..cubicTo(size.width, size.height + tailHeight * 2, size.width - tailWidth, size.height, size.width - tailWidth * 2, size.height)
       // 3차 베지에 곡선을 통한 꼬리 구현
       ..lineTo(size.width - tailWidth, size.height) // 우하단 몸통으로 복귀
       ..lineTo(radius, size.height) // 좌하단 코너 시작지점으로 통하는 직선
