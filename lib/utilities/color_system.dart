@@ -25,6 +25,7 @@ class _Chatting {
   final Color bubbleBackground2 = ColorSystem.mainBlue;
   final Color chatColor1 = const Color(0xFF585763);
   final Color chatColor2 = ColorSystem.white;
+  final Color timeStamp = const Color(0xFF848395);
 }
 
 class _Screen {

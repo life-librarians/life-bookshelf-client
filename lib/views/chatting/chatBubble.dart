@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:life_bookshelf/utilities/color_system.dart';
 import 'package:life_bookshelf/utilities/font_system.dart';
@@ -14,31 +16,69 @@ class ChatBubble extends StatelessWidget {
     EdgeInsets margin;
     CustomPainter painter;
     Color textColor;
+    CrossAxisAlignment timeStampAlignment;
 
     if (isUser) {
       margin = EdgeInsets.only(left: 90.w);
       painter = UserBubblePainter();
       textColor = ColorSystem.chatting.chatColor2;
+      timeStampAlignment = CrossAxisAlignment.end;
     } else {
       margin = EdgeInsets.only(right: 90.w);
       painter = InterviewerBubblePainter();
       textColor = ColorSystem.chatting.chatColor1;
+      timeStampAlignment = CrossAxisAlignment.start;
     }
+
+    final timeStampMargin = calculateTimestampMargin(message, FontSystem.KR16R.copyWith(color: textColor));
 
     return Container(
       margin: margin,
       padding: EdgeInsets.all(8.w),
-      child: CustomPaint(
-        painter: painter,
-        child: Container(
-          padding: EdgeInsets.only(left: 20.w, top: 15.w, right: 20.w, bottom: 15.w),
-          child: Text(
-            message,
-            style: FontSystem.KR16R.copyWith(color: textColor),
+      child: Column(
+        crossAxisAlignment: timeStampAlignment,
+        children: [
+          CustomPaint(
+            painter: painter,
+            child: Container(
+              padding: EdgeInsets.only(left: 20.w, top: 15.w, right: 20.w, bottom: 15.w),
+              child: Text(
+                message,
+                style: FontSystem.KR16R.copyWith(color: textColor),
+              ),
+            ),
           ),
-        ),
+          // TODO: TimeStamp 실제 값 수정
+          Container(
+            margin: EdgeInsets.only(top: timeStampMargin),
+            child: Text(
+              "01:30 PM",
+              style: FontSystem.KR14SB.copyWith(color: ColorSystem.chatting.timeStamp),
+            ),
+          )
+        ],
       ),
     );
+  }
+
+  /// message text의 길이를 이용하여 chatBubble의 width를 계산, 이후 timestamp와 chatBubble 사이의 margin 값을 계산합니다.
+  double calculateTimestampMargin(String message, TextStyle textStyle) {
+    final textSpan = TextSpan(
+      text: message,
+      style: textStyle,
+    );
+    final textPainter = TextPainter(
+      text: textSpan,
+      maxLines: 1,
+      textDirection: TextDirection.ltr,
+    )..layout(minWidth: 0, maxWidth: double.infinity);
+    final messageWidth = textPainter.size.width;
+
+    // 패딩을 포함한 버블의 실제 너비 계산
+    final finalWidth = messageWidth + 40.w;
+
+    // 최종 margin값 계산 (20과 계산된 값 중 작은 값을 사용)
+    return min(20.h, finalWidth / 10);
   }
 }
 

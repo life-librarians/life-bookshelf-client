@@ -11,11 +11,13 @@ class ChattingScreen extends BaseScreen<ChattingViewModel> {
   Widget buildBody(BuildContext context) {
     return const Center(
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text("Chatting"),
           ChatBubble(isUser: true, message: "그 중에서도 가장 기억에 남는 순간은 내 생일 파티였어. 여름이었고, 엄마가 느티나무 아래에서 작은 파티를 준비해 주셨어."),
           ChatBubble(isUser: false, message: "그 중에서도 가장 기억에 남는 순간은 내 생일 파티였어. 여름이었고, 엄마가 느티나무 아래에서 작은 파티를 준비해 주셨어."),
+          ChatBubble(isUser: true, message: "어쩌라고"),
+          ChatBubble(isUser: false, message: ". . ."),
+          ChatBubble(isUser: true, message: ""),
         ],
       ),
     );
