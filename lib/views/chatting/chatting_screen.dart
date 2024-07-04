@@ -49,10 +49,7 @@ class ChattingScreen extends BaseScreen<ChattingViewModel> {
               children: [
                 const Text("Interview Chat", style: FontSystem.KR18SB),
                 Text("65% completed", style: FontSystem.KR10M.copyWith(color: Colors.black.withOpacity(0.5))),
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 5),
-                  child: ProgressBar(progress: 65),
-                )
+                const ProgressBar(progress: 65).paddingSymmetric(vertical: 3)
               ],
             ),
           ),
