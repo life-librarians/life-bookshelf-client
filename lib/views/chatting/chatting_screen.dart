@@ -32,7 +32,7 @@ class ChattingScreen extends BaseScreen<ChattingViewModel> {
                   child: SingleChildScrollView(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: viewModel.chatBubbles,
+                      children: [...viewModel.chatBubbles, const SizedBox(height: 100)],
                     ),
                   ),
                 ),

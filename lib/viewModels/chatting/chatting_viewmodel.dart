@@ -23,19 +23,30 @@ class ChattingViewModel extends GetxController {
 
   Future<void> _startListening() async {
     _currentSpeech.value = '';
-    chatBubbles.add(const ChatBubble(isUser: true, message: ''));
-
     bool available = await _speech.initialize(
       onStatus: (status) => print('onStatus: $status'),
       onError: (errorNotification) => print('onError: $errorNotification'),
     );
 
+    // 빈 말풍선 추가
+    int bubbleIndex = chatBubbles.length;
+    chatBubbles.add(const ChatBubble(isUser: true, message: ''));
+
     if (available) {
-      _speech.listen(
+      await _speech.listen(
         onResult: (result) {
           _currentSpeech.value = result.recognizedWords;
-          chatBubbles.last = ChatBubble(isUser: true, message: _currentSpeech.value);
+
+          // 실시간으로 말풍선 업데이트
+          chatBubbles[bubbleIndex] = ChatBubble(isUser: true, message: _currentSpeech.value);
+
+          if (result.finalResult) {
+            // 최종 결과일 경우 말풍선 확정
+            chatBubbles[bubbleIndex] = ChatBubble(isUser: true, message: _currentSpeech.value, isFinal: true);
+            _currentSpeech.value = '';
+          }
         },
+        localeId: 'ko_KR', // 한국어 설정
       );
     }
   }
