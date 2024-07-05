@@ -1,13 +1,48 @@
 import 'package:get/get.dart';
+import 'package:life_bookshelf/views/chatting/chatBubble.dart';
+import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 class ChattingViewModel extends GetxController {
   final RxInt _micStateValue = 0.obs;
+  final stt.SpeechToText _speech = stt.SpeechToText();
+  final RxString _currentSpeech = ''.obs;
+  final RxList<ChatBubble> chatBubbles = <ChatBubble>[].obs;
 
   MicState get micState => MicState.fromInt(_micStateValue.value);
+  String get currentSpeech => _currentSpeech.value;
 
-  void changeMicState() {
+  Future<void> changeMicState() async {
     _micStateValue.value = (_micStateValue.value + 1) % 3;
-    print("change mic state to $_micStateValue");
+
+    if (micState == MicState.inProgress) {
+      await _startListening();
+    } else if (micState == MicState.finish) {
+      await _stopListening();
+    }
+  }
+
+  Future<void> _startListening() async {
+    _currentSpeech.value = '';
+    chatBubbles.add(const ChatBubble(isUser: true, message: ''));
+
+    bool available = await _speech.initialize(
+      onStatus: (status) => print('onStatus: $status'),
+      onError: (errorNotification) => print('onError: $errorNotification'),
+    );
+
+    if (available) {
+      _speech.listen(
+        onResult: (result) {
+          _currentSpeech.value = result.recognizedWords;
+          chatBubbles.last = ChatBubble(isUser: true, message: _currentSpeech.value);
+        },
+      );
+    }
+  }
+
+  Future<void> _stopListening() async {
+    await _speech.stop();
+    _currentSpeech.value = '';
   }
 }
 
