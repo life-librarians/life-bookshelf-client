@@ -26,7 +26,10 @@ List<GetPage> appPages = [
   ),
   GetPage(
     name: Routes.CHATTING,
-    page: () => const ChattingScreen(),
+    page: () => ChattingScreen(
+      currentChapterId: Get.arguments['currentChapterId'],
+      currentAutobiographies: Get.arguments['currentAutobiographies'],
+    ),
     binding: RootBinding(),
   ),
 ];

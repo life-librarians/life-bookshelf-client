@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:life_bookshelf/models/home/autobiography.dart';
 import 'package:life_bookshelf/utilities/font_system.dart';
 import 'package:life_bookshelf/utilities/screen_utils.dart';
 import 'package:life_bookshelf/viewModels/chatting/chatting_viewmodel.dart';
@@ -8,7 +9,10 @@ import 'package:life_bookshelf/views/base/base_screen.dart';
 import 'package:life_bookshelf/views/chatting/chatBubble.dart';
 
 class ChattingScreen extends BaseScreen<ChattingViewModel> {
-  const ChattingScreen({super.key});
+  final int? currentChapterId;
+  final List<HomeAutobiography>? currentAutobiographies;
+
+  const ChattingScreen({super.key, required this.currentChapterId, required this.currentAutobiographies});
 
   @override
   Widget buildBody(BuildContext context) {

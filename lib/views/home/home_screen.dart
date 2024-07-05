@@ -79,9 +79,8 @@ class _TopCurrentPage extends StatelessWidget {
         //지금은 현재 챕터의 맨 위 소챕터로 세팅해놨어요
         final currentChapterId = viewmodel.currentChapter.value?.chapterId;
         final currentAutobiographies = viewmodel.autobiographies[currentChapterId ?? 0];
-        //// 스크린 명 모르는 관계로 위의 변수 넣어서 Get.toName으로 스크린 이동하게 수정해주시면 됩니다!
         print("현재 인터뷰로 이동");
-        Get.to(() => const ChattingScreen());
+        Get.to(() => ChattingScreen(currentAutobiographies: currentAutobiographies, currentChapterId: currentChapterId));
       },
       child: Column(children: [
         Stack(
