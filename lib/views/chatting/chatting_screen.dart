@@ -23,7 +23,7 @@ class ChattingScreen extends BaseScreen<ChattingViewModel> {
           const ChatBubble(isUser: false, message: ". . ."),
           const ChatBubble(isUser: true, message: ""),
         ],
-      ),
+      ).paddingSymmetric(horizontal: 15),
     );
   }
 
