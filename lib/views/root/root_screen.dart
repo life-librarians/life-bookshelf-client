@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:life_bookshelf/views/chatting/chatting_screen.dart';
 import 'package:life_bookshelf/views/home/home_screen.dart';
 import 'package:life_bookshelf/views/mypage/mypage_screen.dart';
 import 'package:life_bookshelf/views/publish/publish_screen.dart';
@@ -25,6 +26,7 @@ class RootScreen extends BaseScreen<RootViewModel> {
           HomeScreen(),
           PublishScreen(),
           MypageScreen(),
+          ChattingScreen(),
         ],
       ),
     );
