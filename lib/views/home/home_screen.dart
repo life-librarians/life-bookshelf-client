@@ -220,8 +220,6 @@ class _ChapterBoxs extends StatelessWidget {
   }
 }
 
-
-
 class _ChapterBox extends StatelessWidget {
   final HomeAutobiography autobiography;
 
