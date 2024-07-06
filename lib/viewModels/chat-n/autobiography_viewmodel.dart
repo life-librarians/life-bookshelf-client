@@ -56,6 +56,9 @@ class AutobiographyViewModel extends GetxController {
       isLoading(true);
       errorMessage('');
 
+      // Todo API 호출: 서비스를 통해 실제 자서전 데이터 조회
+      // final result = await service.fetchAutobiography(autobiographyId); // 실제 서비스 호출 부분
+
       // 더미 데이터
       final result = ChatAutobiography(
         id: autobiographyId,
@@ -71,7 +74,6 @@ class AutobiographyViewModel extends GetxController {
         createdAt: DateTime.now(),
         updatedAt: DateTime.now(),
       );
-
       autobiography(result);
       contentController.text = result.content ?? '';
     } catch (e) {
