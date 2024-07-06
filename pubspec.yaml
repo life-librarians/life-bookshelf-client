@@ -38,6 +38,7 @@ flutter:
         - assets/config/.env
         - assets/icons/
         - assets/icons/main/
+        - assets/icons/mypage/
         - assets/images/
 
     fonts:
