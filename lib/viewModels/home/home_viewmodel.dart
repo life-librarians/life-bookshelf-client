@@ -21,8 +21,6 @@ class HomeViewModel extends GetxController {
     fetchAllData();
   }
 
-
-
   Future<void> fetchAllData() async {
     try {
       await fetchChapters();

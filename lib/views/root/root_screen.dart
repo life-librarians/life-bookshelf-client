@@ -6,7 +6,6 @@ import 'package:life_bookshelf/views/home/home_screen.dart';
 import 'package:life_bookshelf/views/mypage/mypage_screen.dart';
 import 'package:life_bookshelf/views/publish/publish_screen.dart';
 import 'package:life_bookshelf/views/root/custom_bottom_navigation_bar.dart';
-
 import '../../viewModels/root/root_viewmodel.dart';
 import '../base/base_screen.dart';
 import '../../utilities/color_system.dart';
