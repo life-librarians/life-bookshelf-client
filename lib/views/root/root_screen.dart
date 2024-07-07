@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:life_bookshelf/views/chatting/chatting_screen.dart';
 import 'package:life_bookshelf/views/home/home_screen.dart';
+import 'package:life_bookshelf/views/login/login_screen.dart';
 import 'package:life_bookshelf/views/mypage/mypage_screen.dart';
 import 'package:life_bookshelf/views/publish/publish_screen.dart';
 import 'package:life_bookshelf/views/root/custom_bottom_navigation_bar.dart';

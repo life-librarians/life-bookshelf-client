@@ -12,10 +12,25 @@ import 'package:get/get.dart';
 import 'package:life_bookshelf/views/chatting/chatting_screen.dart';
 import 'package:dotted_line/dotted_line.dart';
 import 'package:shimmer/shimmer.dart';
+import '../../services/userpreferences_service.dart';
 import '../chat-n/autobiography_detail_chapter_screen.dart';
+import '../login/login_screen.dart';
 
 class HomeScreen extends BaseScreen<HomeViewModel> {
   const HomeScreen({super.key});
+
+  @override
+  void onInit() {
+    if (!_isLoggedIn()) {
+      Get.offAll(() => LoginScreen());
+    }
+  }
+
+  bool _isLoggedIn() {
+    String token = UserPreferences.getUserToken();
+    print("token: " + token);
+    return token.isNotEmpty;
+  }
 
   @override
   Widget buildBody(BuildContext context) {
@@ -40,6 +55,7 @@ class HomeScreen extends BaseScreen<HomeViewModel> {
     });
   }
 }
+
 class _Header extends StatelessWidget {
   const _Header({super.key});
 

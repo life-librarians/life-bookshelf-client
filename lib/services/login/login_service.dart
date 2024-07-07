@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../../models/login/login_model.dart';
+import '../userpreferences_service.dart';
 
 class LoginService {
   // 로그인 정보를 서버로 보내고 결과를 받아오는 함수
@@ -15,6 +16,7 @@ class LoginService {
     );
 
     if (response.statusCode == 200) {
+      await UserPreferences.setUserToken(response.body);
       return Login.fromJson(json.decode(response.body));
     } else if (response.statusCode == 404) {
       throw Exception('BIO008: 존재하지 않는 회원입니다.');

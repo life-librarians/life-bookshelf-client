@@ -4,6 +4,9 @@ import 'package:life_bookshelf/models/home/autobiography.dart';
 import 'package:life_bookshelf/services/home/chapter_service.dart';
 import 'package:life_bookshelf/services/home/autobiography_service.dart';
 
+import '../../services/userpreferences_service.dart';
+import '../../views/login/login_screen.dart';
+
 class HomeViewModel extends GetxController {
   final HomeChapterService chapterService;
   final HomeAutobiographyService autobiographyService;
@@ -18,7 +21,16 @@ class HomeViewModel extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    fetchAllData();
+    fetchAllData().then((_) {
+      if (!_isLoggedIn()) {
+        Get.offAll(() => LoginScreen());
+      }
+    });
+  }
+
+  bool _isLoggedIn() {
+    String token = UserPreferences.getUserToken(); // 토큰 가져오기
+    return token.isNotEmpty; // 토큰 존재 여부 확인
   }
 
   Future<void> fetchAllData() async {
