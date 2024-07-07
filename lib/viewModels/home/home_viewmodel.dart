@@ -18,6 +18,7 @@ class HomeViewModel extends GetxController {
 
   HomeViewModel(this.chapterService, this.autobiographyService);
 
+  // Todo: 메인화면으로 가고 싶으면 밑에 isLoggedIn() 없애주세요!!! 토큰이 없으면 무조건 저기로 갑니다
   @override
   void onInit() {
     super.onInit();
@@ -30,6 +31,7 @@ class HomeViewModel extends GetxController {
 
   bool _isLoggedIn() {
     String token = UserPreferences.getUserToken(); // 토큰 가져오기
+    print("token : " + token);
     return token.isNotEmpty; // 토큰 존재 여부 확인
   }
 

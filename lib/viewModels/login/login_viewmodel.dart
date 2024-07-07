@@ -14,6 +14,8 @@ class LoginViewModel extends GetxController {
   var isEmailFocused = false.obs;
   var isPasswordFocused = false.obs;
   var passwordVisible = false.obs;
+  var email = ''.obs;
+  var password = ''.obs;
 
   LoginViewModel(this.loginService) {
     // 포커스 노드 리스너 설정
@@ -34,12 +36,13 @@ class LoginViewModel extends GetxController {
   }
 
   // 로그인을 시도하고 결과를 처리하는 메소드
-  Future<void> login(String email, String password) async {
+  Future<void> login() async {
     isLoading(true);
     try {
-      final response = await loginService.postLogin(email, password);
+      final response = await loginService.postLogin(email.value, password.value);
       authToken.value = response.accessToken; // accessToken을 상태로 저장
       print('Login successful with token: ${authToken.value}');
+      Get.toNamed('/home');
     } catch (e) {
       loginError.value = e.toString(); // 에러 메시지를 상태로 저장
       print('Login failed: $loginError');

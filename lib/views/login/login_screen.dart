@@ -94,6 +94,7 @@ class _Middle extends StatelessWidget {
         Obx(() => TextField(
           focusNode: viewModel.emailFocusNode,
           style: FontSystem.KR16R.copyWith(color: Color(0xFF262626)),
+          onChanged: (value) => viewModel.email.value = value,
           decoration: InputDecoration(
             labelText: "Email",
             labelStyle: FontSystem.KR16R.copyWith(color: Color(0xFF7C8BA0)),
@@ -114,9 +115,10 @@ class _Middle extends StatelessWidget {
         )),
         SizedBox(height: 16),
         Obx(() => TextField(
-          obscureText: !viewModel.passwordVisible.value,  // Use GetX's reactive state for toggling visibility
+          obscureText: !viewModel.passwordVisible.value,
           focusNode: viewModel.passwordFocusNode,
           style: FontSystem.KR16R.copyWith(color: Color(0xFF262626)),
+          onChanged: (value) => viewModel.password.value = value,
           decoration: InputDecoration(
             labelText: "Password",
             labelStyle: FontSystem.KR16R.copyWith(color: Color(0xFF7C8BA0)),
@@ -166,7 +168,8 @@ class _Middle extends StatelessWidget {
 }
 
 class _Bottom extends StatelessWidget {
-  const _Bottom({Key? key}) : super(key: key);
+  _Bottom({Key? key}) : super(key: key);
+  final LoginViewModel viewModel = Get.find<LoginViewModel>();
 
   @override
   Widget build(BuildContext context) {
@@ -174,7 +177,8 @@ class _Bottom extends StatelessWidget {
       children: <Widget>[
         ElevatedButton(
           onPressed: () {
-            // Perform login
+            // viewModel.login(); Todo: 연동 후에 이거 주석 해제하고 밑 GetTo 지우기
+            Get.toNamed('/home');
           },
           child: Text(
             'Log In',
