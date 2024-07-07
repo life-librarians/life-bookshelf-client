@@ -18,6 +18,7 @@ class ChattingScreen extends BaseScreen<ChattingViewModel> {
   @override
   void initViewModel() {
     super.initViewModel();
+    // TODO: Null Checking
     viewModel.loadConversations(currentChapterId!);
   }
 

@@ -16,6 +16,7 @@ class ChattingViewModel extends GetxController {
   MicState get micState => MicState.fromInt(_micStateValue.value);
   String get currentSpeech => _currentSpeech.value;
 
+  /// 현재 진행 중인 페이지에 들어갈 시 진행 중이던 대화 initializing.
   Future<void> loadConversations(int autobiographyId, {int page = 1, int size = 20}) async {
     try {
       isLoading(true);
@@ -34,6 +35,7 @@ class ChattingViewModel extends GetxController {
     }
   }
 
+  /// 채팅 화면 아래 버튼 state 변경
   Future<void> changeMicState() async {
     _micStateValue.value = (_micStateValue.value + 1) % 3;
 
@@ -44,6 +46,7 @@ class ChattingViewModel extends GetxController {
     }
   }
 
+  /// STT를 위한 음성 녹음 시작
   Future<void> _startListening() async {
     _currentSpeech.value = '';
     bool available = await _speech.initialize(
@@ -74,6 +77,7 @@ class ChattingViewModel extends GetxController {
     }
   }
 
+  /// STT 종료
   Future<void> _stopListening() async {
     await _speech.stop();
     _currentSpeech.value = '';

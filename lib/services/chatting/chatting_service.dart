@@ -8,6 +8,7 @@ class ChattingService extends GetxService {
   // TODO: Null Checking
   final String baseUrl = dotenv.env['API'] ?? "";
 
+  // TODO: Pagination에 따른 Paging 구현 필요
   Future<List<Conversation>> getConversations(int autobiographyId, int page, int size) async {
     try {
       final response = await http.get(Uri.parse('$baseUrl/api/v1/interviews/autobiographies/$autobiographyId/conversations?page=$page&size=$size'));
