@@ -5,6 +5,7 @@ abstract class ColorSystem {
   static const _Screen screen = _Screen();
   static const _BottomNavigation bottomNavigation = _BottomNavigation();
   static const _Mypage mypage = _Mypage();
+  static const _Chatting chatting = _Chatting();
 
   // 공통 색상
   static const Color white = Color(0xFFFFFFFF);
@@ -16,6 +17,17 @@ class _General {
   const _General();
 
   final Color white = ColorSystem.white;
+  final Color mainBlue = ColorSystem.mainBlue;
+}
+
+class _Chatting {
+  const _Chatting();
+
+  final Color bubbleBackground1 = const Color(0xFFD8D8D8);
+  final Color bubbleBackground2 = ColorSystem.mainBlue;
+  final Color chatColor1 = const Color(0xFF585763);
+  final Color chatColor2 = ColorSystem.white;
+  final Color timeStamp = const Color(0xFF848395);
 }
 
 class _Screen {
@@ -23,7 +35,6 @@ class _Screen {
   final Color background = const Color(0xFFF7F7F7);
   final Color green = const Color(0xFF428929);
   final Color red = const Color(0xFFAD4949);
-
 }
 
 class _BottomNavigation {
