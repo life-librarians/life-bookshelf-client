@@ -16,6 +16,12 @@ class ChattingScreen extends BaseScreen<ChattingViewModel> {
   const ChattingScreen({super.key, required this.currentChapterId, required this.currentAutobiographies});
 
   @override
+  void initViewModel() {
+    super.initViewModel();
+    viewModel.loadConversations(currentChapterId!);
+  }
+
+  @override
   Widget buildBody(BuildContext context) {
     return Obx(
       () => Stack(

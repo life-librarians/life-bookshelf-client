@@ -1,15 +1,38 @@
 import 'package:get/get.dart';
+import 'package:life_bookshelf/services/chatting/chatting_service.dart';
 import 'package:life_bookshelf/views/chatting/chatBubble.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 class ChattingViewModel extends GetxController {
+  final ChattingService _apiService = Get.find<ChattingService>();
   final RxInt _micStateValue = 0.obs;
   final stt.SpeechToText _speech = stt.SpeechToText();
   final RxString _currentSpeech = ''.obs;
   final RxList<ChatBubble> chatBubbles = <ChatBubble>[].obs;
+  final RxBool isLoading = true.obs;
+  @override
+  bool initialized = false;
 
   MicState get micState => MicState.fromInt(_micStateValue.value);
   String get currentSpeech => _currentSpeech.value;
+
+  Future<void> loadConversations(int autobiographyId, {int page = 1, int size = 20}) async {
+    try {
+      isLoading(true);
+      final conversations = await _apiService.getConversations(autobiographyId, page, size);
+      chatBubbles.value = conversations
+          .map((conv) => ChatBubble(
+                isUser: conv.conversationType == 'HUMAN',
+                message: conv.content,
+                isFinal: true,
+              ))
+          .toList();
+    } catch (e) {
+      Get.snackbar('오류', e.toString());
+    } finally {
+      isLoading(false);
+    }
+  }
 
   Future<void> changeMicState() async {
     _micStateValue.value = (_micStateValue.value + 1) % 3;
