@@ -20,19 +20,6 @@ class HomeScreen extends BaseScreen<HomeViewModel> {
   const HomeScreen({super.key});
 
   @override
-  void onInit() {
-    if (!_isLoggedIn()) {
-      Get.offAll(() => LoginScreen());
-    }
-  }
-
-  bool _isLoggedIn() {
-    String token = UserPreferences.getUserToken();
-    print("token: " + token);
-    return token.isNotEmpty;
-  }
-
-  @override
   Widget buildBody(BuildContext context) {
     return Obx(() {
       if (viewModel.isLoading.value) {
@@ -257,7 +244,7 @@ class _ChapterBox extends StatelessWidget {
       },
       child: Container(
         margin: EdgeInsets.only(bottom: 17),
-      
+
         child: Row(
           children: [
             ClipRRect(
@@ -285,8 +272,8 @@ class _ChapterBox extends StatelessWidget {
                       );
                     }
                   },
-      
-      
+
+
               ),
             ),
             ClipRRect(

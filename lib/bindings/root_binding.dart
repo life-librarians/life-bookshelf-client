@@ -10,7 +10,6 @@ import 'package:life_bookshelf/views/chatting/chatting_screen.dart';
 import 'package:life_bookshelf/services/home/chapter_service.dart';
 import 'package:life_bookshelf/services/home/autobiography_service.dart';
 import 'package:life_bookshelf/services/chat-n/autobiography_service.dart';
-
 import '../viewModels/login/login_viewmodel.dart';
 
 class RootBinding extends Bindings {
@@ -21,7 +20,7 @@ class RootBinding extends Bindings {
     Get.put(RootViewModel());
 
     // ChildViewModel is singleton
-    Get.put(LoginViewModel(LoginService()));
+    Get.lazyPut(()=>LoginViewModel(LoginService()));
     Get.put(HomeViewModel(
         HomeChapterService(baseUrl), HomeAutobiographyService(baseUrl)));
     Get.put(ChatAutobiographyService());
