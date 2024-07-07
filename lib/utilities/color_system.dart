@@ -37,4 +37,5 @@ class _Mypage {
   const _Mypage();
 
   final Color fontBlack = const Color(0xFF181D27);
+  final Color fontGray = const Color(0xFFABB7C2);
 }

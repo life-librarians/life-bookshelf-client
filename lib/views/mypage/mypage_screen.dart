@@ -88,45 +88,13 @@ class _Profile extends StatelessWidget {
   }
 }
 
-class _PublicationProgress extends StatelessWidget {
-  const _PublicationProgress({super.key});
+class _ProgressnApplication extends StatelessWidget {
+  const _ProgressnApplication({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text("출판 진행 상황", style: FontSystem.KR14B.copyWith(color: ColorSystem.mypage.fontBlack)),
-      ],
-    );
+    return PublicationProgress();
   }
 }
-
-class _ProgressDone extends StatelessWidget {
-  const _ProgressDone({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Placeholder();
-  }
-}
-
-class _ProgressInProgress extends StatelessWidget {
-  const _ProgressInProgress({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Placeholder();
-  }
-}
-
-class _ProgressnToDo extends StatelessWidget {
-  const _ProgressnToDo({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Placeholder();
-  }
-}
-
 
 
