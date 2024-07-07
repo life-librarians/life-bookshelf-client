@@ -32,17 +32,24 @@ class MypageScreen extends BaseScreen<MypageViewModel> {
 
   @override
   Widget buildBody(BuildContext context) {
-    return Container(
-      alignment: Alignment.center,
-      child: Column(
-        children: [
-          _Profile(),
-          PublicationProgress(),
-          _BooksPublished(),
-          _More(),
-        ],
-      ),
-    );
+    final viewmodel = Get.find<MypageViewModel>();
+    return Obx(() {
+      if (viewmodel.isLoading.isTrue) {
+        return Center(child: CircularProgressIndicator());
+      } else {
+        return Container(
+          alignment: Alignment.center,
+          child: Column(
+            children: [
+              _Profile(),
+              PublicationProgress(),
+              _BooksPublished(),
+              _More(),
+            ],
+          ),
+        );
+      }
+    });
   }
 }
 
@@ -51,6 +58,7 @@ class _Profile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final viewmodel = Get.find<MypageViewModel>();
     return Container(
       decoration: BoxDecoration(
         color: ColorSystem.deepBlue,
@@ -73,11 +81,11 @@ class _Profile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '황현정',
+                  viewmodel.userModel.value?.name ?? '황현정',
                   style: FontSystem.KR16M.copyWith(color: Colors.white),
                 ),
                 Text(
-                  '2001.02.24',
+                  viewmodel.userModel.value?.bornedAt ?? '2001-02-24',
                   style: FontSystem.KR11M.copyWith(color: ColorSystem.white),
                 ),
               ],
@@ -102,7 +110,7 @@ class _BooksPublished extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children:[
-          Text("출판 진행 상황", style: FontSystem.KR14B.copyWith(color: ColorSystem.mypage.fontBlack)),
+          Text("내가 출판한 책", style: FontSystem.KR14B.copyWith(color: ColorSystem.mypage.fontBlack)),
           Text("책의 오른쪽 상단 버튼을 터치하면 다시 비공개, 혹은 공개로 만들수있어요.",
             style: FontSystem.KR10M.copyWith(color: ColorSystem.mypage.fontGray),
           ),
