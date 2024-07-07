@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -10,7 +8,6 @@ import 'package:life_bookshelf/utilities/font_system.dart';
 import 'package:life_bookshelf/utilities/screen_utils.dart';
 import 'package:life_bookshelf/viewModels/chatting/chatting_viewmodel.dart';
 import 'package:life_bookshelf/views/base/base_screen.dart';
-import 'package:life_bookshelf/views/chatting/chatBubble.dart';
 
 class ChattingScreen extends BaseScreen<ChattingViewModel> {
   final int? currentChapterId;
