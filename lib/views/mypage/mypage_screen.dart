@@ -6,6 +6,7 @@ import 'package:life_bookshelf/utilities/font_system.dart';
 import 'package:life_bookshelf/viewModels/mypage/mypage_viewmodel.dart';
 import 'package:life_bookshelf/views/base/base_screen.dart';
 import 'package:life_bookshelf/views/mypage/components/publication_progress.dart';
+import 'package:life_bookshelf/views/mypage/components/toggle.dart';
 
 class MypageScreen extends BaseScreen<MypageViewModel> {
   const MypageScreen({super.key});
@@ -37,6 +38,8 @@ class MypageScreen extends BaseScreen<MypageViewModel> {
         children: [
           _Profile(),
           PublicationProgress(),
+          _BooksPublished(),
+          _More(),
         ],
       ),
     );
@@ -88,13 +91,188 @@ class _Profile extends StatelessWidget {
   }
 }
 
-class _ProgressnApplication extends StatelessWidget {
-  const _ProgressnApplication({super.key});
+class _BooksPublished extends StatelessWidget {
+  const _BooksPublished({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return PublicationProgress();
+    return Container(
+      margin: const EdgeInsets.only(top: 31),
+      width: Get.width * 0.89,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children:[
+          Text("출판 진행 상황", style: FontSystem.KR14B.copyWith(color: ColorSystem.mypage.fontBlack)),
+          Text("책의 오른쪽 상단 버튼을 터치하면 다시 비공개, 혹은 공개로 만들수있어요.",
+            style: FontSystem.KR10M.copyWith(color: ColorSystem.mypage.fontGray),
+          ),
+          _BookBoxs(),
+        ]
+      ),
+    );
   }
 }
 
+class _BookBoxs extends StatelessWidget {
+  const _BookBoxs({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 41,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal, // 수평 스크롤 설정
+        itemCount: 10, // 예를 들어 10개의 _BookBox를 생성
+        itemBuilder: (context, index) {
+          return _BookBox(); // _BookBox 위젯을 여러 개 생성
+        },
+      ),
+    );
+  }
+}
+
+class _BookBox extends StatelessWidget {
+  const _BookBox({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(right: 9),
+      width: Get.width * 0.34,
+      height: 41,
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(4.23),
+        image: DecorationImage(
+          image: AssetImage("assets/icons/main/example.png"),
+          fit: BoxFit.cover,
+          colorFilter: ColorFilter.mode(
+            Colors.black.withOpacity(0.69),
+            BlendMode.darken,
+          ),
+        ),
+      ),
+      child: Stack(
+        children: [
+          Container(
+            margin: const EdgeInsets.only(left: 8),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                "엉망이어도 볼만한 인생",
+                style: FontSystem.KR10B.copyWith(color: Colors.white),
+              ),
+            ),
+          ),
+          Positioned(
+            top: 5,
+            right: 4,
+            child: Container(
+              decoration: BoxDecoration(
+                color: ColorSystem.screen.green,
+                borderRadius: BorderRadius.circular(2.35),
+              ),
+              width: 27,
+              height: 29.51,
+              child: Center(
+                child: Text(
+                  "공개",
+                  style: FontSystem.KR10B.copyWith(color: Colors.white),
+                ),
+              )
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _More extends StatelessWidget {
+  const _More({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(top: 15),
+      width: Get.width * 0.89,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text("More", style: FontSystem.KR14B.copyWith(color: ColorSystem.mypage.fontBlack)),
+          SizedBox(height: 12),
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(5),
+            ),
+            height: 157,
+            child: Column(
+              children: [
+                _Remind(),
+                _Withdrawal(),
+              ],
+            ),
+
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+
+class _Remind extends StatelessWidget {
+  const _Remind({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(left: 16, top: 23),
+      child: Row(
+        children: [
+          SvgPicture.asset('assets/icons/mypage/remind.svg'),
+          SizedBox(width: 16,),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("리마인드 푸시알림 설정",style:FontSystem.KR13M,),
+              Text("설정하시면 저녁 8시에 알림이 가요",style: FontSystem.KR11M.copyWith(color: ColorSystem.mypage.fontGray),),
+            ],
+          ),
+          SizedBox(width: Get.width * 0.18),
+          SimpleToggleSwitch(index: 0),
+        ],
+      ),
+    );
+  }
+}
+
+class _Withdrawal extends StatelessWidget {
+  const _Withdrawal({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(left: 16, top: 23),
+      child: Row(
+        children: [
+          SvgPicture.asset('assets/icons/mypage/out.svg'),
+          SizedBox(width: 16,),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("회원탈퇴",style:FontSystem.KR13M,),
+              Text("여행자님의 데이터는 30일 뒤에 삭제되어요.",style: FontSystem.KR11M.copyWith(color: ColorSystem.mypage.fontGray),),
+            ]
+          ),
+          SizedBox(width: Get.width * 0.18),
+          Container(
+            margin: const EdgeInsets.only(top: 10),
+              child: SvgPicture.asset('assets/icons/mypage/arrow.svg')),
+
+        ],
+      ),
+    );
+  }
+}
 

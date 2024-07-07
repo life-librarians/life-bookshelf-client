@@ -20,7 +20,7 @@ class PublicationProgress extends StatelessWidget {
           Text("출판 진행 상황", style: FontSystem.KR14B.copyWith(color: ColorSystem.mypage.fontBlack)),
           SizedBox(height: 10),
           Container(
-            width: Get.width * 0.86,
+            width: Get.width * 0.89,
             height: 173,
             decoration: BoxDecoration(
               border: Border.all(
