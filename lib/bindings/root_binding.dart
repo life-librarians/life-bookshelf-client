@@ -11,7 +11,9 @@ import 'package:life_bookshelf/views/chatting/chatting_screen.dart';
 import 'package:life_bookshelf/services/home/chapter_service.dart';
 import 'package:life_bookshelf/services/home/autobiography_service.dart';
 import 'package:life_bookshelf/services/chat-n/autobiography_service.dart';
+import '../services/register/register_service.dart';
 import '../viewModels/login/login_viewmodel.dart';
+import '../viewModels/register/register_viewmodel.dart';
 
 class RootBinding extends Bindings {
   @override
@@ -22,6 +24,7 @@ class RootBinding extends Bindings {
 
     // ChildViewModel is singleton
     Get.lazyPut(()=>LoginViewModel(LoginService()));
+    Get.lazyPut(()=>RegisterViewModel(RegisterService()));
     Get.put(HomeViewModel(
         HomeChapterService(baseUrl), HomeAutobiographyService(baseUrl)));
     Get.put(ChatAutobiographyService());
