@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:life_bookshelf/services/login/login_service.dart';
+import 'package:life_bookshelf/services/chatting/chatting_service.dart';
 import 'package:life_bookshelf/viewModels/chatting/chatting_viewmodel.dart';
 import 'package:life_bookshelf/viewModels/chat-n/autobiography_viewmodel.dart';
 import 'package:life_bookshelf/viewModels/home/home_viewmodel.dart';
@@ -25,6 +26,7 @@ class RootBinding extends Bindings {
         HomeChapterService(baseUrl), HomeAutobiographyService(baseUrl)));
     Get.put(ChatAutobiographyService());
     Get.put(AutobiographyViewModel(ChatAutobiographyService()));
+    Get.put(ChattingService());
 
     Get.put(MypageViewModel());
     Get.put(PublishViewModel());
