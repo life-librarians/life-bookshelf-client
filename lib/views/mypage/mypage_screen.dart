@@ -159,6 +159,7 @@ class _BookBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final viewmodel = Get.find<MypageViewModel>();
     return Container(
       margin: const EdgeInsets.only(right: 9),
       width: Get.width * 0.34,
@@ -191,7 +192,7 @@ class _BookBox extends StatelessWidget {
             right: 4,
             child: Container(
                 decoration: BoxDecoration(
-                  color: ColorSystem.screen.green,
+                  color: visibility == "공개" ? ColorSystem.screen.green : ColorSystem.screen.red,
                   borderRadius: BorderRadius.circular(2.35),
                 ),
                 width: 27,

@@ -102,5 +102,54 @@ class MyPageApiService {
     await Future.delayed(Duration(seconds: 1));  // Simulating network delay
     return BookListModel.fromJson(json.decode(responseJson));
   }
+
+  Future<List<NotificationModel>> fetchNotifications() async {
+    /*
+    final response = await http.get(Uri.parse('$baseUrl/notifications/subscriptions'));
+    if (response.statusCode == 200) {
+      List<dynamic> data = json.decode(response.body)['results'];
+      return data.map((item) => NotificationModel.fromJson(item)).toList();
+    } else {
+      throw Exception('Failed to load notifications');
+    }
+    */
+    // Mock response for testing
+    var responseJson = json.encode({
+      "results": [
+        {
+          "notificationId": 1,
+          "noticeType": "ANNOUNCEMENT",
+          "description": "시스템에서 제공하는 공지 알림",
+          "subscribedAt": "2023-01-01T00:00:00Z"
+        },
+        {
+          "notificationId": 2,
+          "noticeType": "INTERVIEW_REMIND",
+          "description": "자서전 인터뷰 리마인드 알림",
+          "subscribedAt": "2023-01-01T00:00:00Z"
+        }
+      ]
+    });
+    await Future.delayed(Duration(seconds: 1)); // Simulating network delay
+    List<dynamic> data = json.decode(responseJson)['results'];
+    return data.map((item) => NotificationModel.fromJson(item)).toList();
+  }
+
+  Future<void> updateNotificationSubscriptions(List<int> notificationIds) async {
+    /*
+    final response = await http.post(
+      Uri.parse('$baseUrl/notifications/subscriptions'),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({'notificationIds': notificationIds}),
+    );
+    if (response.statusCode != 200) {
+      throw Exception('Failed to update subscriptions');
+    }
+    */
+    // Mock response for testing
+    print("Updating subscription for notification IDs: $notificationIds");
+    await Future.delayed(Duration(seconds: 1)); // Simulating network delay
+    // Normally handle the response or errors
+  }
 }
 

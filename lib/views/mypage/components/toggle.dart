@@ -12,7 +12,12 @@ class SimpleToggleSwitch extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final MypageViewModel toggleController = Get.find();
+    final viewmodel = Get.find<MypageViewModel>();
+
+
+    if (viewmodel.isRemindSubscribed.value == true) {
+      viewmodel.toggleSwitch(index, true);
+    }
 
     return Obx(() => FlutterSwitch(
       activeColor: ColorSystem.mainBlue,
@@ -22,10 +27,12 @@ class SimpleToggleSwitch extends StatelessWidget {
       width: 51,
       height: 30,
       toggleSize: 20,
-      value: toggleController.switches[index].value,
+      value: viewmodel.switches[index].value,
       onToggle: (value) {
-        toggleController.toggleSwitch(index, value);
+        viewmodel.toggleSwitch(index, value);
       },
     ));
+
   }
+
 }

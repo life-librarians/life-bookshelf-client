@@ -95,3 +95,35 @@ class BookListModel {
 
 
 
+class NotificationModel {
+  final int notificationId;
+  final String noticeType;
+  final String description;
+  final DateTime? subscribedAt;
+
+  NotificationModel({
+    required this.notificationId,
+    required this.noticeType,
+    required this.description,
+    this.subscribedAt,
+  });
+
+  factory NotificationModel.fromJson(Map<String, dynamic> json) {
+    return NotificationModel(
+      notificationId: json['notificationId'],
+      noticeType: json['noticeType'],
+      description: json['description'],
+      subscribedAt: json['subscribedAt'] != null ? DateTime.parse(json['subscribedAt']) : null,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'notificationId': notificationId,
+      'noticeType': noticeType,
+      'description': description,
+      'subscribedAt': subscribedAt?.toIso8601String(),
+    };
+  }
+}
+

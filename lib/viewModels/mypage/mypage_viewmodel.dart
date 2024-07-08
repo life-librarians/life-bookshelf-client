@@ -13,13 +13,52 @@ class MypageViewModel extends GetxController {
   Rx<int?> latestPublicationId = Rx<int?>(null);
   RxBool isLoading = true.obs; // 로딩 상태 관리
   RxString publishingStatus = 'IN_PUBLISHING'.obs;
-
+  RxList<NotificationModel> notifications = <NotificationModel>[].obs;
   final MyPageApiService apiService = MyPageApiService();
+  RxBool isRemindSubscribed = false.obs;
 
-  void toggleSwitch(int index, bool value) {
+  void toggleSwitch(int index, bool bool) {
     if (index < switches.length) {
-      switches[index].value = value;
-      print("Switch $index toggled to: ${switches[index].value}");
+      switches[index].value = !switches[index].value; // 토글 변경
+      // 구독 업데이트 함수 실행
+    }
+  }
+  Future<void> fetchNotifications() async {
+    isLoading.value = true;
+    try {
+      var fetchedNotifications = await apiService.fetchNotifications();
+      notifications.assignAll(fetchedNotifications);
+      print("Notifications loaded: ${notifications.length}");
+      isRemindSubscribed.value = notifications.any((n) => n.notificationId == 2);
+    } catch (e) {
+      print("Failed to load notifications: $e");
+    } finally {
+      isLoading.value = false;
+    }
+  }
+  void toggleSubscription(int notificationId) {
+    var currentNotification = notifications.firstWhere((n) => n.notificationId == notificationId, orElse: () => NotificationModel(notificationId: -1, noticeType: '', description: ''));
+    if (currentNotification != null) {
+      var currentIndex = notifications.indexOf(currentNotification);
+      bool isSubscribed = currentNotification.subscribedAt != null;
+      notifications[currentIndex] = NotificationModel(
+        notificationId: currentNotification.notificationId,
+        noticeType: currentNotification.noticeType,
+        description: currentNotification.description,
+        subscribedAt: isSubscribed ? null : DateTime.now(),
+      );
+      updateSubscriptions();
+    }
+  }
+
+  Future<void> updateSubscriptions() async {
+    List<int> subscribedIds = notifications.where((n) => n.subscribedAt != null).map((n) => n.notificationId).toList();
+    try {
+      await apiService.updateNotificationSubscriptions(subscribedIds);
+      await fetchNotifications();  // Re-fetch to ensure UI is updated with server state
+      print("Notifications updated and refreshed.");
+    } catch (e) {
+      print("Failed to update notifications: $e");
     }
   }
 
@@ -59,7 +98,8 @@ class MypageViewModel extends GetxController {
     await loadUserProfile();
     // Example: Load book details for a specific member ID and books list with pagination
     await loadBookDetails(123); // Assuming 123 is a sample member ID
-    await loadPublishedBooks(1, 10); // Load the first page with 10 entries per page
+    await loadPublishedBooks(1, 10);
+    await fetchNotifications();
     isLoading.value = false; // Indicate that data loading is complete.
   }
 
