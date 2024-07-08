@@ -44,6 +44,7 @@ flutter:
         - assets/icons/mypage/
         - assets/images/
         - assets/images/login/
+        - assets/images/register/
 
     fonts:
         - family: Pretendard

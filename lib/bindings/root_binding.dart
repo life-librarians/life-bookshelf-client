@@ -25,6 +25,7 @@ class RootBinding extends Bindings {
     // ChildViewModel is singleton
     Get.lazyPut(()=>LoginViewModel(LoginService()));
     Get.lazyPut(()=>RegisterViewModel(RegisterService()));
+    
     Get.put(HomeViewModel(
         HomeChapterService(baseUrl), HomeAutobiographyService(baseUrl)));
     Get.put(ChatAutobiographyService());

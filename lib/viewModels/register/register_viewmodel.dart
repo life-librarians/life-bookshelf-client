@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../services/register/register_service.dart';
 import '../../views/home/home_screen.dart';
+import '../../views/login/login_screen.dart';
 
 class RegisterViewModel extends GetxController {
   final RegisterService registerService;
@@ -14,6 +15,7 @@ class RegisterViewModel extends GetxController {
   var isEmailFocused = false.obs;
   var isPasswordFocused = false.obs;
   var passwordVisible = false.obs;
+  var agreeToTerms = false.obs;
 
   var email = ''.obs;
   var password = ''.obs;
@@ -42,7 +44,7 @@ class RegisterViewModel extends GetxController {
     try {
       final response = await registerService.postRegister(email.value, password.value);
       print('Register successful');
-      Get.to(HomeScreen());
+      Get.to(LoginScreen());
     } catch (e) {
       registerError.value = e.toString(); // 에러 메시지를 상태로 저장
       print('Login failed: $registerError');

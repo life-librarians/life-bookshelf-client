@@ -1,6 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart'; // SVG 이미지를 사용하기 위해 필요
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
@@ -8,6 +8,8 @@ import 'package:life_bookshelf/services/login/login_service.dart';
 import '../../utilities/font_system.dart';
 import '../../viewModels/login/login_viewmodel.dart';
 import 'package:life_bookshelf/views/base/base_screen.dart';
+
+import '../register/register_screen.dart';
 
 class LoginScreen extends BaseScreen<LoginViewModel> {
   const LoginScreen({super.key});
@@ -207,7 +209,7 @@ class _Bottom extends StatelessWidget {
                     text: 'Sign Up',
                     style: FontSystem.KR14R.copyWith(color: Color(0xFF567AF3)),
                     recognizer: TapGestureRecognizer()..onTap = () {
-                      // Get.to(() => SignupScreen()); // 페이지 이동
+                      Get.to(() => RegisterScreen()); // 페이지 이동
                     },
                   ),
                 ],
