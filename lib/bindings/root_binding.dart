@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:life_bookshelf/services/chatting/chatting_service.dart';
 import 'package:life_bookshelf/viewModels/chatting/chatting_viewmodel.dart';
 import 'package:life_bookshelf/viewModels/chat-n/autobiography_viewmodel.dart';
 import 'package:life_bookshelf/viewModels/home/home_viewmodel.dart';
@@ -18,10 +19,10 @@ class RootBinding extends Bindings {
     Get.put(RootViewModel());
 
     // ChildViewModel is singleton
-    Get.put(HomeViewModel(
-        HomeChapterService(baseUrl), HomeAutobiographyService(baseUrl)));
+    Get.put(HomeViewModel(HomeChapterService(baseUrl), HomeAutobiographyService(baseUrl)));
     Get.put(ChatAutobiographyService());
     Get.put(AutobiographyViewModel(ChatAutobiographyService()));
+    Get.put(ChattingService());
 
     Get.put(MypageViewModel());
     Get.put(PublishViewModel());
