@@ -34,5 +34,6 @@ class RootBinding extends Bindings {
     Get.put(MypageViewModel());
     Get.put(PublishViewModel());
     Get.put(ChattingViewModel());
+    Get.put(MypageViewModel());
   }
 }
