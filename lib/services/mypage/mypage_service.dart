@@ -1,14 +1,13 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-import 'package:life_bookshelf/models/mypage/mypage_model.dart';
-
+import 'package:life_bookshelf/models/mypage/mypage_model.dart';// Assume this is the model for the list of books with pagination
 
 class MyPageApiService {
-  // Base URL for the actual API
   final String baseUrl = "https://yourapi.com/api/v1";
 
   Future<MyPageUserModel> fetchUserProfile() async {
+    // Commented out real API call for demonstration purposes
     /*
     final response = await http.get(Uri.parse('$baseUrl/members/me'));
     if (response.statusCode == 200) {
@@ -17,7 +16,6 @@ class MyPageApiService {
       throw Exception('Failed to load user profile');
     }
     */
-
     // Mock response for testing
     var responseJson = json.encode({
       "name": "김남철",
@@ -28,38 +26,81 @@ class MyPageApiService {
     await Future.delayed(Duration(seconds: 1)); // Simulating network delay
     return MyPageUserModel.fromJson(json.decode(responseJson));
   }
-  Future<PublicationResponse> fetchMyPublications(int page, int size) async {
-    // Uncomment the following lines to use actual API call
+
+  Future<BookDetailModel> fetchBookDetails(int memberId) async {
+    // Commented out real API call for demonstration purposes
     /*
-    final response = await http.get(Uri.parse('$baseUrl/publications/me?page=$page&size=$size'));
+    final response = await http.get(Uri.parse('$baseUrl/books/$memberId'));
     if (response.statusCode == 200) {
-      return PublicationResponse.fromJson(json.decode(response.body));
+      return BookDetailModel.fromJson(json.decode(response.body));
     } else {
-      throw Exception('Failed to load publications list');
+      Map<String, dynamic> errorResponse = json.decode(response.body);
+      throw Exception('${errorResponse['code']}: ${errorResponse['message']}');
     }
     */
+    // Mock response for testing
+    var responseJson = json.encode({
+      "bookId": 2,
+      "title": "나의 두번째 출판 책",
+      "coverImageUrl": "https://my_second_book",
+      "visibleScope": "PRIVATE",
+      "page": 104,
+      "createdAt": "2023-01-02T00:00:00Z",
+      "price": 100000,
+      "titlePosition": "TOP",
+      "publishStatus": "REQUESTED",
+      "requestAt": "2023-01-03T00:00:00Z",
+      "willPublishedAt": "2023-01-16T00:00:00Z"
+    });
+    await Future.delayed(Duration(seconds: 1));  // Simulating network delay
+    return BookDetailModel.fromJson(json.decode(responseJson));
+  }
 
+  Future<BookListModel> fetchPublishedBooks(int page, int size) async {
+    // Commented out real API call for demonstration purposes
+    /*
+    final response = await http.get(Uri.parse('$baseUrl/books?page=$page&size=$size'));
+    if (response.statusCode == 200) {
+      return BookListModel.fromJson(json.decode(response.body));
+    } else {
+      Map<String, dynamic> errorResponse = json.decode(response.body);
+      throw Exception('${errorResponse['code']}: ${errorResponse['message']}');
+    }
+    */
+    // Mock response for testing
+    print("Fetching published books for page $page with size $size");
     var responseJson = json.encode({
       "results": [
+        {
+          "bookId": 1,
+          "publicationId": 1,
+          "title": "나의 첫 출판 책",
+          "contentPreview": "This is the story of my early life...",
+          "coverImageUrl": "https://my_first_book",
+          "visibleScope": "PUBLIC",
+          "page": 142,
+          "createdAt": "2023-01-01T00:00:00Z"
+        },
         {
           "bookId": 2,
           "publicationId": 2,
           "title": "나의 두번째 출판 책",
-          "contentPreview": "This is the story of my early life...",
-          "coveImageUrl": "https://my_second_book",
+          "contentPreview": "Continuing my journey...",
+          "coverImageUrl": "https://my_second_book",
           "visibleScope": "PRIVATE",
           "page": 104,
           "createdAt": "2023-01-02T00:00:00Z"
-        },
+        }
       ],
       "currentPage": 1,
-      "totalElements": 1,
+      "totalElements": 3,
       "totalPages": 1,
       "hasNextPage": false,
       "hasPreviousPage": false
     });
-    await Future.delayed(Duration(seconds: 1)); // Simulating network delay
-    return PublicationResponse.fromJson(json.decode(responseJson));
+
+    await Future.delayed(Duration(seconds: 1));  // Simulating network delay
+    return BookListModel.fromJson(json.decode(responseJson));
   }
 }
 

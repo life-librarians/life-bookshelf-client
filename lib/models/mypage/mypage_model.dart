@@ -10,99 +10,88 @@ class MyPageUserModel {
 
   factory MyPageUserModel.fromJson(Map<String, dynamic> json) {
     return MyPageUserModel(
-      name: json['name'],
-      bornedAt: json['bornedAt'],
-      gender: json['gender'],
-      hasChildren: json['hasChildren'],
+        name: json['name'],
+        bornedAt: json['bornedAt'],
+        gender: json['gender'],
+        hasChildren: json['hasChildren']
     );
   }
 }
 
-class MyPagePublicationModel {
+class BookDetailModel {
   final int bookId;
-  final String title;
-  final String coverImageUrl;
-  final String visibleScope;
-  final int page;
-  final DateTime createdAt;
-  final double price;
-  final String titlePosition;
-  final String publishStatus;
-  final DateTime requestAt;
-  final DateTime willPublishedAt;
+  final String? title;
+  final String? coverImageUrl;
+  final String? visibleScope;
+  final int? page;  // Nullable로 변경
+  final String? createdAt;
+  final int? price;  // Nullable로 변경
+  final String? titlePosition;
+  final String? publishStatus;
+  final String? requestAt;
+  final String? willPublishedAt;
 
-  MyPagePublicationModel({
+  BookDetailModel({
     required this.bookId,
     required this.title,
     required this.coverImageUrl,
     required this.visibleScope,
-    required this.page,
+    this.page,  // Nullable
     required this.createdAt,
-    required this.price,
+    this.price,  // Nullable
     required this.titlePosition,
     required this.publishStatus,
     required this.requestAt,
     required this.willPublishedAt,
   });
 
-  factory MyPagePublicationModel.fromJson(Map<String, dynamic> json) {
-    return MyPagePublicationModel(
+  factory BookDetailModel.fromJson(Map<String, dynamic> json) {
+    return BookDetailModel(
       bookId: json['bookId'],
-      title: json['title'],
-      coverImageUrl: json['coveImageUrl'],
-      visibleScope: json['visibleScope'],
-      page: json['page'],
-      createdAt: DateTime.parse(json['createdAt']),
-      price: json['price'],
-      titlePosition: json['titlePosition'],
-      publishStatus: json['publishStatus'],
-      requestAt: DateTime.parse(json['requestAt']),
-      willPublishedAt: DateTime.parse(json['willPublishedAt']),
+      title: json['title'] as String?,
+      coverImageUrl: json['coverImageUrl'] as String?,
+      visibleScope: json['visibleScope'] as String?,
+      page: json['page'] as int?,  // Null 처리
+      createdAt: json['createdAt'],
+      price: json['price'] as int?,  // Null 처리
+      titlePosition: json['titlePosition'] as String?,
+      publishStatus: json['publishStatus'] as String?,
+      requestAt: json['requestAt'] as String?,
+      willPublishedAt: json['willPublishedAt']as String?,
     );
   }
 }
 
-class MyPagePublicationSummary {
-  final int publicationId;
-  final String title;
 
-  MyPagePublicationSummary({required this.publicationId, required this.title});
-
-  factory MyPagePublicationSummary.fromJson(Map<String, dynamic> json) {
-    if (json is! Map<String, dynamic>) {
-      throw FormatException('Data is not a Map<String, dynamic>');
-    }
-    return MyPagePublicationSummary(
-      publicationId: json['publicationId'] as int,
-      title: json['title'] as String,
-    );
-  }
-}
-
-class PublicationResponse {
-  final List<MyPagePublicationSummary> results;
+class BookListModel {
+  final List<BookDetailModel> results;
+  final int currentPage;
+  final int totalElements;
+  final int totalPages;
   final bool hasNextPage;
+  final bool hasPreviousPage;
 
-  PublicationResponse({required this.results, required this.hasNextPage});
+  BookListModel({
+    required this.results,
+    this.currentPage = 1,
+    this.totalElements = 0,
+    this.totalPages = 1,
+    required this.hasNextPage,
+    required this.hasPreviousPage,
+  });
 
-  factory PublicationResponse.fromJson(dynamic json) {
-    if (json is! Map<String, dynamic>) {
-      throw FormatException('Expected json to be a Map<String, dynamic>');
-    }
+  factory BookListModel.fromJson(Map<String, dynamic> json) {
+    return BookListModel(
+      results: List<BookDetailModel>.from(json['results'].map((x) => BookDetailModel.fromJson(x))),
+      currentPage: json['currentPage'] ?? 1,
+      totalElements: json['totalElements'] ?? 0,
+      totalPages: json['totalPages'] ?? 1,
+      hasNextPage: json['hasNextPage'] ?? false,
+      hasPreviousPage: json['hasPreviousPage'] ?? false,
 
-    var resultsList = json['results'] as List;
-    List<MyPagePublicationSummary> results = resultsList.map((item) {
-      if (item is Map<String, dynamic>) {
-        return MyPagePublicationSummary.fromJson(item);
-      } else {
-        throw FormatException('Expected item to be a Map<String, dynamic>, got ${item.runtimeType}');
-      }
-    }).toList();
-
-    return PublicationResponse(
-      results: results,
-      hasNextPage: json['hasNextPage'] as bool,
     );
   }
-
 }
+
+
+

@@ -61,12 +61,12 @@ class _pubAppSubmitted extends StatelessWidget {
     Color textColor2;
     String svgAsset;
 
-    if (viewmodel.publishingStatus == 'requested') {
+    if (viewmodel.publishingStatus == 'REQUESTED') {
       backgroundColor = ColorSystem.mainBlue;
       textColor1 = ColorSystem.white;
       textColor2 = ColorSystem.white;
       svgAsset = 'assets/icons/mypage/01_w.svg';
-    } else if (viewmodel.publishingStatus == 'request_confirmed' || viewmodel.publishingStatus == 'in_publishing' || viewmodel.publishingStatus == 'published') {
+    } else if (viewmodel.publishingStatus == 'REQUEST_CONFIRMED' || viewmodel.publishingStatus == 'IN_PUBLISHING' || viewmodel.publishingStatus == 'PUBLISHED') {
       backgroundColor = Colors.white; // 배경색 하얀색 유지
       textColor1 = ColorSystem.mypage.fontBlack;
       textColor2 = ColorSystem.mypage.fontGray;
@@ -126,12 +126,12 @@ class _PubInProgress extends StatelessWidget {
     Color textColor2;
     String svgAsset;
 
-    if (viewmodel.publishingStatus == 'requested' || viewmodel.publishingStatus == 'rejected') {
+    if (viewmodel.publishingStatus == 'REQUESTED' || viewmodel.publishingStatus == 'REJECTED') {
       backgroundColor = ColorSystem.white;
       textColor1 = ColorSystem.mypage.fontGray;
       textColor2 = ColorSystem.mypage.fontGray;
       svgAsset = 'assets/icons/mypage/02.svg';
-    } else if (viewmodel.publishingStatus == 'request_confirmed' ){
+    } else if (viewmodel.publishingStatus == 'REQUEST_CONFIRMED' ){
     backgroundColor = ColorSystem.mainBlue;
       textColor1 = ColorSystem.white;
       textColor2 = ColorSystem.white;
@@ -188,12 +188,12 @@ class _PubCompleted extends StatelessWidget {
     Color textColor2;
     String svgAsset;
 
-    if (viewmodel.publishingStatus == 'requested' || viewmodel.publishingStatus == 'request_confirmed' || viewmodel.publishingStatus == 'rejected')  {
+    if (viewmodel.publishingStatus == 'REQUESTED' || viewmodel.publishingStatus == 'REQUEST_CONFIRMED' || viewmodel.publishingStatus == 'REJECTED')  {
       backgroundColor = ColorSystem.white;
       textColor1 = ColorSystem.mypage.fontGray;
       textColor2 = ColorSystem.mypage.fontGray;
       svgAsset = 'assets/icons/mypage/03.svg';
-    } else if (viewmodel.publishingStatus == 'in_publishing' ){
+    } else if (viewmodel.publishingStatus == 'IN_PUBLISHING' ){
       backgroundColor = ColorSystem.mainBlue; // 배경색 하얀색 유지
       textColor1 = ColorSystem.white;
       textColor2 = ColorSystem.white;

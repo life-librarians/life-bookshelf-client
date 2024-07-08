@@ -121,26 +121,41 @@ class _BooksPublished extends StatelessWidget {
   }
 }
 
+
 class _BookBoxs extends StatelessWidget {
   const _BookBoxs({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Access the ViewModel
+    final MypageViewModel viewModel = Get.find<MypageViewModel>();
+
     return Container(
       height: 41,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal, // 수평 스크롤 설정
-        itemCount: 10, // 예를 들어 10개의 _BookBox를 생성
+      child: Obx(() => ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: viewModel.bookList.value?.results.length ?? 0,  // Use actual count from bookList
         itemBuilder: (context, index) {
-          return _BookBox(); // _BookBox 위젯을 여러 개 생성
+          final book = viewModel.bookList.value?.results[index];  // Get book details
+          return _BookBox(
+              title: book?.title ?? "No Title",  // Pass the title
+              visibility: book?.visibleScope == "PUBLIC" ? "공개" : "비공개"  // Determine visibility
+          );
         },
-      ),
+      )),
     );
   }
 }
 
 class _BookBox extends StatelessWidget {
-  const _BookBox({super.key});
+  final String title;
+  final String visibility;
+
+  const _BookBox({
+    super.key,
+    required this.title,
+    required this.visibility,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -149,7 +164,7 @@ class _BookBox extends StatelessWidget {
       width: Get.width * 0.34,
       height: 41,
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(4.23),
+        borderRadius: BorderRadius.circular(4.23),
         image: DecorationImage(
           image: AssetImage("assets/icons/main/example.png"),
           fit: BoxFit.cover,
@@ -166,7 +181,7 @@ class _BookBox extends StatelessWidget {
             child: Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                "엉망이어도 볼만한 인생",
+                title,
                 style: FontSystem.KR10B.copyWith(color: Colors.white),
               ),
             ),
@@ -175,18 +190,18 @@ class _BookBox extends StatelessWidget {
             top: 5,
             right: 4,
             child: Container(
-              decoration: BoxDecoration(
-                color: ColorSystem.screen.green,
-                borderRadius: BorderRadius.circular(2.35),
-              ),
-              width: 27,
-              height: 29.51,
-              child: Center(
-                child: Text(
-                  "공개",
-                  style: FontSystem.KR10B.copyWith(color: Colors.white),
+                decoration: BoxDecoration(
+                  color: ColorSystem.screen.green,
+                  borderRadius: BorderRadius.circular(2.35),
                 ),
-              )
+                width: 27,
+                height: 29.51,
+                child: Center(
+                  child: Text(
+                    visibility,
+                    style: FontSystem.KR10B.copyWith(color: Colors.white),
+                  ),
+                )
             ),
           ),
         ],

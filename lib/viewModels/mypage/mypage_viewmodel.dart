@@ -6,10 +6,13 @@ class MypageViewModel extends GetxController {
   List<RxBool> switches = List.generate(6, (_) => false.obs);
 
   Rx<MyPageUserModel?> userModel = Rx<MyPageUserModel?>(null);
-  Rx<List<MyPagePublicationModel>> publications = Rx<List<MyPagePublicationModel>>([]);
+  // Additional Rx properties for books
+  Rx<BookDetailModel?> bookDetail = Rx<BookDetailModel?>(null);
+  Rx<BookListModel?> bookList = Rx<BookListModel?>(null);
+
   Rx<int?> latestPublicationId = Rx<int?>(null);
   RxBool isLoading = true.obs; // 로딩 상태 관리
-  RxString publishingStatus = 'rejected'.obs;
+  RxString publishingStatus = 'IN_PUBLISHING'.obs;
 
   final MyPageApiService apiService = MyPageApiService();
 
@@ -30,50 +33,41 @@ class MypageViewModel extends GetxController {
     }
   }
 
-  Future<void> loadPublications(int publicationId) async {
-    int currentPage = 1;
-    bool hasMore = true;
-    List<MyPagePublicationModel> allPublications = [];
-
+  Future<void> loadBookDetails(int memberId) async {
     try {
-      while (hasMore) {
-        final response = await apiService.fetchMyPublications(currentPage, 10);
-        allPublications.addAll(response.results.map((pub) => MyPagePublicationModel.fromJson(pub as Map<String, dynamic>)).toList());
-
-        hasMore = response.hasNextPage;
-        if (hasMore) currentPage++;
-      }
-
-      publications.value = allPublications;
-      print("All publications loaded: ${publications.value.length} items");
+      final result = await apiService.fetchBookDetails(memberId);
+      bookDetail.value = result;
+      publishingStatus.value = result.publishStatus!;
+      print("Book details loaded for member ID $memberId: ${bookDetail.value}");
     } catch (e) {
-      print("Failed to load publications: $e");
+      print("Failed to load book details: $e");
     }
   }
 
-  Future<void> fetchMostRecentPublication() async {
+  Future<void> loadPublishedBooks(int page, int size) async {
     try {
-      final response = await apiService.fetchMyPublications(1, 1);
-      if (response.results.isNotEmpty) {
-        latestPublicationId.value = response.results.first.publicationId;
-        print("Most recent publication ID: ${latestPublicationId.value}");
-        await loadPublications(latestPublicationId.value!);
-      }
+      final result = await apiService.fetchPublishedBooks(page, size);
+      bookList.value = result;
+      print("Book list loaded: ${bookList.value}");
     } catch (e) {
-      print("Failed to fetch most recent publication: $e");
+      print("Failed to load published books: $e");
     }
   }
 
   Future<void> loadAllData() async {
     isLoading.value = true;
-    await fetchMostRecentPublication();
     await loadUserProfile();
-    isLoading.value = false;
+    // Example: Load book details for a specific member ID and books list with pagination
+    await loadBookDetails(123); // Assuming 123 is a sample member ID
+    await loadPublishedBooks(1, 10); // Load the first page with 10 entries per page
+    isLoading.value = false; // Indicate that data loading is complete.
   }
 
   @override
   void onInit() {
     super.onInit();
-    loadAllData(); // 모든 데이터를 로딩하는 메서드
+    loadAllData(); // Load all data when initializing.
   }
 }
+
+
