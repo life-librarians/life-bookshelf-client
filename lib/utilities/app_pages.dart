@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:life_bookshelf/views/chat-N/autobiography_detail_chapter_screen.dart';
+import 'package:life_bookshelf/views/chatting/chatting_screen.dart';
 import '../bindings/root_binding.dart';
 import '../views/home/home_screen.dart';
 import '../views/root/root_screen.dart';
@@ -18,7 +19,17 @@ List<GetPage> appPages = [
   ),
   GetPage(
     name: Routes.AUTOBIOGRAPHY_DETAIL_CHAPTER,
-    page: () => const AutobiographyDetailScreen(autobiographyId: 0,),
+    page: () => const AutobiographyDetailScreen(
+      autobiographyId: 0,
+    ),
+    binding: RootBinding(),
+  ),
+  GetPage(
+    name: Routes.CHATTING,
+    page: () => ChattingScreen(
+      currentChapterId: Get.arguments['currentChapterId'],
+      currentAutobiographies: Get.arguments['currentAutobiographies'],
+    ),
     binding: RootBinding(),
   ),
 ];

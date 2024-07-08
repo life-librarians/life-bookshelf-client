@@ -23,6 +23,7 @@ dependencies:
     dotted_line: ^3.2.2
     shimmer: ^3.0.0
     flutter_switch: ^0.3.2
+    speech_to_text: ^6.6.2
 
 dev_dependencies:
     flutter_test:

@@ -26,7 +26,6 @@ class RootScreen extends BaseScreen<RootViewModel> {
           HomeScreen(),
           PublishScreen(),
           MypageScreen(),
-          ChattingScreen(),
         ],
       ),
     );

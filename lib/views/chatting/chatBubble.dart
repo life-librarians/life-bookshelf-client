@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:life_bookshelf/utilities/color_system.dart';
 import 'package:life_bookshelf/utilities/font_system.dart';
@@ -8,8 +9,14 @@ import 'package:life_bookshelf/utilities/screen_utils.dart';
 class ChatBubble extends StatelessWidget {
   final bool isUser;
   final String message;
+  final bool isFinal;
 
-  const ChatBubble({super.key, required this.isUser, required this.message});
+  const ChatBubble({
+    super.key,
+    required this.isUser,
+    required this.message,
+    this.isFinal = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -38,24 +45,39 @@ class ChatBubble extends StatelessWidget {
       child: Column(
         crossAxisAlignment: timeStampAlignment,
         children: [
-          CustomPaint(
-            painter: painter,
-            child: Container(
-              padding: EdgeInsets.only(left: 20.w, top: 15.w, right: 20.w, bottom: 15.w),
-              child: Text(
-                message,
-                style: FontSystem.KR16R.copyWith(color: textColor),
+          Opacity(
+            opacity: isFinal ? 1.0 : 0.7, // 인식 진행 중 opacity
+            child: CustomPaint(
+              painter: painter,
+              child: Container(
+                padding: EdgeInsets.only(left: 20.w, top: 15.w, right: 20.w, bottom: 15.w),
+                child: Text(
+                  message,
+                  style: FontSystem.KR16R.copyWith(color: textColor),
+                ),
               ),
             ),
           ),
           // TODO: TimeStamp 실제 값 수정
-          Container(
-            margin: EdgeInsets.only(top: timeStampMargin),
-            child: Text(
-              "01:30 PM",
-              style: FontSystem.KR14SB.copyWith(color: ColorSystem.chatting.timeStamp),
-            ),
-          )
+          if (!isFinal) ...[
+            Container(
+              margin: EdgeInsets.only(top: timeStampMargin),
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                valueColor: AlwaysStoppedAnimation<Color>(ColorSystem.chatting.chatColor1),
+              ),
+            )
+          ] else ...[
+            Container(
+              margin: EdgeInsets.only(top: timeStampMargin),
+              child: Text(
+                "01:30 PM",
+                style: FontSystem.KR14SB.copyWith(color: ColorSystem.chatting.timeStamp),
+              ),
+            )
+          ]
         ],
       ),
     );

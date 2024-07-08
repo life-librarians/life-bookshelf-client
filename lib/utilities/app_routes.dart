@@ -7,4 +7,5 @@ abstract class Routes {
   static const SETTING = '/mypage';
   static const ONBOARDING = '/onboarding';
   static const AUTOBIOGRAPHY_DETAIL_CHAPTER = '/autobiography-detail-chapter';
+  static const CHATTING = '/chatting';
 }
