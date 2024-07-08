@@ -190,19 +190,25 @@ class _BookBox extends StatelessWidget {
           Positioned(
             top: 5,
             right: 4,
-            child: Container(
-                decoration: BoxDecoration(
-                  color: visibility == "공개" ? ColorSystem.screen.green : ColorSystem.screen.red,
-                  borderRadius: BorderRadius.circular(2.35),
-                ),
-                width: 27,
-                height: 29.51,
-                child: Center(
-                  child: Text(
-                    visibility,
-                    style: FontSystem.KR10B.copyWith(color: Colors.white),
+            child: InkWell(
+              onTap: () {
+                // Toggle visibility
+                print("Toggling visibility for $title");
+              },
+              child: Container(
+                  decoration: BoxDecoration(
+                    color: visibility == "공개" ? ColorSystem.screen.green : ColorSystem.screen.red,
+                    borderRadius: BorderRadius.circular(2.35),
                   ),
-                )
+                  width: 27,
+                  height: 29.51,
+                  child: Center(
+                    child: Text(
+                      visibility,
+                      style: FontSystem.KR10B.copyWith(color: Colors.white),
+                    ),
+                  )
+              ),
             ),
           ),
         ],

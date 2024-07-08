@@ -17,12 +17,24 @@ class MypageViewModel extends GetxController {
   final MyPageApiService apiService = MyPageApiService();
   RxBool isRemindSubscribed = false.obs;
 
-  void toggleSwitch(int index, bool bool) {
+  void toggleSwitch(int index, bool value) {
     if (index < switches.length) {
       switches[index].value = !switches[index].value; // 토글 변경
-      // 구독 업데이트 함수 실행
+      // 서버에 업데이트 호출
+      updateSwitchStateOnServer(index, switches[index].value);
     }
   }
+
+  Future<void> updateSwitchStateOnServer(int index, bool state) async {
+    try {
+      // 가정: API 서비스에 updateSwitchState 메서드가 있다고 가정합니다.
+      await apiService.updateSwitchState(index, state);
+      print("Switch state updated on server for index $index: $state");
+    } catch (e) {
+      print("Failed to update switch state on server: $e");
+    }
+  }
+
   Future<void> fetchNotifications() async {
     isLoading.value = true;
     try {

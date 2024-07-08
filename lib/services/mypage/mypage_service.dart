@@ -151,5 +151,33 @@ class MyPageApiService {
     await Future.delayed(Duration(seconds: 1)); // Simulating network delay
     // Normally handle the response or errors
   }
+
+  // Update the switch state on the server - Test implementation
+  Future<void> updateSwitchState(int index, bool state) async {
+    // 실제 서버 호출은 주석 처리
+    /*
+    var url = Uri.parse('$baseUrl/switches/$index');
+    var response = await http.put(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer your_access_token',
+      },
+      body: json.encode({
+        'state': state
+      }),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to update switch state on server');
+    }
+    */
+
+    // 테스트 목적의 시뮬레이션 로직
+    print("Mock update: Switch at index $index set to $state");
+
+    // 테스트 시뮬레이션 지연 시간
+    await Future.delayed(Duration(seconds: 1));
+  }
 }
 
