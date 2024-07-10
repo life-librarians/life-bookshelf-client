@@ -6,8 +6,7 @@ import '../../models/chat-n/autobiography_model.dart';
 class ChatAutobiographyService {
   // 특정 자서전 상세 정보 조회
   Future<ChatAutobiography> fetchAutobiography(int autobiographyId) async {
-    String apiUrl =
-        '${dotenv.env['API']}/api/v1/autobiographies/$autobiographyId';
+    String apiUrl = '${dotenv.env['API']}/api/v1/autobiographies/$autobiographyId';
 
     final response = await http.get(Uri.parse(apiUrl));
     if (response.statusCode == 200) {
