@@ -23,7 +23,6 @@ class MyPageApiService {
       "gender": "male",
       "hasChildren": false
     });
-    await Future.delayed(Duration(seconds: 1)); // Simulating network delay
     return MyPageUserModel.fromJson(json.decode(responseJson));
   }
 
@@ -52,7 +51,7 @@ class MyPageApiService {
       "requestAt": "2023-01-03T00:00:00Z",
       "willPublishedAt": "2023-01-16T00:00:00Z"
     });
-    await Future.delayed(Duration(seconds: 1));  // Simulating network delay
+
     return BookDetailModel.fromJson(json.decode(responseJson));
   }
 
@@ -99,7 +98,6 @@ class MyPageApiService {
       "hasPreviousPage": false
     });
 
-    await Future.delayed(Duration(seconds: 1));  // Simulating network delay
     return BookListModel.fromJson(json.decode(responseJson));
   }
 
@@ -130,7 +128,6 @@ class MyPageApiService {
         }
       ]
     });
-    await Future.delayed(Duration(seconds: 1)); // Simulating network delay
     List<dynamic> data = json.decode(responseJson)['results'];
     return data.map((item) => NotificationModel.fromJson(item)).toList();
   }
@@ -148,7 +145,6 @@ class MyPageApiService {
     */
     // Mock response for testing
     print("Updating subscription for notification IDs: $notificationIds");
-    await Future.delayed(Duration(seconds: 1)); // Simulating network delay
     // Normally handle the response or errors
   }
 
@@ -177,7 +173,6 @@ class MyPageApiService {
     print("Mock update: Switch at index $index set to $state");
 
     // 테스트 시뮬레이션 지연 시간
-    await Future.delayed(Duration(seconds: 1));
   }
 }
 

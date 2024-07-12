@@ -6,6 +6,7 @@ abstract class ColorSystem {
   static const _BottomNavigation bottomNavigation = _BottomNavigation();
   static const _Mypage mypage = _Mypage();
   static const _Chatting chatting = _Chatting();
+  static const _Onboarding onboarding = _Onboarding();
 
   // 공통 색상
   static const Color white = Color(0xFFFFFFFF);
@@ -49,4 +50,11 @@ class _Mypage {
 
   final Color fontBlack = const Color(0xFF181D27);
   final Color fontGray = const Color(0xFFABB7C2);
+}
+
+class _Onboarding {
+  const _Onboarding();
+
+  final Color fontBlack = const Color(0xFF0B4870);
+  final Color fontGray = const Color(0xFFADADAD);
 }
