@@ -12,6 +12,11 @@ var answers = <String>[].obs;
 var currentQuestion = "".obs;
 var currentQuestionDetail = "".obs;
 
+  var isDateValid = false.obs;
+  var isNameValid = false.obs;
+
+  var isButtonPressed = false.obs;
+
   List<String> questions = [
     "여행자님의 이름을 알려주세요",
     "여행자님의 나이가 궁금해요",
@@ -64,5 +69,21 @@ var currentQuestionDetail = "".obs;
   void updateCurrentQuestion() {
     currentQuestion.value = questions[currentQuestionIndex.value];
     currentQuestionDetail.value = questionsDetails[currentQuestionIndex.value];
+  }
+
+  void validateDate() {
+    if (answers.length <= currentQuestionIndex.value && isButtonPressed.value == true) {
+      isDateValid(false);
+    } else {
+      isDateValid(true);
+    }
+  }
+
+  void validateName(String newName) {
+    if(answers.length <= currentQuestionIndex.value && isButtonPressed.value == true) {
+      isNameValid(false);
+    } else {
+      isNameValid(true);
+    }
   }
 }

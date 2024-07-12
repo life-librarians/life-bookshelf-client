@@ -14,6 +14,7 @@ class NameField extends StatelessWidget {
 
     _controller.addListener(() {
       viewModel.updateAnswer(_controller.text);
+      viewModel.validateName(_controller.text);
     });
     return Container(
       width: Get.width * 0.83,
@@ -21,27 +22,27 @@ class NameField extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(height: 33),
-          TextField(
-            controller: _controller,  // Assign the controller to the TextField
+          Obx(() => TextField(
+            controller: _controller,
             decoration: InputDecoration(
               hintText: "Enter your name",
               hintStyle: TextStyle(color: Color(0xFFD5D4DC)),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
                 borderSide: BorderSide(
-                  color: Color(0xFFD5D4DC),
+                  color: viewModel.isNameValid.value || viewModel.isButtonPressed.value == false ? Color(0xFFD5D4DC) : Colors.red,
                   width: 1,
                 ),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
                 borderSide: BorderSide(
-                  color: ColorSystem.mainBlue,
+                  color: viewModel.isNameValid.value ? ColorSystem.mainBlue : Colors.red,
                   width: 1,
                 ),
               ),
             ),
-          ),
+          )),
         ],
       ),
     );
