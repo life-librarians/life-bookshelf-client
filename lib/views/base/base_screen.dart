@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:life_bookshelf/viewModels/publish/publish_viewmodel.dart';
 
 @immutable
 abstract class BaseScreen<T extends GetxController> extends GetView<T> {
@@ -51,7 +52,7 @@ abstract class BaseScreen<T extends GetxController> extends GetView<T> {
 
   // SafeArea의 색상을 정의하는 메서드
   @protected
-  Color? get unSafeAreaColor => Color(0xFFF7F7F7);
+  Color? get unSafeAreaColor => const Color(0xFFF7F7F7);
 
   // 키보드가 나타날 때 화면을 조절할지 여부를 정의하는 메서드
   @protected
@@ -71,7 +72,7 @@ abstract class BaseScreen<T extends GetxController> extends GetView<T> {
 
   // 화면의 배경 색상을 정의하는 메서드
   @protected
-  Color? get screenBackgroundColor => Color(0xFFF7F7F7);
+  Color? get screenBackgroundColor => const Color(0xFFF7F7F7);
 
   // SafeArea로 감싸는지 여부를 정의하는 메서드
   @protected

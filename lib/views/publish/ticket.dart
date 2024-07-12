@@ -9,7 +9,7 @@ class TicketPainter extends CustomPainter {
 
     const double radius = 25;
     const double edgeRadius = radius + 10;
-    const double edgeCoor = 70;
+    const double edgeCoor = 75;
 
     final path = Path()
       ..moveTo(radius, 0) // 좌상단 시작
