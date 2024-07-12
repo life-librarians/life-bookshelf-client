@@ -25,6 +25,7 @@ class OnboardingApiService {
 
     if (simulatedStatusCode == 200) {
       // 성공 시 처리를 시뮬레이션
+      await Future.delayed(Duration(seconds: 3));
       print('회원 정보가 성공적으로 수정되었습니다.');
     } else {
       // 실패 시 에러 처리를 시뮬레이션

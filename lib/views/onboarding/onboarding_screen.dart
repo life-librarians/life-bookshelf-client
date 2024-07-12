@@ -45,7 +45,6 @@ class _BottomItems extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final OnboardingViewModel viewmodel = Get.find<OnboardingViewModel>();
-
     // Wrapping the switch statement inside Obx() to make it reactive
     return Obx(() {
       switch (viewmodel.currentQuestionIndex.value) {
@@ -130,6 +129,7 @@ class _BottomItems extends StatelessWidget {
             ],
           );
         case 4:
+          viewmodel.updateUserInformation();
           return Image.asset("assets/images/AirplaneLoading.gif", width: 250,);
         default:
           return SizedBox(height: 0); // Default case for handling undefined indexes

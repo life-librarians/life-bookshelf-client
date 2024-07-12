@@ -35,7 +35,7 @@ var currentQuestionDetail = "".obs;
 
   final OnboardingApiService _userService = OnboardingApiService();
 
-  void updateUserInformation() {
+  Future<void> updateUserInformation() async {
     if (answers.length >= 4) {
       OnUserModel user = OnUserModel(
         name: answers[0],
@@ -44,14 +44,17 @@ var currentQuestionDetail = "".obs;
         hasChildren: answers[3].toLowerCase() == 'yes',
       );
 
-      _userService.updateUser(user).catchError((error) {
-        // 오류 처리 로직
+      try {
+        await _userService.updateUser(user);
+        Get.toNamed('/home');  // 이동 로직을 try-catch 블록 안으로 이동
+      } catch (error) {
         print("Error updating user: $error");
-      });
+      }
     } else {
       print("Not enough information to update user.");
     }
   }
+
 
   void updateAnswer(String text) {
     if (currentQuestionIndex.value >= answers.length) {
