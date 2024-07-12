@@ -44,7 +44,6 @@ flutter:
         - assets/icons/main/
         - assets/icons/mypage/
         - assets/images/
-        - assets/icons/onboarding/
         - assets/images/login/
         - assets/images/register/
 
