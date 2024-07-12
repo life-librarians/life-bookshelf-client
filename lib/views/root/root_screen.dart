@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:life_bookshelf/views/chatting/chatting_screen.dart';
 import 'package:life_bookshelf/views/home/home_screen.dart';
 import 'package:life_bookshelf/views/mypage/mypage_screen.dart';
+import 'package:life_bookshelf/views/onboarding/onboarding_screen.dart';
 import 'package:life_bookshelf/views/publish/publish_screen.dart';
 import 'package:life_bookshelf/views/root/custom_bottom_navigation_bar.dart';
 
@@ -23,7 +24,8 @@ class RootScreen extends BaseScreen<RootViewModel> {
       () => IndexedStack(
         index: viewModel.selectedIndex,
         children: const [
-          HomeScreen(),
+          //HomeScreen(),
+          OnboardingScreen(),
           PublishScreen(),
           MypageScreen(),
         ],

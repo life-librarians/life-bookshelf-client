@@ -24,6 +24,7 @@ dependencies:
     shimmer: ^3.0.0
     flutter_switch: ^0.3.2
     speech_to_text: ^6.6.2
+    image: ^4.2.0
 
 dev_dependencies:
     flutter_test:
@@ -42,6 +43,7 @@ flutter:
         - assets/icons/main/
         - assets/icons/mypage/
         - assets/images/
+        - assets/icons/onboarding/
 
     fonts:
         - family: Pretendard
