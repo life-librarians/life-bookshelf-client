@@ -31,6 +31,9 @@ class _Publication {
   final Color ticketContentBlue = const Color(0xFF6ABCFE);
   final Color ticketContentBlue60 = const Color(0x996ABCFE); // 0xFF6ABCFE, opacity 60%
   final Color ticketContentBlue10 = const Color(0x1A6ABCFE); // 0xFF6ABCFE, opacity 10%
+
+  final Color optionTitle = const Color(0xFF333333);
+  final Color titleLocationButton = const Color(0xFF666666);
 }
 
 class _Chatting {

@@ -12,15 +12,154 @@ class PublishScreen extends BaseScreen<PublishViewModel> {
 
   @override
   Widget buildBody(BuildContext context) {
-    return Center(
-      child: CustomPaint(
-        painter: TicketPainter(),
-        child: Container(
-          width: 333,
-          height: 400,
-          padding: const EdgeInsets.all(20),
-          child: _ticketContent(),
+    return SingleChildScrollView(
+      child: Center(
+        child: Column(
+          children: [
+            _bookOption(),
+            CustomPaint(
+              painter: TicketPainter(),
+              child: Container(
+                width: 333,
+                height: 400,
+                padding: const EdgeInsets.all(20),
+                child: _ticketContent(),
+              ),
+            ),
+            const SizedBox(height: 22),
+            _publicationButton()
+          ],
         ),
+      ),
+    );
+  }
+
+  Container _bookOption() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey.shade300, width: 1),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 왼쪽 이미지 부분
+          Container(
+            width: 100,
+            height: 120,
+            decoration: BoxDecoration(
+              color: Colors.grey.shade200,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.image, size: 40, color: Colors.grey),
+                const SizedBox(height: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: const Text(
+                    '표지에 넣을 이미지',
+                    style: TextStyle(fontSize: 10),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 16),
+          // 오른쪽 텍스트 부분
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('책 제목', style: FontSystem.KR16SB.copyWith(color: ColorSystem.publication.optionTitle)),
+                const SizedBox(height: 5),
+                Container(
+                  decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8), boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.3),
+                      spreadRadius: 1,
+                      blurRadius: 3,
+                      offset: const Offset(0, 1),
+                    ),
+                  ]),
+                  child: TextField(
+                    decoration: InputDecoration(
+                      hintText: '제목을 입력하세요',
+                      hintStyle: FontSystem.KR14R.copyWith(color: ColorSystem.publication.titleLocationButton),
+                      border: InputBorder.none,
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    ),
+                    style: FontSystem.KR14SB.copyWith(color: ColorSystem.publication.optionTitle),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text('제목 위치', style: FontSystem.KR16SB.copyWith(color: ColorSystem.publication.optionTitle)),
+                const SizedBox(height: 10),
+                Row(
+                  children: ['상단', '중간', '하단', '왼쪽']
+                      .map((text) => Container(
+                            margin: const EdgeInsets.only(right: 11),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(5),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.3),
+                                  spreadRadius: 1,
+                                  blurRadius: 3,
+                                  offset: const Offset(0, 1),
+                                ),
+                              ],
+                            ),
+                            child: Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                onTap: () {
+                                  // 버튼 탭 동작 추가
+                                },
+                                borderRadius: BorderRadius.circular(5),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                  child: Text(text, style: FontSystem.KR12SB.copyWith(color: ColorSystem.publication.titleLocationButton)),
+                                ),
+                              ),
+                            ),
+                          ))
+                      .toList(),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Container _publicationButton() {
+    return Container(
+      width: double.infinity,
+      height: 40,
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: ElevatedButton(
+        onPressed: () {
+          // TODO: 출판 진행 로직 구현
+        },
+        style: ElevatedButton.styleFrom(
+          foregroundColor: Colors.white,
+          backgroundColor: ColorSystem.mainBlue,
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+        ),
+        child: Text("이대로 출판 진행하기", style: FontSystem.KR18SB.copyWith(color: Colors.white)),
       ),
     );
   }
@@ -87,7 +226,7 @@ class PublishScreen extends BaseScreen<PublishViewModel> {
               Positioned(
                 left: 5,
                 right: 5,
-                child: Container(height: 1, color: Colors.grey),
+                child: Container(height: 1.5, color: Colors.grey),
               ),
               // 원형 배경과 비행기 아이콘
               Container(
