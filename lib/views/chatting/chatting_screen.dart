@@ -79,7 +79,73 @@ class ChattingScreen extends BaseScreen<ChattingViewModel> {
               ],
             ),
           ),
-          const SizedBox(width: 30),
+          GestureDetector(
+            onTap: () {
+              // TODO: 임시 버튼. 추후 수정 바람.
+              _showFinishModal();
+            },
+            child: Container(width: 30, color: ColorSystem.mainBlue),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showFinishModal() {
+    Get.dialog(
+      AlertDialog(
+        title: const Center(
+          child: Text(
+            '인터뷰가 완료되었어요',
+            style: FontSystem.KR20B,
+          ),
+        ),
+        content: Padding(
+          padding: const EdgeInsets.all(5),
+          child: Text(
+            '이 인터뷰와 관련한, 혹은 이 연령대에 관련한 사진이 있나요? 있다면 사진을 첨부해주세요. 없다면 자서전에 사진이 실리지 않아요.',
+            style: FontSystem.KR13R.copyWith(color: ColorSystem.chatting.modalContentColor),
+          ),
+        ),
+        actions: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Expanded(
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    elevation: 0,
+                    foregroundColor: ColorSystem.chatting.modalContentColor,
+                    backgroundColor: ColorSystem.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      side: BorderSide(color: ColorSystem.chatting.modalButtonColor1, width: 1),
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
+                    fixedSize: const Size.fromHeight(42),
+                  ),
+                  child: Text('없어요', style: FontSystem.KR14SB.copyWith(color: ColorSystem.chatting.modalContentColor)),
+                  onPressed: () => Get.back(),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: ColorSystem.white,
+                    backgroundColor: ColorSystem.accentBlue,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
+                    fixedSize: const Size.fromHeight(42),
+                  ),
+                  child: Text('첨부할래요', style: FontSystem.KR14SB.copyWith(color: ColorSystem.white)),
+                  onPressed: () => Get.back(),
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );

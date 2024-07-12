@@ -11,6 +11,7 @@ abstract class ColorSystem {
   static const Color white = Color(0xFFFFFFFF);
   static const Color mainBlue = Color(0xFF567AF3);
   static const Color deepBlue = Color(0xFF0601B4);
+  static const Color accentBlue = Color(0xFF2B4BF2);
 }
 
 class _General {
@@ -28,6 +29,8 @@ class _Chatting {
   final Color chatColor1 = const Color(0xFF585763);
   final Color chatColor2 = ColorSystem.white;
   final Color timeStamp = const Color(0xFF848395);
+  final Color modalContentColor = const Color(0x80151920); // 0x151920, opacity 50%
+  final Color modalButtonColor1 = const Color(0x42566789); // 0x566789, opacity 26%
 }
 
 class _Screen {
