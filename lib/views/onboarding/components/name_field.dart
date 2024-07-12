@@ -1,10 +1,49 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:life_bookshelf/utilities/color_system.dart';
+import 'package:life_bookshelf/viewModels/onboarding/onboarding_viewmodel.dart';
 
 class NameField extends StatelessWidget {
-  const NameField({super.key});
+  final TextEditingController _controller = TextEditingController();
+
+  NameField({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    final OnboardingViewModel viewModel = Get.find<OnboardingViewModel>();
+
+    _controller.addListener(() {
+      viewModel.updateAnswer(_controller.text);
+    });
+    return Container(
+      width: Get.width * 0.83,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(height: 33),
+          TextField(
+            controller: _controller,  // Assign the controller to the TextField
+            decoration: InputDecoration(
+              hintText: "Enter your name",
+              hintStyle: TextStyle(color: Color(0xFFD5D4DC)),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(
+                  color: Color(0xFFD5D4DC),
+                  width: 1,
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(
+                  color: ColorSystem.mainBlue,
+                  width: 1,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

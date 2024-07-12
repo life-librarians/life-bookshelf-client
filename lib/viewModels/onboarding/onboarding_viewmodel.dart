@@ -9,7 +9,8 @@ var currentQuestionIndex = 0.obs;
 // 답을 저장할 List<String>형태의 .obs
 var answers = <String>[].obs;
 
-
+var currentQuestion = "".obs;
+var currentQuestionDetail = "".obs;
 
   List<String> questions = [
     "여행자님의 이름을 알려주세요",
@@ -47,4 +48,21 @@ var answers = <String>[].obs;
     }
   }
 
+  void updateAnswer(String text) {
+    if (currentQuestionIndex.value >= answers.length) {
+      answers.add(text);
+    } else {
+      answers[currentQuestionIndex.value] = text;
+    }
+  }
+
+  void addCurrentQuestionIndex() {
+    currentQuestionIndex.value++;
+    print("Current question index: ${currentQuestionIndex.value}");
+  }
+
+  void updateCurrentQuestion() {
+    currentQuestion.value = questions[currentQuestionIndex.value];
+    currentQuestionDetail.value = questionsDetails[currentQuestionIndex.value];
+  }
 }

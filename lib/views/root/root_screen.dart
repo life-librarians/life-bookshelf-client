@@ -24,8 +24,7 @@ class RootScreen extends BaseScreen<RootViewModel> {
       () => IndexedStack(
         index: viewModel.selectedIndex,
         children: const [
-          //HomeScreen(),
-          OnboardingScreen(),
+          HomeScreen(),
           PublishScreen(),
           MypageScreen(),
         ],

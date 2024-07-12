@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:image/image.dart' as img;
 import 'dart:typed_data';
 import 'package:flutter/services.dart';
+import 'package:life_bookshelf/utilities/color_system.dart';
 import 'package:life_bookshelf/utilities/font_system.dart';
 
 class CloudWindow extends StatelessWidget {
@@ -43,7 +44,9 @@ class CloudWindow extends StatelessWidget {
               .map((letter) => Text(
                     letter,
                     style: FontSystem.KR15EL.copyWith(
-                        height: 0.9), // Reduce line height for closer spacing
+                        height: 0.9,
+                      color: ColorSystem.onboarding.fontGray,
+                    ), // Reduce line height for closer spacing
                   ))
               .toList(),
         ),

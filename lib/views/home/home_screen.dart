@@ -11,6 +11,7 @@ import 'package:life_bookshelf/views/base/base_screen.dart';
 import 'package:get/get.dart';
 import 'package:life_bookshelf/views/chatting/chatting_screen.dart';
 import 'package:dotted_line/dotted_line.dart';
+import 'package:life_bookshelf/views/onboarding/onboarding_screen.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../chat-n/autobiography_detail_chapter_screen.dart';
@@ -60,6 +61,23 @@ class _Header extends StatelessWidget {
                 Text("당신의 이야기가 궁금해요", style: FontSystem.KR21SB.copyWith(color: const Color(0xFF192252))),
                 const SizedBox(width: 6),
                 Image.asset("assets/icons/main/book.png"),
+                //getput하는 버튼
+                GestureDetector(
+                  onTap: () {
+                    Get.to(() => OnboardingScreen());
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.only(left: 10),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(7),
+                      color: const Color(0xFF192252),
+                    ),
+                    width: Get.width * 0.05,
+                    height: Get.width * 0.05,
+                    padding: const EdgeInsets.all(7),
+                    child: Text("온보딩 테스트"),
+                  ),
+                ),
               ],
             ),
           ],
