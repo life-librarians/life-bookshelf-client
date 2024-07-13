@@ -2,6 +2,8 @@ import 'package:get/get.dart';
 import 'package:life_bookshelf/services/chatting/chatting_service.dart';
 import 'package:life_bookshelf/views/chatting/chatBubble.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
 class ChattingViewModel extends GetxController {
   final ChattingService _apiService = Get.find<ChattingService>();
@@ -10,6 +12,11 @@ class ChattingViewModel extends GetxController {
   final RxString _currentSpeech = ''.obs;
   final RxList<ChatBubble> chatBubbles = <ChatBubble>[].obs;
   final RxBool isLoading = true.obs;
+
+  // Image Picker
+  final ImagePicker _picker = ImagePicker();
+  final Rx<File?> selectedImage = Rx<File?>(null);
+
   @override
   bool initialized = false;
 
@@ -81,6 +88,27 @@ class ChattingViewModel extends GetxController {
   Future<void> _stopListening() async {
     await _speech.stop();
     _currentSpeech.value = '';
+  }
+
+  /// Image Picker
+  Future<void> pickImage() async {
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      selectedImage.value = File(image.path);
+      return;
+    }
+  }
+
+  Future<void> saveImage() async {
+    if (selectedImage.value != null) {
+      // TODO: 이미지 업로드 API 호출
+      // await _apiService.uploadImage(selectedImage.value!);
+      selectedImage.value = null;
+    }
+  }
+
+  void clearSelectedImage() {
+    selectedImage.value = null;
   }
 }
 

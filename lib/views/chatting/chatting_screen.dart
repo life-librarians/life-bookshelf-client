@@ -79,7 +79,128 @@ class ChattingScreen extends BaseScreen<ChattingViewModel> {
               ],
             ),
           ),
-          const SizedBox(width: 30),
+          GestureDetector(
+            onTap: () {
+              // TODO: 임시 버튼. 추후 수정 바람.
+              _showFinishModal();
+            },
+            child: Container(width: 30, color: ColorSystem.mainBlue),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showFinishModal() {
+    Get.dialog(
+      AlertDialog(
+        title: const Center(
+          child: Text(
+            '인터뷰가 완료되었어요',
+            style: FontSystem.KR20B,
+          ),
+        ),
+        content: Padding(
+          padding: const EdgeInsets.all(5),
+          child: Text(
+            '이 인터뷰와 관련한, 혹은 이 연령대에 관련한 사진이 있나요? 있다면 사진을 첨부해주세요. 없다면 자서전에 사진이 실리지 않아요.',
+            style: FontSystem.KR13R.copyWith(color: ColorSystem.chatting.modalContentColor),
+          ),
+        ),
+        actions: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Expanded(
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    elevation: 0,
+                    foregroundColor: ColorSystem.chatting.modalContentColor,
+                    backgroundColor: ColorSystem.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      side: BorderSide(color: ColorSystem.chatting.modalButtonColor1, width: 1),
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
+                    fixedSize: Size.fromHeight(42.h),
+                  ),
+                  child: Text('없어요', style: FontSystem.KR14SB.copyWith(color: ColorSystem.chatting.modalContentColor)),
+                  onPressed: () => Get.back(),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: ColorSystem.white,
+                    backgroundColor: ColorSystem.accentBlue,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
+                    fixedSize: Size.fromHeight(42.h),
+                  ),
+                  child: Text('첨부할래요', style: FontSystem.KR14SB.copyWith(color: ColorSystem.white)),
+                  onPressed: () async {
+                    await viewModel.pickImage();
+                    if (viewModel.selectedImage.value != null) {
+                      Get.back();
+                      _showImageConfirmationModal(viewModel);
+                    }
+                  },
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  // TODO: 이미지 첨부 확인 모달창 디자인 확정 or 제거
+  void _showImageConfirmationModal(ChattingViewModel viewModel) {
+    Get.dialog(
+      AlertDialog(
+        title: const Center(
+          child: Text(
+            '선택한 사진',
+            style: FontSystem.KR20B,
+          ),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Image.file(viewModel.selectedImage.value!),
+            const SizedBox(height: 20),
+            const Text('이 사진을 사용하시겠습니까?', style: FontSystem.KR13SB),
+          ],
+        ),
+        actions: [
+          TextButton(
+            child: const Text('다시 선택', style: FontSystem.KR14SB),
+            onPressed: () async {
+              viewModel.clearSelectedImage();
+              await viewModel.pickImage();
+              if (viewModel.selectedImage.value != null) {
+                Get.back();
+                _showImageConfirmationModal(viewModel);
+              }
+            },
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              foregroundColor: ColorSystem.white,
+              backgroundColor: ColorSystem.accentBlue,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            onPressed: () {
+              viewModel.saveImage();
+              Get.back();
+            },
+            child: Text('확인', style: FontSystem.KR14SB.copyWith(color: ColorSystem.white)),
+          ),
         ],
       ),
     );
