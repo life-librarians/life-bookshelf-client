@@ -1,9 +1,11 @@
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:life_bookshelf/utilities/color_system.dart';
 import 'package:life_bookshelf/utilities/font_system.dart';
+import 'package:life_bookshelf/utilities/screen_utils.dart';
 import 'package:life_bookshelf/viewModels/publish/publish_viewmodel.dart';
 import 'package:life_bookshelf/views/base/base_screen.dart';
 import 'package:life_bookshelf/views/publish/ticket.dart';
@@ -17,6 +19,7 @@ class PublishScreen extends BaseScreen<PublishViewModel> {
       child: Center(
         child: Column(
           children: [
+            _publishHeader(),
             _bookOption(),
             CustomPaint(
               painter: TicketPainter(),
@@ -31,6 +34,19 @@ class PublishScreen extends BaseScreen<PublishViewModel> {
             _publicationButton()
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _publishHeader() {
+    return SizedBox(
+      height: 80.h,
+      child: const Row(
+        children: [
+          Expanded(
+            child: Center(child: Text("출판 진행 페이지", style: FontSystem.KR18SB)),
+          ),
+        ],
       ),
     );
   }
