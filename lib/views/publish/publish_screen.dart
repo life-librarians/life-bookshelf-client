@@ -1,6 +1,7 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:get/get.dart';
 import 'package:life_bookshelf/utilities/color_system.dart';
 import 'package:life_bookshelf/utilities/font_system.dart';
 import 'package:life_bookshelf/viewModels/publish/publish_viewmodel.dart';
@@ -34,46 +35,56 @@ class PublishScreen extends BaseScreen<PublishViewModel> {
     );
   }
 
-  Container _bookOption() {
+  Widget _bookOption() {
     return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.shade300, width: 1),
-        borderRadius: BorderRadius.circular(8),
-      ),
+      padding: const EdgeInsets.all(10),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 왼쪽 이미지 부분
-          Container(
-            width: 100,
-            height: 120,
-            decoration: BoxDecoration(
-              color: Colors.grey.shade200,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.image, size: 40, color: Colors.grey),
-                const SizedBox(height: 8),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          GestureDetector(
+            onTap: controller.pickCoverImage,
+            child: Obx(() => Container(
+                  width: 125,
+                  height: 180,
                   decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
+                    color: Colors.grey.shade200,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: ColorSystem.publication.titleLocationButton,
+                      width: 0.5,
+                      style: BorderStyle.solid,
+                    ),
+                    image: controller.coverImage.value != null
+                        ? DecorationImage(
+                            image: FileImage(File(controller.coverImage.value!.path)),
+                            fit: BoxFit.cover,
+                          )
+                        : null,
                   ),
-                  child: const Text(
-                    '표지에 넣을 이미지',
-                    style: TextStyle(fontSize: 10),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ],
-            ),
+                  child: controller.coverImage.value == null
+                      ? Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.image, size: 40, color: Colors.grey),
+                            const SizedBox(height: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Text(
+                                '표지에 넣을 이미지',
+                                style: FontSystem.KR12M.copyWith(color: ColorSystem.publication.titleLocationButton),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ],
+                        )
+                      : null,
+                )),
           ),
           const SizedBox(width: 16),
-          // 오른쪽 텍스트 부분
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -90,11 +101,12 @@ class PublishScreen extends BaseScreen<PublishViewModel> {
                     ),
                   ]),
                   child: TextField(
+                    onChanged: controller.setBookTitle,
                     decoration: InputDecoration(
                       hintText: '제목을 입력하세요',
                       hintStyle: FontSystem.KR14R.copyWith(color: ColorSystem.publication.titleLocationButton),
                       border: InputBorder.none,
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                     ),
                     style: FontSystem.KR14SB.copyWith(color: ColorSystem.publication.optionTitle),
                   ),
@@ -104,10 +116,10 @@ class PublishScreen extends BaseScreen<PublishViewModel> {
                 const SizedBox(height: 10),
                 Row(
                   children: ['상단', '중간', '하단', '왼쪽']
-                      .map((text) => Container(
+                      .map((text) => Obx(() => Container(
                             margin: const EdgeInsets.only(right: 11),
                             decoration: BoxDecoration(
-                              color: Colors.white,
+                              color: controller.titleLocation.value == text ? ColorSystem.mainBlue : Colors.white,
                               borderRadius: BorderRadius.circular(5),
                               boxShadow: [
                                 BoxShadow(
@@ -121,17 +133,19 @@ class PublishScreen extends BaseScreen<PublishViewModel> {
                             child: Material(
                               color: Colors.transparent,
                               child: InkWell(
-                                onTap: () {
-                                  // 버튼 탭 동작 추가
-                                },
+                                onTap: () => controller.setTitleLocation(text),
                                 borderRadius: BorderRadius.circular(5),
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                                  child: Text(text, style: FontSystem.KR12SB.copyWith(color: ColorSystem.publication.titleLocationButton)),
+                                  child: Text(
+                                    text,
+                                    style: FontSystem.KR12SB.copyWith(
+                                        color: controller.titleLocation.value == text ? Colors.white : ColorSystem.publication.titleLocationButton),
+                                  ),
                                 ),
                               ),
                             ),
-                          ))
+                          )))
                       .toList(),
                 ),
               ],
@@ -142,15 +156,13 @@ class PublishScreen extends BaseScreen<PublishViewModel> {
     );
   }
 
-  Container _publicationButton() {
+  Widget _publicationButton() {
     return Container(
       width: double.infinity,
       height: 40,
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: ElevatedButton(
-        onPressed: () {
-          // TODO: 출판 진행 로직 구현
-        },
+        onPressed: controller.proceedPublication,
         style: ElevatedButton.styleFrom(
           foregroundColor: Colors.white,
           backgroundColor: ColorSystem.mainBlue,
