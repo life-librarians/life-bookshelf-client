@@ -5,6 +5,7 @@ import 'package:life_bookshelf/viewModels/chatting/chatting_viewmodel.dart';
 import 'package:life_bookshelf/viewModels/chat-n/autobiography_viewmodel.dart';
 import 'package:life_bookshelf/viewModels/home/home_viewmodel.dart';
 import 'package:life_bookshelf/viewModels/mypage/mypage_viewmodel.dart';
+import 'package:life_bookshelf/viewModels/onboarding/onboarding_viewmodel.dart';
 import 'package:life_bookshelf/viewModels/publish/publish_viewmodel.dart';
 import 'package:life_bookshelf/viewModels/root/root_viewmodel.dart';
 import 'package:life_bookshelf/views/chatting/chatting_screen.dart';
@@ -36,5 +37,6 @@ class RootBinding extends Bindings {
     Get.put(PublishViewModel());
     Get.put(ChattingViewModel());
     Get.put(MypageViewModel());
+    Get.put(OnboardingViewModel());
   }
 }

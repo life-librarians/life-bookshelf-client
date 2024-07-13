@@ -18,12 +18,18 @@ class MypageViewModel extends GetxController {
   RxBool isRemindSubscribed = false.obs;
 
   void toggleSwitch(int index, bool value) {
-    if (index < switches.length) {
-      switches[index].value = !switches[index].value; // 토글 변경
-      // 서버에 업데이트 호출
+    if (index >= 0 && index < switches.length) {
+      switches[index].value = value;
+
       updateSwitchStateOnServer(index, switches[index].value);
+
+      print("Switch at index $index set to $value.");
+    } else {
+
+      print("Invalid index: $index. No switch updated.");
     }
   }
+
 
   Future<void> updateSwitchStateOnServer(int index, bool state) async {
     try {

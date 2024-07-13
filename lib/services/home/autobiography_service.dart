@@ -43,7 +43,6 @@ class HomeAutobiographyService {
         ]
     }
     ''';
-    await Future.delayed(Duration(milliseconds: 100)); // Simulate network delay
     var data = jsonDecode(jsonString);
     return (data['results'] as List)
         .map((autoJson) => HomeAutobiography.fromJson(autoJson))

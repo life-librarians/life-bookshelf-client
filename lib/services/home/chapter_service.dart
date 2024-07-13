@@ -48,7 +48,6 @@ class HomeChapterService {
         "hasPreviousPage": false
     }
     ''';
-    await Future.delayed(Duration(milliseconds: 100)); // Simulate network delay
     var data = jsonDecode(jsonString);
     currentChapterId = data['currentChapterId'];
     return (data['results'] as List)
