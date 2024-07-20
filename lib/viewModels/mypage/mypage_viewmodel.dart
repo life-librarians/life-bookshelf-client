@@ -90,12 +90,12 @@ class MypageViewModel extends GetxController {
     }
   }
 
-  Future<void> loadBookDetails(int memberId) async {
+  Future<void> loadBookDetails(int publicationId) async {
     try {
-      final result = await apiService.fetchBookDetails(memberId);
+      final result = await apiService.fetchBookDetails(publicationId);
       bookDetail.value = result;
       publishingStatus.value = result.publishStatus!;
-      print("Book details loaded for member ID $memberId: ${bookDetail.value}");
+      print("Book details loaded for publicationId ID $publicationId: ${bookDetail.value}");
     } catch (e) {
       print("Failed to load book details: $e");
     }

@@ -5,7 +5,6 @@ import 'package:life_bookshelf/utilities/color_system.dart';
 import 'package:life_bookshelf/utilities/font_system.dart';
 import 'package:life_bookshelf/viewModels/mypage/mypage_viewmodel.dart';
 
-
 class PublicationProgress extends StatelessWidget {
   const PublicationProgress({super.key});
 
@@ -235,5 +234,3 @@ class _PubCompleted extends StatelessWidget {
     );
   }
 }
-
-
