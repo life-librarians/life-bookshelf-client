@@ -37,9 +37,9 @@ class MainApp extends StatelessWidget {
             colorSchemeSeed: Colors.blue,
             scaffoldBackgroundColor: const Color(0xFFf6f6f8),
         ),
-        home: onboardingCompleted ? RootScreen() : OnboardingScreen(),
+        home: onboardingCompleted ? const RootScreen() : OnboardingScreen(),
     getPages: [
-    GetPage(name: '/', page: () => RootScreen(), binding: RootBinding()),
+    GetPage(name: '/', page: () => const RootScreen(), binding: RootBinding()),
     GetPage(name: '/onboarding', page: () => OnboardingScreen()),
     ],
     );
