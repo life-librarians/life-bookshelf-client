@@ -242,7 +242,7 @@ class _Bottom extends StatelessWidget {
                     text: 'Sign In',
                     style: FontSystem.KR14R.copyWith(color: Color(0xFF567AF3)),
                     recognizer: TapGestureRecognizer()..onTap = () {
-                      Get.to(LoginScreen()); // 페이지 이동
+                      Get.to(() => LoginScreen()); // 페이지 이동
                     },
                   ),
                 ],

@@ -71,7 +71,9 @@ class FixContentBuild extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          viewModel.autobiography.value!.contentPreview ?? "content preview",
+          viewModel.autobiography.value?.content != null && viewModel.autobiography.value!.content!.length > 15
+              ? viewModel.autobiography.value!.content!.substring(0, 15) + "..."
+              : viewModel.autobiography.value?.content ?? "content preview",
           style: FontSystem.KR20_72SB.copyWith(color: Color(0xFF192252)),
         ),
         SizedBox(height: 13),
