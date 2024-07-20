@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:life_bookshelf/utilities/color_system.dart';
 import 'package:life_bookshelf/utilities/font_system.dart';
+import 'package:life_bookshelf/utilities/screen_utils.dart';
 import 'package:life_bookshelf/viewModels/mypage/mypage_viewmodel.dart';
 import 'package:life_bookshelf/views/base/base_screen.dart';
 import 'package:life_bookshelf/views/mypage/components/publication_progress.dart';
@@ -74,7 +75,6 @@ class _Profile extends StatelessWidget {
               'assets/icons/mypage/profile.svg',
               width: 42,
               height: 42,
-
             ),
             SizedBox(width: 13),
             Column(
@@ -139,7 +139,7 @@ class _BookBoxs extends StatelessWidget {
           final book = viewModel.bookList.value?.results[index];  // Get book details
           return _BookBox(
               title: book?.title ?? "No Title",  // Pass the title
-              visibility: book?.visibleScope == "PUBLIC" ? "공개" : "비공개"  // Determine visibility
+              // visibility: book?.visibleScope == "PUBLIC" ? "공개" : "비공개"  // Determine visibility
           );
         },
       )),
@@ -149,69 +149,89 @@ class _BookBoxs extends StatelessWidget {
 
 class _BookBox extends StatelessWidget {
   final String title;
-  final String visibility;
 
   const _BookBox({
     super.key,
     required this.title,
-    required this.visibility,
   });
+
+  void _showModal() {
+    Get.dialog(
+      AlertDialog(
+        title: const Center(
+          child: Text(
+            '자서전을 만들고 있어요',
+            style: FontSystem.KR20B,
+          ),
+        ),
+        content: Padding(
+          padding: const EdgeInsets.all(5),
+          child: Text(
+            '여행자님과의 대화들로부터 자서전을 만들고있어요. 모두 완성된 뒤에는 알림으로 알려드릴게요. 평균 2일 소요되어요.',
+            style: FontSystem.KR13R.copyWith(color: ColorSystem.chatting.modalContentColor),
+          ),
+        ),
+        actions: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Expanded(
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: ColorSystem.white,
+                    backgroundColor: ColorSystem.accentBlue,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
+                    fixedSize: Size.fromHeight(42.h),
+                  ),
+                  child: Text('확인했어요', style: FontSystem.KR14SB.copyWith(color: ColorSystem.white)),
+                  onPressed: () => Get.back(),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    final viewmodel = Get.find<MypageViewModel>();
-    return Container(
-      margin: const EdgeInsets.only(right: 9),
-      width: Get.width * 0.34,
-      height: 41,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(4.23),
-        image: DecorationImage(
-          image: AssetImage("assets/icons/main/example.png"),
-          fit: BoxFit.cover,
-          colorFilter: ColorFilter.mode(
-            Colors.black.withOpacity(0.69),
-            BlendMode.darken,
+    return InkWell(
+      onTap: () {
+        _showModal();
+      },
+      child: Container(
+        margin: const EdgeInsets.only(right: 9),
+        width: Get.width * 0.34,
+        height: 41,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(4.23),
+          image: DecorationImage(
+            image: AssetImage("assets/icons/main/example.png"),
+            fit: BoxFit.cover,
+            colorFilter: ColorFilter.mode(
+              Colors.black.withOpacity(0.69),
+              BlendMode.darken,
+            ),
           ),
         ),
-      ),
-      child: Stack(
-        children: [
-          Container(
-            margin: const EdgeInsets.only(left: 8),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                title,
-                style: FontSystem.KR10B.copyWith(color: Colors.white),
+        child: Stack(
+          children: [
+            Container(
+              margin: const EdgeInsets.only(left: 8),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  title,
+                  style: FontSystem.KR10B.copyWith(color: Colors.white),
+                ),
               ),
             ),
-          ),
-          Positioned(
-            top: 5,
-            right: 4,
-            child: InkWell(
-              onTap: () {
-                // Toggle visibility
-                print("Toggling visibility for $title");
-              },
-              child: Container(
-                  decoration: BoxDecoration(
-                    color: visibility == "공개" ? ColorSystem.screen.green : ColorSystem.screen.red,
-                    borderRadius: BorderRadius.circular(2.35),
-                  ),
-                  width: 27,
-                  height: 29.51,
-                  child: Center(
-                    child: Text(
-                      visibility,
-                      style: FontSystem.KR10B.copyWith(color: Colors.white),
-                    ),
-                  )
-              ),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

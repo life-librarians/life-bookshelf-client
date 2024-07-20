@@ -1,15 +1,16 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:life_bookshelf/models/mypage/mypage_model.dart';// Assume this is the model for the list of books with pagination
 
 class MyPageApiService {
-  final String baseUrl = "https://yourapi.com/api/v1";
+  String baseUrl = '${dotenv.env['API']}';
 
   Future<MyPageUserModel> fetchUserProfile() async {
     // Commented out real API call for demonstration purposes
     /*
-    final response = await http.get(Uri.parse('$baseUrl/members/me'));
+    final response = await http.get(Uri.parse('$baseUrl/v1/members/me'));
     if (response.statusCode == 200) {
       return MyPageUserModel.fromJson(json.decode(response.body));
     } else {
@@ -26,10 +27,10 @@ class MyPageApiService {
     return MyPageUserModel.fromJson(json.decode(responseJson));
   }
 
-  Future<BookDetailModel> fetchBookDetails(int memberId) async {
+  Future<BookDetailModel> fetchBookDetails(int publicationId) async {
     // Commented out real API call for demonstration purposes
     /*
-    final response = await http.get(Uri.parse('$baseUrl/books/$memberId'));
+    final response = await http.get(Uri.parse('$baseUrl/v1/publications/$publicationId/progress'));
     if (response.statusCode == 200) {
       return BookDetailModel.fromJson(json.decode(response.body));
     } else {
