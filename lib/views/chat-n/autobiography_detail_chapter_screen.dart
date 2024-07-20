@@ -14,6 +14,9 @@ class AutobiographyDetailScreen extends BaseScreen<AutobiographyViewModel> {
 
   @override
   PreferredSizeWidget? buildAppBar(BuildContext context) {
+    final AutobiographyViewModel viewModel = Get.find<AutobiographyViewModel>();
+    // viewModel.loadAutobiography(autobiographyId);
+
     return AppBar(
       backgroundColor: Color(0xFFF7F7F7),
       leading: Padding(
