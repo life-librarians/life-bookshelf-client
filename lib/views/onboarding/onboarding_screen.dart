@@ -19,14 +19,14 @@ class OnboardingScreen extends BaseScreen<OnboardingViewModel> {
     viewModel.updateCurrentQuestion();
     return Column(
       children: [
-        SizedBox(height: Get.height * 0.10),
+        SizedBox(height: Get.height * 0.05),
         CloudWindow(),
         SizedBox(
-          height: 27.0,
+          height: Get.height * 0.031,
         ),
         _Dots(),
         SizedBox(
-          height: 12.0,
+          height: Get.height * 0.012,
         ),
         _QuestionTexts(),
         _BottomItems(),
@@ -192,7 +192,7 @@ class _QuestionTexts extends StatelessWidget {
             ),
           ),
           SizedBox(
-            height: 15.0,
+            height: Get.height * 0.017,
           ),
           Container(
             alignment: Alignment.center,

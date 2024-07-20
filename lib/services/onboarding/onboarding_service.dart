@@ -1,35 +1,44 @@
-
-
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:life_bookshelf/models/onboarding/onboarding_model.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class OnboardingApiService {
-  final String apiUrl = "http://your-api-url.com/updateUser";
+  final String apiUrl = '${dotenv.env['API']}/api/v1/members/me';
 
   // 사용자 정보 업데이트 메서드
   Future<void> updateUser(OnUserModel user) async {
     print("Sending request to URL: $apiUrl");
-    print("Request body: ${jsonEncode(user.toJson())}");
 
-    // final response = await http.post(
-    //   Uri.parse(apiUrl),
-    //   headers: <String, String>{
-    //     'Content-Type': 'application/json; charset=UTF-8',
-    //   },
-    //   body: jsonEncode(user.toJson()),
-    // );
+    // 실제 구동 코드 (주석 처리)
+    /*
+    var request = http.MultipartRequest('POST', Uri.parse(apiUrl));
+    request.fields['name'] = user.name;
+    request.fields['bornedAt'] = user.bornedAt.toIso8601String();
+    request.fields['gender'] = user.gender;
+    request.fields['hasChildren'] = user.hasChildren.toString();
 
-    // 서버 응답 시뮬레이션
-    int simulatedStatusCode = 200; // 테스트를 위해 상태 코드를 설정
+    var response = await request.send();
+    var responseBody = await response.stream.bytesToString();
 
-    if (simulatedStatusCode == 200) {
-      // 성공 시 처리를 시뮬레이션
-      await Future.delayed(Duration(seconds: 3));
+    if (response.statusCode == 200) {
       print('회원 정보가 성공적으로 수정되었습니다.');
+    } else if (response.statusCode == 400) {
+      final errorResponse = jsonDecode(responseBody);
+      throw Exception('회원 정보 수정 실패: ${errorResponse['message']}');
     } else {
-      // 실패 시 에러 처리를 시뮬레이션
-      print('Failed to update user info. Status Code: $simulatedStatusCode');
+      throw Exception('회원 정보 수정 실패. 상태 코드: ${response.statusCode}');
     }
+    */
+    // 테스트용 코드
+    print("Request body:");
+    print("name: ${user.name}");
+    print("bornedAt: ${user.bornedAt}");
+    print("gender: ${user.gender}");
+    print("hasChildren: ${user.hasChildren}");
+
+    await Future.delayed(Duration(seconds: 4));
+
+
   }
 }

@@ -37,27 +37,30 @@ class DateField extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: 33),
+          SizedBox(height: Get.height * 0.038),
           GestureDetector(
             onTap: showCupertinoDatePicker,
             child: AbsorbPointer(
-              child: TextField(
-                controller: _controller,
-                decoration: InputDecoration(
-                  hintText: "생년월일을 입력하기 위해 터치",
-                  hintStyle: TextStyle(color: viewModel.isDateValid.value || viewModel.isButtonPressed.value == false? ColorSystem.onboarding.fontGray : Colors.red),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide(
-                      color: viewModel.isDateValid.value || viewModel.isButtonPressed.value == false? Color(0xFFD5D4DC) : Colors.red,
-                      width: 1,
+              child: Container(
+                  height: Get.height * 0.056,
+                child: TextField(
+                  controller: _controller,
+                  decoration: InputDecoration(
+                    hintText: "생년월일을 입력하기 위해 터치",
+                    hintStyle: TextStyle(color: viewModel.isDateValid.value || viewModel.isButtonPressed.value == false? ColorSystem.onboarding.fontGray : Colors.red),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(
+                        color: viewModel.isDateValid.value || viewModel.isButtonPressed.value == false? Color(0xFFD5D4DC) : Colors.red,
+                        width: 1,
+                      ),
                     ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide(
-                      color: viewModel.isDateValid.value ? ColorSystem.mainBlue : Colors.red,
-                      width: 1,
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(
+                        color: viewModel.isDateValid.value ? ColorSystem.mainBlue : Colors.red,
+                        width: 1,
+                      ),
                     ),
                   ),
                 ),

@@ -13,6 +13,7 @@ import '../base/base_screen.dart';
 import '../../utilities/color_system.dart';
 
 class RootScreen extends BaseScreen<RootViewModel> {
+
   const RootScreen({super.key});
 
   @override
