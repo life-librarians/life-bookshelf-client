@@ -46,7 +46,7 @@ class RegisterViewModel extends GetxController {
       print('Register successful');
       Get.to(LoginScreen());
     } catch (e) {
-      registerError.value = e.toString(); // 에러 메시지를 상태로 저장
+      registerError.value = e.toString();
       print('Login failed: $registerError');
     } finally {
       isLoading(false);
