@@ -13,12 +13,14 @@ class CloudWindow extends StatelessWidget {
   Widget build(BuildContext context) {
     String text = "Powered by GIPHY";
     double width = MediaQuery.of(context).size.width *
-        0.58; // Calculate width based on screen size
+        0.58;
+    double height = MediaQuery.of(context).size.height *
+        0.35;
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         FutureBuilder<img.Image?>(
-          future: loadAnimatedWebP('assets/images/cloud_1.webp', width.toInt()),
+          future: loadAnimatedWebP('assets/images/cloud_1.webp', width.toInt(), height.toInt()),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done &&
                 snapshot.hasData) {
@@ -55,14 +57,14 @@ class CloudWindow extends StatelessWidget {
   }
 }
 
-Future<img.Image?> loadAnimatedWebP(String path, int width) async {
+Future<img.Image?> loadAnimatedWebP(String path, int width, int height) async {
   try {
     final ByteData data = await rootBundle.load(path);
     final Uint8List bytes = data.buffer.asUint8List();
     var image = img.decodeWebP(bytes);
     if (image != null) {
       // Resize the image to dynamic width and 305 pixels height
-      image = img.copyResize(image, width: width, height: 305);
+      image = img.copyResize(image, width: width, height: height);
     }
     return image;
   } catch (e) {
