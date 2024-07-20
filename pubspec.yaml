@@ -22,7 +22,7 @@ dependencies:
   intl: ^0.18.1
   dotted_line: ^3.2.2
   shimmer: ^3.0.0
-  shared_preferences: ^2.2.2
+  shared_preferences: ^2.2.3
   flutter_switch: ^0.3.2
   speech_to_text: ^6.6.2
   image_picker: ^1.1.2

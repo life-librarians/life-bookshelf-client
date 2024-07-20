@@ -1,16 +1,16 @@
-
 import 'package:get/get.dart';
 import 'package:life_bookshelf/models/onboarding/onboarding_model.dart';
 import 'package:life_bookshelf/services/onboarding/onboarding_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class OnboardingViewModel extends GetxController{
+class OnboardingViewModel extends GetxController {
+  var currentQuestionIndex = 0.obs;
 
-var currentQuestionIndex = 0.obs;
 // 답을 저장할 List<String>형태의 .obs
-var answers = <String>[].obs;
+  var answers = <String>[].obs;
 
-var currentQuestion = "".obs;
-var currentQuestionDetail = "".obs;
+  var currentQuestion = "".obs;
+  var currentQuestionDetail = "".obs;
 
   var isDateValid = false.obs;
   var isNameValid = false.obs;
@@ -31,7 +31,7 @@ var currentQuestionDetail = "".obs;
     "성별은 우리의 일부일 뿐이지만, 사람마다 특별한 이야기를 담고 있죠. 여행자님의 성별은 어떻게 되시나요?",
     "자녀가 있다면 그만큼 삶이 풍요로워지죠. 여행자님의 가족 이야기가 궁금해요. 자녀가 있으신가요?",
     "답해주신 내용으로 책을 만들기 위한 가장 적절한 챕터를 만들고있어요..."
-      ];
+  ];
 
   final OnboardingApiService _userService = OnboardingApiService();
 
@@ -46,7 +46,8 @@ var currentQuestionDetail = "".obs;
 
       try {
         await _userService.updateUser(user);
-        Get.toNamed('/home');  // 이동 로직을 try-catch 블록 안으로 이동
+        await setOnboardingCompleted();
+        Get.toNamed('/home'); // 이동 로직을 try-catch 블록 안으로 이동
       } catch (error) {
         print("Error updating user: $error");
       }
@@ -54,7 +55,6 @@ var currentQuestionDetail = "".obs;
       print("Not enough information to update user.");
     }
   }
-
 
   void updateAnswer(String text) {
     if (currentQuestionIndex.value >= answers.length) {
@@ -75,7 +75,8 @@ var currentQuestionDetail = "".obs;
   }
 
   void validateDate() {
-    if (answers.length <= currentQuestionIndex.value && isButtonPressed.value == true) {
+    if (answers.length <= currentQuestionIndex.value &&
+        isButtonPressed.value == true) {
       isDateValid(false);
     } else {
       isDateValid(true);
@@ -83,10 +84,28 @@ var currentQuestionDetail = "".obs;
   }
 
   void validateName(String newName) {
-    if(answers.length <= currentQuestionIndex.value && isButtonPressed.value == true) {
+    if (answers.length <= currentQuestionIndex.value &&
+        isButtonPressed.value == true) {
       isNameValid(false);
     } else {
       isNameValid(true);
     }
+  }
+
+  Future<void> setOnboardingCompleted() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('onboardingCompleted', true);
+  }
+
+  Future<bool> isOnboardingCompleted() async {
+    final prefs = await SharedPreferences.getInstance();
+    print("Onboarding completed: ${prefs.getBool('onboardingCompleted')}");
+    return prefs.getBool('onboardingCompleted') ?? false;
+  }
+
+  Future<void> clearOnboardingStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('onboardingCompleted');
+    print("Onboarding status has been cleared");
   }
 }
