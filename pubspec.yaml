@@ -19,7 +19,7 @@ dependencies:
   flutter_launcher_icons: ^0.13.1
   get: ^4.6.6
   flutter_svg: ^2.0.9
-  intl: ^0.18.1
+  intl: ^0.19.0
   dotted_line: ^3.2.2
   shimmer: ^3.0.0
   shared_preferences: ^2.2.2
@@ -33,7 +33,7 @@ dev_dependencies:
     sdk: flutter
 
   flutter_lints: ^3.0.1
-  intl_translation: ^0.18.1
+  intl_translation: ^0.20.0
 
 flutter:
   uses-material-design: true
@@ -43,6 +43,7 @@ flutter:
     - assets/config/.env
     - assets/icons/
     - assets/icons/main/
+    - assets/icons/login/
     - assets/icons/mypage/
     - assets/images/
     - assets/images/login/

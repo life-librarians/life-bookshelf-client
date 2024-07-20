@@ -94,8 +94,8 @@ class _TopCurrentPage extends StatelessWidget {
     final viewmodel = Get.find<HomeViewModel>();
     return GestureDetector(
       onTap: () {
-        //시원님 API 수정된 다음에 autobioID로 이동하게 수정해놓을게요
-        //지금은 현재 챕터의 맨 위 소챕터로 세팅해놨어요
+        // 시원님 API 수정된 다음에 autobioID로 이동하게 수정해놓을게요
+        // 지금은 현재 챕터의 맨 위 소챕터로 세팅해놨어요
         final currentChapterId = viewmodel.currentChapter.value?.chapterId;
         final currentAutobiographies = viewmodel.autobiographies[currentChapterId ?? 0];
         print("현재 인터뷰로 이동");
