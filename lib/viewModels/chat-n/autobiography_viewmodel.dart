@@ -20,6 +20,7 @@ class AutobiographyViewModel extends GetxController {
   RxList<Map<String, String>> textCorrections = <Map<String, String>>[].obs;
   RxMap<int, bool> correctionStates = <int, bool>{}.obs;
 
+  // 수정 에딧
   void toggleEditing() {
     isEditing.value = !isEditing.value;
   }
