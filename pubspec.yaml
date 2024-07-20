@@ -5,66 +5,67 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-    sdk: ">=3.1.3 <4.0.0"
+  sdk: ">=3.1.3 <4.0.0"
 
 dependencies:
-    flutter:
-        sdk: flutter
-    flutter_localizations:
-        sdk: flutter
-    collection: any
-    cupertino_icons: ^1.0.2
-    flutter_native_splash: ^2.3.6
-    flutter_dotenv: ^5.1.0
-    flutter_launcher_icons: ^0.13.1
-    get: ^4.6.6
-    flutter_svg: ^2.0.9
-    intl: ^0.18.1
-    dotted_line: ^3.2.2
-    shimmer: ^3.0.0
-    shared_preferences: ^2.2.2
-    flutter_switch: ^0.3.2
-    speech_to_text: ^6.6.2
-    image: ^4.2.0
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  collection: any
+  cupertino_icons: ^1.0.2
+  flutter_native_splash: ^2.3.6
+  flutter_dotenv: ^5.1.0
+  flutter_launcher_icons: ^0.13.1
+  get: ^4.6.6
+  flutter_svg: ^2.0.9
+  intl: ^0.18.1
+  dotted_line: ^3.2.2
+  shimmer: ^3.0.0
+  shared_preferences: ^2.2.2
+  flutter_switch: ^0.3.2
+  speech_to_text: ^6.6.2
+  image_picker: ^1.1.2
+  image: ^4.2.0
 
 dev_dependencies:
-    flutter_test:
-        sdk: flutter
+  flutter_test:
+    sdk: flutter
 
-    flutter_lints: ^3.0.1
-    intl_translation: ^0.18.1
+  flutter_lints: ^3.0.1
+  intl_translation: ^0.18.1
 
 flutter:
-    uses-material-design: true
+  uses-material-design: true
 
-    assets:
-        - assets/fonts/
-        - assets/config/.env
-        - assets/icons/
-        - assets/icons/main/
-        - assets/icons/mypage/
-        - assets/images/
-        - assets/images/login/
-        - assets/images/register/
+  assets:
+    - assets/fonts/
+    - assets/config/.env
+    - assets/icons/
+    - assets/icons/main/
+    - assets/icons/mypage/
+    - assets/images/
+    - assets/images/login/
+    - assets/images/register/
 
-    fonts:
-        - family: Pretendard
-          fonts:
-              - asset: assets/fonts/Pretendard-Thin.otf
-                weight: 100
-              - asset: assets/fonts/Pretendard-ExtraLight.otf
-                weight: 200
-              - asset: assets/fonts/Pretendard-Light.otf
-                weight: 300
-              - asset: assets/fonts/Pretendard-Regular.otf
-                weight: 400
-              - asset: assets/fonts/Pretendard-Medium.otf
-                weight: 500
-              - asset: assets/fonts/Pretendard-SemiBold.otf
-                weight: 600
-              - asset: assets/fonts/Pretendard-Bold.otf
-                weight: 700
-              - asset: assets/fonts/Pretendard-ExtraBold.otf
-                weight: 800
-              - asset: assets/fonts/Pretendard-Black.otf
-                weight: 900
+  fonts:
+    - family: Pretendard
+      fonts:
+        - asset: assets/fonts/Pretendard-Thin.otf
+          weight: 100
+        - asset: assets/fonts/Pretendard-ExtraLight.otf
+          weight: 200
+        - asset: assets/fonts/Pretendard-Light.otf
+          weight: 300
+        - asset: assets/fonts/Pretendard-Regular.otf
+          weight: 400
+        - asset: assets/fonts/Pretendard-Medium.otf
+          weight: 500
+        - asset: assets/fonts/Pretendard-SemiBold.otf
+          weight: 600
+        - asset: assets/fonts/Pretendard-Bold.otf
+          weight: 700
+        - asset: assets/fonts/Pretendard-ExtraBold.otf
+          weight: 800
+        - asset: assets/fonts/Pretendard-Black.otf
+          weight: 900
