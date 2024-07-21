@@ -21,9 +21,8 @@ class RootBinding extends Bindings {
   void dependencies() {
     const String baseUrl = 'https://jsonplaceholder.typicode.com';
     // ParentViewModel is singleton
-    Get.put(RootViewModel());
+    Get.put(RootViewModel(), permanent: true);
 
-    // ChildViewModel is singleton
     Get.lazyPut(()=>LoginViewModel(LoginService()));
     Get.lazyPut(()=>RegisterViewModel(RegisterService()));
     

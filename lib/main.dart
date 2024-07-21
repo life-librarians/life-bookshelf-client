@@ -5,6 +5,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:life_bookshelf/main_app.dart';
 import 'package:life_bookshelf/services/userpreferences_service.dart';
 import 'package:life_bookshelf/viewModels/onboarding/onboarding_viewmodel.dart';
+import 'package:life_bookshelf/viewModels/root/root_viewmodel.dart';
 
 
 void main() async {
@@ -14,9 +15,11 @@ void main() async {
   await UserPreferences.init();
 
   Get.put(OnboardingViewModel());
+  Get.put(RootViewModel());
+
   final OnboardingViewModel viewmodel = Get.find<OnboardingViewModel>();
   final onboardingCompleted = await viewmodel.isOnboardingCompleted();
-  //온보딩 다시 하고싶을때 취소하깅
+  //온보딩 다시 하고싶을때 취소
   //viewmodel.clearOnboardingStatus();
 
   runApp( MainApp(initialRoute: "/",onboardingCompleted: onboardingCompleted));
