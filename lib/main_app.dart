@@ -12,7 +12,8 @@ class MainApp extends StatelessWidget {
 
   const MainApp({
     super.key,
-    required this.onboardingCompleted, required String initialRoute,
+    required this.onboardingCompleted,
+    required String initialRoute,
   });
 
   @override
@@ -22,26 +23,31 @@ class MainApp extends StatelessWidget {
     ScreenUtils().init(context);
 
     return GetMaterialApp(
-        title: "Life Bookshelf",
-        localizationsDelegates: const [
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        supportedLocales: const [
-          Locale('ko', 'KR'),
-        ],
-        theme: ThemeData(
-            useMaterial3: true,
-            fontFamily: 'Pretendard',
-            colorSchemeSeed: Colors.blue,
-            scaffoldBackgroundColor: const Color(0xFFf6f6f8),
-        ),
-        home: onboardingCompleted ? const RootScreen() : OnboardingScreen(),
-    getPages: [
-    GetPage(name: '/', page: () => const RootScreen(), binding: RootBinding()),
-    GetPage(name: '/onboarding', page: () => OnboardingScreen()),
-    ],
+      initialBinding: RootBinding(),
+      title: "Life Bookshelf",
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('ko', 'KR'),
+      ],
+      theme: ThemeData(
+        useMaterial3: true,
+        fontFamily: 'Pretendard',
+        colorSchemeSeed: Colors.blue,
+        scaffoldBackgroundColor: const Color(0xFFf6f6f8),
+      ),
+      home: onboardingCompleted ? const RootScreen() : OnboardingScreen(),
+      getPages: [
+        GetPage(
+            name: '/', page: () => const RootScreen(), binding: RootBinding()),
+        GetPage(
+            name: '/onboarding',
+            page: () => OnboardingScreen(),
+            binding: RootBinding()),
+      ],
     );
   }
 }

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:life_bookshelf/models/home/autobiography.dart';
 import 'package:life_bookshelf/models/home/chapter.dart';
 import 'package:life_bookshelf/utilities/font_system.dart';
 import 'package:life_bookshelf/viewModels/home/home_viewmodel.dart';
@@ -75,15 +74,18 @@ class _TopCurrentPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final viewmodel = Get.find<HomeViewModel>();
+    final currentChapter = viewmodel.currentChapter.value;
+    final currentSubChapter = currentChapter?.subChapters.isNotEmpty == true
+        ? currentChapter!.subChapters.first
+        : null;
     return GestureDetector(
-      onTap: () {
-        // 시원님 API 수정된 다음에 autobioID로 이동하게 수정해놓을게요
-        // 지금은 현재 챕터의 맨 위 소챕터로 세팅해놨어요
-        final currentChapterId = viewmodel.currentChapter.value?.chapterId;
-        final currentAutobiographies = viewmodel.autobiographies[currentChapterId ?? 0];
-        print("현재 인터뷰로 이동");
-        Get.to(() => ChattingScreen(currentAutobiographies: currentAutobiographies, currentChapterId: currentChapterId));
-      },
+        onTap: () {
+          if (currentSubChapter != null) {
+            print("현재 인터뷰로 이동");
+            //이부분 시원님 API수정으로 인해 구조 바뀔것 같으니까 재원님께서 수정해주세요
+            //Get.to(() => ChattingScreen(currentAutobiographies: currentAutobiographies, currentChapterId: currentChapterId));
+          }
+        },
       child: Column(children: [
         Stack(
           alignment: Alignment.bottomLeft,
@@ -166,7 +168,6 @@ class _Chapter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final viewmodel = Get.find<HomeViewModel>();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -179,8 +180,8 @@ class _Chapter extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(left: 26, right: 12.5),
               child: Column(
-                children: List.generate(viewmodel.autobiographies.length * 2 - 1, (index) {
-                  if (viewmodel.autobiographies.length == 1 && index == 0) {
+                children: List.generate((chapter.subChapters?.length ?? 0) * 2 - 1, (index) {
+                  if ((chapter.subChapters?.length ?? 0) == 1 && index == 0) {
                     return Container(
                       child: SvgPicture.asset("assets/icons/main/circle.svg"),
                     );
@@ -195,48 +196,40 @@ class _Chapter extends StatelessWidget {
                 }),
               ),
             ),
-            _ChapterBoxs(chapterId: chapter.chapterId),
+            _ChapterBoxs(chapter: chapter),
           ],
         ),
       ],
     );
   }
 }
-
 class _ChapterBoxs extends StatelessWidget {
-  final int chapterId;
+  final HomeChapter chapter;
 
-  const _ChapterBoxs({super.key, required this.chapterId});
+  const _ChapterBoxs({super.key, required this.chapter});
 
   @override
   Widget build(BuildContext context) {
-    print("ChapterId: $chapterId");
-    final viewmodel = Get.find<HomeViewModel>();
-    final autobiographies = viewmodel.autobiographies[chapterId] ?? [];
-
     return Column(
-      children: autobiographies.map((auto) => _ChapterBox(autobiography: auto)).toList(),
+      children: (chapter.subChapters ?? []).map((subChapter) => _ChapterBox(subChapter: subChapter)).toList(),
     );
   }
 }
 
-class _ChapterBox extends StatelessWidget {
-  final HomeAutobiography autobiography;
 
-  const _ChapterBox({super.key, required this.autobiography});
+class _ChapterBox extends StatelessWidget {
+  final HomeChapter subChapter;
+
+  const _ChapterBox({super.key, required this.subChapter});
 
   @override
   Widget build(BuildContext context) {
     final viewmodel = Get.find<HomeViewModel>();
-    String timeAgo = viewmodel.getTimeAge(autobiography.updatedAt);
+    String timeAgo = viewmodel.getTimeAge(subChapter.chapterCreatedAt);
 
     return GestureDetector(
       onTap: () {
-        final currentChapterId = viewmodel.currentChapter.value?.chapterId;
-        final currentAutobiographies = viewmodel.autobiographies[currentChapterId ?? 0];
-        //일단 0번째로 가도록. 시원님 API 수정 받으면 0번째가 아니라 현재 사용자 번째를 넣어 수정합니다.
-        //그리고 이거 currentChapterId도 받도록 수정하셔야 합니다. 몇번째 챕터의 몇번째 소챕터... 와같이 인덱싱 될 예정입니다.
-        Get.to(() => AutobiographyDetailScreen(autobiographyId: currentAutobiographies![0].autobiographyId));
+        Get.to(() => AutobiographyDetailScreen(autobiographyId: subChapter.chapterId));
       },
       child: Container(
         margin: const EdgeInsets.only(bottom: 17),
@@ -247,26 +240,11 @@ class _ChapterBox extends StatelessWidget {
                 topLeft: Radius.circular(7.78),
                 bottomLeft: Radius.circular(7.78),
               ),
-              child: Image.network(
-                autobiography.coverImageUrl,
+              child: Image.asset(
+                "assets/icons/main/example.png", // 예시 이미지로 대체
                 width: Get.width * 0.22,
                 height: 86,
                 fit: BoxFit.cover,
-                loadingBuilder: (context, child, loadingProgress) {
-                  if (loadingProgress == null) {
-                    return child;
-                  } else {
-                    return Shimmer.fromColors(
-                      baseColor: Colors.grey[300]!,
-                      highlightColor: Colors.grey[100]!,
-                      child: Container(
-                        width: Get.width * 0.22,
-                        height: 86,
-                        color: Colors.grey[300],
-                      ),
-                    );
-                  }
-                },
               ),
             ),
             ClipRRect(
@@ -285,15 +263,15 @@ class _ChapterBox extends StatelessWidget {
                     children: [
                       const SizedBox(height: 12),
                       Text(
-                        autobiography.title,
+                        'chapter ${subChapter.chapterNumber}',
                         style: FontSystem.KR12SB.copyWith(color: const Color(0xFF848FAC)),
                       ),
                       const SizedBox(height: 3),
                       Text(
-                        autobiography.contentPreview,
+                        subChapter.chapterName,
                         style: FontSystem.KR14SB.copyWith(color: const Color(0xFF192252)),
-                        maxLines: 1, // 텍스트를 한 줄로 제한
-                        overflow: TextOverflow.ellipsis, // 너비를 초과하는 텍스트는 생략하고 말줄임표를 추가
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 10),
                       Text(
