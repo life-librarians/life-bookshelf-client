@@ -11,9 +11,8 @@ import 'package:life_bookshelf/views/base/base_screen.dart';
 
 class ChattingScreen extends BaseScreen<ChattingViewModel> {
   final int? currentChapterId;
-  final List<HomeAutobiography>? currentAutobiographies;
 
-  const ChattingScreen({super.key, required this.currentChapterId, required this.currentAutobiographies});
+  const ChattingScreen({super.key, required this.currentChapterId});
 
   @override
   void initViewModel() {

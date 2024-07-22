@@ -7,7 +7,6 @@ import 'package:life_bookshelf/models/home/chapter.dart';
 import 'package:life_bookshelf/utilities/font_system.dart';
 import 'package:life_bookshelf/viewModels/home/home_viewmodel.dart';
 import 'package:life_bookshelf/views/base/base_screen.dart';
-import 'package:get/get.dart';
 import 'package:life_bookshelf/views/chatting/chatting_screen.dart';
 import 'package:dotted_line/dotted_line.dart';
 import 'package:life_bookshelf/views/onboarding/onboarding_screen.dart';
@@ -75,17 +74,16 @@ class _TopCurrentPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final viewmodel = Get.find<HomeViewModel>();
     final currentChapter = viewmodel.currentChapter.value;
-    final currentSubChapter = currentChapter?.subChapters.isNotEmpty == true
-        ? currentChapter!.subChapters.first
-        : null;
+    final currentSubChapter = currentChapter?.subChapters.isNotEmpty == true ? currentChapter!.subChapters.first : null;
     return GestureDetector(
-        onTap: () {
-          if (currentSubChapter != null) {
-            print("현재 인터뷰로 이동");
-            //이부분 시원님 API수정으로 인해 구조 바뀔것 같으니까 재원님께서 수정해주세요
-            //Get.to(() => ChattingScreen(currentAutobiographies: currentAutobiographies, currentChapterId: currentChapterId));
-          }
-        },
+      onTap: () {
+        // if (currentSubChapter != null) {
+        if (true) {
+          print("현재 인터뷰로 이동");
+          // TODO: 인터뷰 이동 네비게이션 수정
+          Get.to(() => const ChattingScreen(currentChapterId: 3));
+        }
+      },
       child: Column(children: [
         Stack(
           alignment: Alignment.bottomLeft,
@@ -180,8 +178,8 @@ class _Chapter extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(left: 26, right: 12.5),
               child: Column(
-                children: List.generate((chapter.subChapters?.length ?? 0) * 2 - 1, (index) {
-                  if ((chapter.subChapters?.length ?? 0) == 1 && index == 0) {
+                children: List.generate((chapter.subChapters.length ?? 0) * 2 - 1, (index) {
+                  if ((chapter.subChapters.length ?? 0) == 1 && index == 0) {
                     return Container(
                       child: SvgPicture.asset("assets/icons/main/circle.svg"),
                     );
@@ -203,6 +201,7 @@ class _Chapter extends StatelessWidget {
     );
   }
 }
+
 class _ChapterBoxs extends StatelessWidget {
   final HomeChapter chapter;
 
@@ -215,7 +214,6 @@ class _ChapterBoxs extends StatelessWidget {
     );
   }
 }
-
 
 class _ChapterBox extends StatelessWidget {
   final HomeChapter subChapter;
