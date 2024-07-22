@@ -28,4 +28,29 @@ class ChattingService extends GetxService {
       throw Exception('데이터를 불러오는 중 오류가 발생했습니다: $e');
     }
   }
+
+  Future<String> getNextQuestion(List<Map<String, dynamic>> conversations, List<String> predefinedQuestions) async {
+    try {
+      final response = await http.post(
+        // TODO: API URL 수정 필요 (ai 서버 측)
+        Uri.parse(''),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode({
+          'conversations': conversations,
+          'predefinedQuestions': predefinedQuestions,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
+        return data['nextQuestion'] as String;
+      } else {
+        throw Exception('서버 오류가 발생했습니다. 상태 코드: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('다음 질문을 가져오는 중 오류가 발생했습니다: $e');
+    }
+  }
 }

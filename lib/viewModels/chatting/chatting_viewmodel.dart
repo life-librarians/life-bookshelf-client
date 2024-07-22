@@ -15,6 +15,15 @@ class ChattingViewModel extends GetxController {
   final RxList<Conversation> conversations = <Conversation>[].obs;
   final RxBool isLoading = true.obs;
 
+  // 사전에 생성한 질문 리스트 (예시)
+  final List<String> predefinedQuestions = [
+    "어린 시절 가장 행복했던 순간은 언제인가요?",
+    "가장 힘들었던 경험은 무엇이었나요?",
+    "인생에서 가장 중요한 결정은 무엇이었나요?",
+    "가장 존경하는 인물은 누구인가요?",
+    "미래에 이루고 싶은 꿈은 무엇인가요?"
+  ];
+
   // Image Picker
   final ImagePicker _picker = ImagePicker();
   final Rx<File?> selectedImage = Rx<File?>(null);
@@ -58,8 +67,7 @@ class ChattingViewModel extends GetxController {
     } else if (micState == MicState.finish) {
       await _stopListening();
     } else {
-      // TODO: 다음 질문 받아오기
-      // await _apiService.getNextQuestion();
+      _getNextQuestion();
     }
   }
 
@@ -97,14 +105,6 @@ class ChattingViewModel extends GetxController {
     }
   }
 
-  void addAIResponse(String response) {
-    conversations.add(Conversation(
-      conversationType: 'AI',
-      content: response,
-    ));
-    updateChatBubbles();
-  }
-
   /// STT 종료
   Future<void> _stopListening() async {
     await _speech.stop();
@@ -130,6 +130,34 @@ class ChattingViewModel extends GetxController {
 
   void clearSelectedImage() {
     selectedImage.value = null;
+  }
+
+  /// 답변 후 다음 질문 받아오기
+  Future<void> _getNextQuestion() async {
+    try {
+      isLoading(true);
+
+      // 현재까지의 대화 내용을 JSON 형태로 변환
+      conversations.sort((a, b) => a.timestamp.compareTo(b.timestamp)); // 시간순 정렬
+      final conversationsJson = conversations.map((conv) => conv.toJson()).toList();
+
+      final nextQuestion = await _apiService.getNextQuestion(conversationsJson, predefinedQuestions);
+
+      if (nextQuestion.isNotEmpty) {
+        conversations.add(Conversation(
+          conversationType: 'AI',
+          content: nextQuestion,
+        ));
+        updateChatBubbles();
+      } else {
+        // 더 이상 질문이 없는 경우 처리
+        Get.snackbar('알림', '모든 질문이 완료되었습니다.');
+      }
+    } catch (e) {
+      Get.snackbar('오류', e.toString());
+    } finally {
+      isLoading(false);
+    }
   }
 }
 
