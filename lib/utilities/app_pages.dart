@@ -27,16 +27,16 @@ List<GetPage> appPages = [
   ),
   GetPage(
     name: Routes.CHATTING,
+    // TODO: 네비게이팅 수정
     page: () => ChattingScreen(
       currentChapterId: Get.arguments['currentChapterId'],
-      currentAutobiographies: Get.arguments['currentAutobiographies'],
+      // currentAutobiographies: Get.arguments['currentAutobiographies'],
     ),
     binding: RootBinding(),
   ),
   GetPage(
     name: Routes.ONBOARDING,
-    page: () => OnboardingScreen(),
+    page: () => const OnboardingScreen(),
     binding: RootBinding(),
-
   )
 ];

@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:life_bookshelf/models/chatting/conversation_model.dart';
 import 'package:life_bookshelf/services/chatting/chatting_service.dart';
 import 'package:life_bookshelf/views/chatting/chatBubble.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
@@ -11,6 +12,7 @@ class ChattingViewModel extends GetxController {
   final stt.SpeechToText _speech = stt.SpeechToText();
   final RxString _currentSpeech = ''.obs;
   final RxList<ChatBubble> chatBubbles = <ChatBubble>[].obs;
+  final RxList<Conversation> conversations = <Conversation>[].obs;
   final RxBool isLoading = true.obs;
 
   // Image Picker
@@ -27,19 +29,24 @@ class ChattingViewModel extends GetxController {
   Future<void> loadConversations(int autobiographyId, {int page = 1, int size = 20}) async {
     try {
       isLoading(true);
-      final conversations = await _apiService.getConversations(autobiographyId, page, size);
-      chatBubbles.value = conversations
-          .map((conv) => ChatBubble(
-                isUser: conv.conversationType == 'HUMAN',
-                message: conv.content,
-                isFinal: true,
-              ))
-          .toList();
+      final loadedConversations = await _apiService.getConversations(autobiographyId, page, size);
+      conversations.value = loadedConversations;
+      updateChatBubbles();
     } catch (e) {
       Get.snackbar('오류', e.toString());
     } finally {
       isLoading(false);
     }
+  }
+
+  void updateChatBubbles() {
+    chatBubbles.value = conversations
+        .map((conv) => ChatBubble(
+              isUser: conv.conversationType == 'HUMAN',
+              message: conv.content,
+              isFinal: true,
+            ))
+        .toList();
   }
 
   /// 채팅 화면 아래 버튼 state 변경
@@ -50,6 +57,9 @@ class ChattingViewModel extends GetxController {
       await _startListening();
     } else if (micState == MicState.finish) {
       await _stopListening();
+    } else {
+      // TODO: 다음 질문 받아오기
+      // await _apiService.getNextQuestion();
     }
   }
 
@@ -74,14 +84,25 @@ class ChattingViewModel extends GetxController {
           chatBubbles[bubbleIndex] = ChatBubble(isUser: true, message: _currentSpeech.value);
 
           if (result.finalResult) {
-            // 최종 결과일 경우 말풍선 확정
-            chatBubbles[bubbleIndex] = ChatBubble(isUser: true, message: _currentSpeech.value, isFinal: true);
+            conversations.add(Conversation(
+              conversationType: 'HUMAN',
+              content: _currentSpeech.value,
+            ));
+            updateChatBubbles();
             _currentSpeech.value = '';
           }
         },
         localeId: 'ko_KR', // 한국어 설정
       );
     }
+  }
+
+  void addAIResponse(String response) {
+    conversations.add(Conversation(
+      conversationType: 'AI',
+      content: response,
+    ));
+    updateChatBubbles();
   }
 
   /// STT 종료
