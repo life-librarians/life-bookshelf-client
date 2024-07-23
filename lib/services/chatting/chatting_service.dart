@@ -1,10 +1,14 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
 import 'package:life_bookshelf/models/chatting/conversation_model.dart';
+import 'package:life_bookshelf/services/image_upload_service.dart';
 
 class ChattingService extends GetxService {
+  final ImageUploadService _imageUploadService = Get.find<ImageUploadService>();
+
   // TODO: Null Checking
   final String baseUrl = dotenv.env['API'] ?? "";
 
@@ -27,5 +31,38 @@ class ChattingService extends GetxService {
     } catch (e) {
       throw Exception('데이터를 불러오는 중 오류가 발생했습니다: $e');
     }
+  }
+
+  Future<Map<String, dynamic>> getNextQuestion(List<Map<String, dynamic>> conversations, List<String> predefinedQuestions) async {
+    try {
+      final response = await http.post(
+        // TODO: API URL 수정 필요 (ai 서버 측)
+        Uri.parse(''),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode({
+          'conversations': conversations,
+          'predefinedQuestions': predefinedQuestions,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
+        return {
+          'nextQuestion': data['nextQuestion'] as String,
+          'isPredefined': data['isPredefined'] as bool,
+        };
+      } else {
+        throw Exception('서버 오류가 발생했습니다. 상태 코드: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('다음 질문을 가져오는 중 오류가 발생했습니다: $e');
+    }
+  }
+
+  /// presigned URL을 통해 이미지를 S3에 업로드
+  Future<String> uploadImage(File imageFile) async {
+    return await _imageUploadService.uploadImage(imageFile, ImageUploadFolder.bioCoverImages);
   }
 }
