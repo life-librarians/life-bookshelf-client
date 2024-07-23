@@ -62,8 +62,8 @@ class ChattingService extends GetxService {
   /// Presigned URL을 통해 이미지 업로드
   Future<String> getPresignedUrl(File imageFile) async {
     final String fileName = imageFile.path.split('/').last;
-    final String randomString = Uuid().v4();
-    final String key = 'profile-images/$randomString/$fileName';
+    final String randomString = const Uuid().v4();
+    final String key = 'bio-cover-images/$randomString/$fileName';
 
     try {
       final response = await http.post(
@@ -104,10 +104,11 @@ class ChattingService extends GetxService {
     }
   }
 
-  Future<void> uploadImage(File imageFile) async {
+  Future<String> uploadImage(File imageFile) async {
     try {
       final presignedUrl = await getPresignedUrl(imageFile);
       await uploadToS3(presignedUrl, imageFile);
+      return presignedUrl;
     } catch (e) {
       throw Exception('Error in image upload process: $e');
     }

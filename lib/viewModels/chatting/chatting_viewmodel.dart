@@ -122,8 +122,9 @@ class ChattingViewModel extends GetxController {
 
   Future<void> saveImage() async {
     if (selectedImage.value != null) {
-      // TODO: 이미지 업로드 API 호출
-      await _apiService.uploadImage(selectedImage.value!);
+      final presignedUrl = await _apiService.uploadImage(selectedImage.value!);
+      // TODO: 이미지 업로드 완료 후 자서전 내용 서버에 업로드 (이미지 url과 함께)
+      // ~
       selectedImage.value = null;
     }
   }
