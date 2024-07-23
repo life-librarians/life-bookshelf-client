@@ -27,6 +27,7 @@ dependencies:
   speech_to_text: ^6.6.2
   image_picker: ^1.1.2
   image: ^4.2.0
+  uuid: ^4.4.2
 
 dev_dependencies:
   flutter_test:

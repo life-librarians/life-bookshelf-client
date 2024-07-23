@@ -67,7 +67,7 @@ class ChattingViewModel extends GetxController {
     } else if (micState == MicState.finish) {
       await _stopListening();
     } else {
-      _getNextQuestion();
+      await _getNextQuestion();
     }
   }
 
@@ -123,7 +123,7 @@ class ChattingViewModel extends GetxController {
   Future<void> saveImage() async {
     if (selectedImage.value != null) {
       // TODO: 이미지 업로드 API 호출
-      // await _apiService.uploadImage(selectedImage.value!);
+      await _apiService.uploadImage(selectedImage.value!);
       selectedImage.value = null;
     }
   }
@@ -141,7 +141,11 @@ class ChattingViewModel extends GetxController {
       conversations.sort((a, b) => a.timestamp.compareTo(b.timestamp)); // 시간순 정렬
       final conversationsJson = conversations.map((conv) => conv.toJson()).toList();
 
-      final nextQuestion = await _apiService.getNextQuestion(conversationsJson, predefinedQuestions);
+      final result = await _apiService.getNextQuestion(conversationsJson, predefinedQuestions);
+
+      final String nextQuestion = result['nextQuestion'];
+      final bool isPredefined = result['isPredefined'];
+      // TODO: isPredefined에 따라 질문이 미리 정해진 경우 처리하여 진행도 계산.
 
       if (nextQuestion.isNotEmpty) {
         conversations.add(Conversation(

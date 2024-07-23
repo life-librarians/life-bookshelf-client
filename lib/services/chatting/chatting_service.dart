@@ -1,8 +1,10 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
 import 'package:life_bookshelf/models/chatting/conversation_model.dart';
+import 'package:uuid/uuid.dart';
 
 class ChattingService extends GetxService {
   // TODO: Null Checking
@@ -29,7 +31,7 @@ class ChattingService extends GetxService {
     }
   }
 
-  Future<String> getNextQuestion(List<Map<String, dynamic>> conversations, List<String> predefinedQuestions) async {
+  Future<Map<String, dynamic>> getNextQuestion(List<Map<String, dynamic>> conversations, List<String> predefinedQuestions) async {
     try {
       final response = await http.post(
         // TODO: API URL 수정 필요 (ai 서버 측)
@@ -45,12 +47,69 @@ class ChattingService extends GetxService {
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body);
-        return data['nextQuestion'] as String;
+        return {
+          'nextQuestion': data['nextQuestion'] as String,
+          'isPredefined': data['isPredefined'] as bool,
+        };
       } else {
         throw Exception('서버 오류가 발생했습니다. 상태 코드: ${response.statusCode}');
       }
     } catch (e) {
       throw Exception('다음 질문을 가져오는 중 오류가 발생했습니다: $e');
+    }
+  }
+
+  /// Presigned URL을 통해 이미지 업로드
+  Future<String> getPresignedUrl(File imageFile) async {
+    final String fileName = imageFile.path.split('/').last;
+    final String randomString = Uuid().v4();
+    final String key = 'profile-images/$randomString/$fileName';
+
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/api/v1/images/presigned-url'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode({
+          'imageUrl': key,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
+        return data['presignedUrl'] as String;
+      } else {
+        throw Exception('Failed to get presigned URL. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Error getting presigned URL: $e');
+    }
+  }
+
+  Future<void> uploadToS3(String presignedUrl, File imageFile) async {
+    try {
+      final request = http.MultipartRequest('PUT', Uri.parse(presignedUrl));
+      request.files.add(await http.MultipartFile.fromPath('file', imageFile.path));
+
+      final response = await request.send();
+
+      if (response.statusCode == 200) {
+        print('Successfully uploaded image to S3');
+      } else {
+        throw Exception('Failed to upload image to S3. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Error uploading image to S3: $e');
+    }
+  }
+
+  Future<void> uploadImage(File imageFile) async {
+    try {
+      final presignedUrl = await getPresignedUrl(imageFile);
+      await uploadToS3(presignedUrl, imageFile);
+    } catch (e) {
+      throw Exception('Error in image upload process: $e');
     }
   }
 }

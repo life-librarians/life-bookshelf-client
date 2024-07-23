@@ -73,6 +73,7 @@ class ChattingScreen extends BaseScreen<ChattingViewModel> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Text("Interview Chat", style: FontSystem.KR18SB),
+                // TODO: 진행도 수정 필요
                 Text("65% completed", style: FontSystem.KR10M.copyWith(color: Colors.black.withOpacity(0.5))),
                 const ProgressBar(progress: 65).paddingSymmetric(vertical: 3)
               ],
