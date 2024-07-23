@@ -21,6 +21,7 @@ class PublishScreen extends BaseScreen<PublishViewModel> {
           children: [
             _publishHeader(),
             _bookOption(),
+            const SizedBox(height: 22),
             CustomPaint(
               painter: TicketPainter(),
               child: Container(
@@ -31,7 +32,8 @@ class PublishScreen extends BaseScreen<PublishViewModel> {
               ),
             ),
             const SizedBox(height: 22),
-            _publicationButton()
+            _publicationButton(),
+            const SizedBox(height: 50),
           ],
         ),
       ),
