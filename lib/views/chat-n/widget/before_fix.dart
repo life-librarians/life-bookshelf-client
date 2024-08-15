@@ -50,12 +50,13 @@ class TopBuild extends StatelessWidget {
 // 수정하기 전 Image
 class ImageBuild extends StatelessWidget {
   ImageBuild({Key? key}) : super(key: key);
+  final AutobiographyViewModel viewModel = Get.find<AutobiographyViewModel>();
 
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Image.asset(
-        'assets/images/detail-chapter-dummyImg.png',
+        viewModel.autobiography.value!.coverImageUrl,
         height: 290.15,
       ),
     );

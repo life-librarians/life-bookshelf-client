@@ -2,7 +2,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class UserPreferences {
   static late SharedPreferences _preferences;
-  static const _userTokenKey = '';
+  static const _userTokenKey = 'user_token';
 
   static Future init() async {
     _preferences = await SharedPreferences.getInstance();

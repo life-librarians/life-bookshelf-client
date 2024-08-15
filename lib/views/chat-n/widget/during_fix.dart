@@ -25,7 +25,10 @@ class TopFixBuild extends StatelessWidget {
         ),
         Spacer(),
         ElevatedButton(
-          onPressed: onFixPressed,
+          onPressed: () async {
+            await viewModel.fetchAfterFixContent(viewModel.autobiography.value!.id!);
+            onFixPressed();
+          },
           style: ElevatedButton.styleFrom(
             foregroundColor: Colors.white,
             backgroundColor: Color(0xFF567AF3), // 버튼 색상 설정

@@ -227,7 +227,9 @@ class _ChapterBox extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        Get.to(() => AutobiographyDetailScreen(autobiographyId: subChapter.chapterId));
+        // Todo: 연동 후에 주석 풀기 일단은 임시로 1로 테스트
+        // Get.to(() => AutobiographyDetailScreen(autobiographyId: subChapter.chapterId));
+        Get.to(() => AutobiographyDetailScreen(autobiographyId: 1));
       },
       child: Container(
         margin: const EdgeInsets.only(bottom: 17),

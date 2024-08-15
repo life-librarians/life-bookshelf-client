@@ -98,7 +98,7 @@ class _Middle extends StatelessWidget {
         Obx(() => TextField(
           focusNode: viewModel.emailFocusNode,
           style: FontSystem.KR16R.copyWith(color: Color(0xFF262626)),
-          onChanged: (value) => viewModel.email.value = value,
+          onChanged: (value) => viewModel.emailController.text = value,
           decoration: InputDecoration(
             labelText: "Email",
             labelStyle: FontSystem.KR16R.copyWith(color: Color(0xFF7C8BA0)),
@@ -122,7 +122,7 @@ class _Middle extends StatelessWidget {
           obscureText: !viewModel.passwordVisible.value,
           focusNode: viewModel.passwordFocusNode,
           style: FontSystem.KR16R.copyWith(color: Color(0xFF262626)),
-          onChanged: (value) => viewModel.password.value = value,
+          onChanged: (value) => viewModel.passwordController.text = value,
           decoration: InputDecoration(
             labelText: "Password",
             labelStyle: FontSystem.KR16R.copyWith(color: Color(0xFF7C8BA0)),
@@ -211,9 +211,23 @@ class _Bottom extends StatelessWidget {
     return Column(
       children: <Widget>[
         Obx(() => ElevatedButton(
-          onPressed: viewModel.agreeToTerms.value ? () {
-            // viewModel.register(); Todo: 연동 후에 이거 주석 해제하고 밑 GetTo 지우기
-            Get.to(LoginScreen());
+          onPressed: viewModel.agreeToTerms.value ? () async {
+            bool isSuccess = await viewModel.register();
+            if (isSuccess) {
+              Get.snackbar(
+                '회원가입 성공',
+                '회원가입이 성공적으로 완료되었습니다.',
+                snackPosition: SnackPosition.TOP,
+                duration: Duration(seconds: 2),
+              );
+            } else {
+              Get.snackbar(
+                '회원가입 실패',
+                '회원가입에 실패하였습니다. 다시 시도해주세요.',
+                snackPosition: SnackPosition.TOP,
+                duration: Duration(seconds: 2),
+              );
+            }
           } : null,
           child: Text(
             'Create Account',
