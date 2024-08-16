@@ -97,17 +97,19 @@ class AutobiographyViewModel extends GetxController {
     try {
       isLoading(true);
       errorMessage('');
-      final corrections = (await service.proofreadAutobiographyContent(autobiography.value!.id!, contentController.text))
-          .map((correction) => {
+
+      // 서버에서 받은 JSON 데이터를 처리하는 부분
+      final jsonResponse = await service.proofreadAutobiographyContent(autobiography.value!.id!, contentController.text);
+
+      // jsonResponse에서 corrections라는 key에 해당하는 리스트를 가져옴
+      final corrections = (jsonResponse[0]['corrections'] as List<dynamic>).map((correction) => {
         'original': (correction['original'] as String?) ?? '',
         'corrected': (correction['corrected'] as String?) ?? '',
+        'explanation': (correction['explanation'] as String?) ?? '',
       }).toList();
-      // final corrections = <Map<String, String>>[
-      //   {"original": "김도훈", "corrected": "도훈 김"},
-      //   {"original": "1985년 3월 15일", "corrected": "March 15, 1985"},
-      //   {"original": "과학자가 되는 꿈", "corrected": "과학자의 꿈"},
-      // ];
+
       textCorrections.assignAll(corrections);
+
       for (int i = 0; i < corrections.length; i++) {
         correctionStates[i] = true;
       }
@@ -125,21 +127,27 @@ class AutobiographyViewModel extends GetxController {
       isLoading(true);
       errorMessage('');
 
-      List<Map<String, String>> selectedCorrections = [];
+      String updatedContent = contentController.text;
+
       for (int i = 0; i < textCorrections.length; i++) {
+        String original = textCorrections[i]["original"]!;
+        String corrected = textCorrections[i]["corrected"]!;
+
+        // 사용자가 선택한 상태에 따라 반영
         if (correctionStates[i] == true) {
-          selectedCorrections.add(textCorrections[i]);
+          updatedContent = updatedContent.replaceAll(original, corrected);
+        } else {
+          updatedContent = updatedContent.replaceAll(corrected, original);
         }
       }
-      // 현재 내용을 텍스트로 변환
-      String updatedContent = contentController.text;
-      // 서비스로 백엔드에 전송
+
       await service.updateAutobiography(
         autobiography.value!.id!,
         autobiography.value!.title!,
         updatedContent,
         autobiography.value!.coverImageUrl!,
       );
+
     } catch (e) {
       errorMessage(e.toString());
     } finally {

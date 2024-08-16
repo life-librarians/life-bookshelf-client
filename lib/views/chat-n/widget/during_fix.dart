@@ -26,7 +26,6 @@ class TopFixBuild extends StatelessWidget {
         Spacer(),
         ElevatedButton(
           onPressed: () async {
-            await viewModel.fetchAfterFixContent(viewModel.autobiography.value!.id!);
             onFixPressed();
           },
           style: ElevatedButton.styleFrom(
