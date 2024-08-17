@@ -32,7 +32,7 @@ class OnboardingApiService {
 
     if (response.statusCode == 200) {
       print('온보딩을 바탕으로 챕터가 성공적으로 생성되었습니다.');
-      
+
       final Map<String, dynamic> responseData = jsonDecode(utf8.decode(response.bodyBytes));
 
       // 콘솔에 출력

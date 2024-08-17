@@ -47,7 +47,9 @@ class OnboardingViewModel extends GetxController {
         hasChildren: answers[3].toLowerCase() == 'yes',
       );
       try {
+        // 온보딩 만들기
         await _userService.updateUser(user);
+        // 회원정보 넣기
         await _myPageApiService.fetchUserProfile(
           name: answers[0],
           bornedAt: answers[1],
