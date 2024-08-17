@@ -227,7 +227,10 @@ class _ChapterBox extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
+        // Todo: 연동 후에 주석 없애기. 일단은 임시로 1로 테스트 해서 연동했습니다!!!
+        // Todo: 지금 이슈가 chapterId가 1,2,3,4 이런식으로 떠야하는데 3,4,6,7, 이런식으로 떠서 수정해야 합니당
         Get.to(() => AutobiographyDetailScreen(autobiographyId: subChapter.chapterId));
+        // Get.to(() => AutobiographyDetailScreen(autobiographyId: 1));
       },
       child: Container(
         margin: const EdgeInsets.only(bottom: 17),

@@ -17,8 +17,8 @@ class RegisterViewModel extends GetxController {
   var passwordVisible = false.obs;
   var agreeToTerms = false.obs;
 
-  var email = ''.obs;
-  var password = ''.obs;
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
 
   RegisterViewModel(this.registerService) {
     // 포커스 노드 리스너 설정
@@ -39,15 +39,16 @@ class RegisterViewModel extends GetxController {
   }
 
   // 로그인을 시도하고 결과를 처리하는 메소드
-  Future<void> register() async {
+  Future<bool> register() async {
     isLoading(true);
     try {
-      final response = await registerService.postRegister(email.value, password.value);
+      final response = await registerService.postRegister(emailController.text, passwordController.text);
       print('Register successful');
-      Get.to(LoginScreen());
+      return true;
     } catch (e) {
       registerError.value = e.toString();
       print('Login failed: $registerError');
+      return false;
     } finally {
       isLoading(false);
     }

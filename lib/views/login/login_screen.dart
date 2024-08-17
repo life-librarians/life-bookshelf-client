@@ -178,9 +178,23 @@ class _Bottom extends StatelessWidget {
     return Column(
       children: <Widget>[
         ElevatedButton(
-          onPressed: () {
-            // viewModel.login(); Todo: 연동 후에 이거 주석 해제하고 밑 GetTo 지우기
-            Get.toNamed('/home');
+          onPressed: () async {
+            bool isSuccess = await viewModel.login();
+            if (isSuccess) {
+              Get.snackbar(
+                '로그인 성공',
+                '로그인이 성공적으로 완료되었습니다.',
+                snackPosition: SnackPosition.TOP,
+                duration: Duration(seconds: 2),
+              );
+            } else {
+              Get.snackbar(
+                '로그인 실패',
+                '로그인에 실패하였습니다. 다시 시도해주세요.',
+                snackPosition: SnackPosition.TOP,
+                duration: Duration(seconds: 2),
+              );
+            }
           },
           child: Text(
             'Log In',

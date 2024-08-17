@@ -25,7 +25,9 @@ class TopFixBuild extends StatelessWidget {
         ),
         Spacer(),
         ElevatedButton(
-          onPressed: onFixPressed,
+          onPressed: () async {
+            onFixPressed();
+          },
           style: ElevatedButton.styleFrom(
             foregroundColor: Colors.white,
             backgroundColor: Color(0xFF567AF3), // 버튼 색상 설정

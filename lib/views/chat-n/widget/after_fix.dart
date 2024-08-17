@@ -28,8 +28,7 @@ class TopAfterFixBuild extends StatelessWidget {
         ElevatedButton(
           onPressed: () async {
             // Todo: 연동하기
-            // await viewModel.submitCorrections();
-            Get.toNamed(Routes.HOME);
+            await viewModel.submitCorrections();
           },
           style: ElevatedButton.styleFrom(
             foregroundColor: Colors.white,
@@ -98,7 +97,7 @@ class AfterFixContentBuild extends StatelessWidget {
 
   List<TextSpan> _buildTextSpans(AutobiographyViewModel viewModel) {
     List<TextSpan> spans = [];
-    String content = viewModel.autobiography.value!.content!;
+    String content = viewModel.contentController.text;
     List<Map<String, String>> corrections = viewModel.textCorrections;
 
     int lastIndex = 0;
@@ -106,7 +105,8 @@ class AfterFixContentBuild extends StatelessWidget {
     for (int i = 0; i < corrections.length; i++) {
       String original = corrections[i]["original"]!;
       String corrected = corrections[i]["corrected"]!;
-      int index = content.indexOf(original, lastIndex);
+
+      int index = content.indexOf(corrected, lastIndex);
 
       if (index != -1) {
         if (lastIndex != index) {
@@ -126,7 +126,9 @@ class AfterFixContentBuild extends StatelessWidget {
               viewModel.toggleCorrectionState(i);
             },
         ));
-        lastIndex = index + original.length;
+        lastIndex = index + corrected.length;
+      } else {
+        print("No match found for '$corrected' in the content.");
       }
     }
     if (lastIndex < content.length) {
