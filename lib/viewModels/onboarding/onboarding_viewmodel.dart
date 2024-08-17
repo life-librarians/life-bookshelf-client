@@ -3,6 +3,8 @@ import 'package:life_bookshelf/models/onboarding/onboarding_model.dart';
 import 'package:life_bookshelf/services/onboarding/onboarding_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../services/mypage/mypage_service.dart';
+
 class OnboardingViewModel extends GetxController {
   var currentQuestionIndex = 0.obs;
 
@@ -34,6 +36,7 @@ class OnboardingViewModel extends GetxController {
   ];
 
   final OnboardingApiService _userService = OnboardingApiService();
+  final MyPageApiService _myPageApiService = MyPageApiService();
 
   Future<void> updateUserInformation() async {
     if (answers.length >= 4) {
@@ -43,13 +46,22 @@ class OnboardingViewModel extends GetxController {
         gender: answers[2],
         hasChildren: answers[3].toLowerCase() == 'yes',
       );
-
       try {
+        // 온보딩 만들기
         await _userService.updateUser(user);
+        // 회원정보 넣기
+        await _myPageApiService.fetchUserProfile(
+          name: answers[0],
+          bornedAt: answers[1],
+          gender: answers[2],
+          hasChildren: answers[3].toLowerCase() == 'yes',
+        );
         await setOnboardingCompleted();
-        Get.toNamed('/home'); // 이동 로직을 try-catch 블록 안으로 이동
-      } catch (error) {
+        Get.toNamed('/home');
+      } catch (error, stackTrace) {
+        // 에러와 스택 트레이스를 함께 출력
         print("Error updating user: $error");
+        print("Stack Trace: $stackTrace");
       }
     } else {
       print("Not enough information to update user.");

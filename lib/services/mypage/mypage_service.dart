@@ -1,31 +1,72 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
-import 'package:life_bookshelf/models/mypage/mypage_model.dart';// Assume this is the model for the list of books with pagination
+import 'package:life_bookshelf/models/mypage/mypage_model.dart';
+import '../userpreferences_service.dart';
 
 class MyPageApiService {
   String baseUrl = '${dotenv.env['API']}';
 
-  Future<MyPageUserModel> fetchUserProfile() async {
-    // Commented out real API call for demonstration purposes
-    /*
-    final response = await http.get(Uri.parse('$baseUrl/v1/members/me'));
-    if (response.statusCode == 200) {
-      return MyPageUserModel.fromJson(json.decode(response.body));
+  Future<MyPageUserModel> fetchUserProfile({
+    String? name,
+    String? bornedAt,
+    String? gender,
+    bool? hasChildren,
+  }) async {
+    String token = UserPreferences.getUserToken();
+    String url = '$baseUrl/members/me';
+
+    // PUT 요청이 필요한 경우
+    if (name != null || bornedAt != null || gender != null || hasChildren != null) {
+      var request = http.MultipartRequest('PUT', Uri.parse(url))
+        ..headers.addAll({
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        });
+
+      // 전달된 인자만 추가
+      if (name != null) request.fields['name'] = name;
+      if (bornedAt != null) request.fields['bornedAt'] = bornedAt;
+      if (gender != null) request.fields['gender'] = gender;
+      if (hasChildren != null) request.fields['hasChildren'] = hasChildren.toString();
+
+      // 요청 전송 및 응답 처리
+      var response = await request.send();
+      var responseBody = await response.stream.bytesToString();
+
+      if (response.statusCode == 200) {
+        if (responseBody.isEmpty) {
+          print("회원정보 수정이 완료되었습니다. 리턴되는 값은 없습니다.");
+          return MyPageUserModel.empty();
+        } else {
+          return MyPageUserModel.fromJson(json.decode(responseBody));
+        }
+      } else {
+        throw Exception('Failed to update user profile ${response.statusCode}');
+      }
     } else {
-      throw Exception('Failed to load user profile');
+      // GET 요청
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+      if (response.statusCode == 200) {
+        if (response.body.isEmpty) {
+          print("회원정보 조회가 완료되었습니다. 리턴되는 값은 없습니다.");
+          return MyPageUserModel.empty();
+        } else {
+          return MyPageUserModel.fromJson(json.decode(response.body));
+        }
+      } else {
+        throw Exception('Failed to load user profile ${response.statusCode}');
+      }
     }
-    */
-    // Mock response for testing
-    var responseJson = json.encode({
-      "name": "김남철",
-      "bornedAt": "2005-02-24",
-      "gender": "male",
-      "hasChildren": false
-    });
-    return MyPageUserModel.fromJson(json.decode(responseJson));
   }
+
+
 
   Future<BookDetailModel> fetchBookDetails(int publicationId) async {
     // Commented out real API call for demonstration purposes
