@@ -5,7 +5,6 @@ import 'package:life_bookshelf/utilities/color_system.dart';
 import 'package:life_bookshelf/utilities/font_system.dart';
 import 'package:life_bookshelf/viewModels/onboarding/onboarding_viewmodel.dart';
 import 'package:life_bookshelf/views/base/base_screen.dart';
-
 import 'package:life_bookshelf/views/onboarding/components/cloud_window.dart';
 import 'package:life_bookshelf/views/onboarding/components/date_field.dart';
 import 'package:life_bookshelf/views/onboarding/components/disk_button.dart';
@@ -45,7 +44,6 @@ class _BottomItems extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final OnboardingViewModel viewmodel = Get.find<OnboardingViewModel>();
-    // Wrapping the switch statement inside Obx() to make it reactive
     return Obx(() {
       switch (viewmodel.currentQuestionIndex.value) {
         case 0:
@@ -58,7 +56,7 @@ class _BottomItems extends StatelessWidget {
               DiskButton(
                 onPressed: () {
                   viewmodel.isButtonPressed.value = true;
-                  if(viewmodel.isNameValid.value == false) return; // If the name is not valid, return
+                  if(viewmodel.isNameValid.value == false) return;
                   viewmodel.addCurrentQuestionIndex();
                   viewmodel.updateCurrentQuestion();
                   viewmodel.isButtonPressed.value = false;
@@ -66,7 +64,7 @@ class _BottomItems extends StatelessWidget {
                 text: 'Next',
               ),
             ],
-          ); // Replace with your actual widget for index 0
+          );
         case 1:
           return Column(
             children: [
@@ -85,14 +83,14 @@ class _BottomItems extends StatelessWidget {
                 text: 'Next',
               ),
             ],
-          ); // Replace with your actual widget for index 1
+          );
         case 2:
           return Column(
             children: [
               SizedBox(height: Get.height*0.05),
               DiskButton(onPressed: (){
                 viewmodel.isButtonPressed.value = true;
-                viewmodel.updateAnswer("남자");
+                viewmodel.updateAnswer("MALE");
                 viewmodel.addCurrentQuestionIndex();
                 viewmodel.updateCurrentQuestion();
                 viewmodel.isButtonPressed.value = false;
@@ -100,13 +98,13 @@ class _BottomItems extends StatelessWidget {
               SizedBox(height: 20),
               DiskButton(onPressed: (){
                 viewmodel.isButtonPressed.value = true;
-                viewmodel.updateAnswer("여자");
+                viewmodel.updateAnswer("FEMALE");
                 viewmodel.addCurrentQuestionIndex();
                 viewmodel.updateCurrentQuestion();
                 viewmodel.isButtonPressed.value = false;
               }, text: "여자"),
             ],
-          ); // Replace with your actual widget for index 2
+          );
         case 3:
           return Column(
             children: [
@@ -132,7 +130,7 @@ class _BottomItems extends StatelessWidget {
           viewmodel.updateUserInformation();
           return Image.asset("assets/images/AirplaneLoading.gif", width: 250,);
         default:
-          return SizedBox(height: 0); // Default case for handling undefined indexes
+          return SizedBox(height: 0);
       }
     });
   }
@@ -165,8 +163,6 @@ class _Dots extends StatelessWidget {
   }
 }
 
-
-
 class _QuestionTexts extends StatelessWidget {
   const _QuestionTexts({super.key});
 
@@ -185,7 +181,7 @@ class _QuestionTexts extends StatelessWidget {
             },
             child: Text(
               viewmodel.currentQuestion.value,
-              key: ValueKey<String>(viewmodel.currentQuestion.value), // Key based on current question
+              key: ValueKey<String>(viewmodel.currentQuestion.value),
               style: FontSystem.KR24B.copyWith(
                 color: ColorSystem.onboarding.fontBlack,
               ),
@@ -203,7 +199,7 @@ class _QuestionTexts extends StatelessWidget {
               },
               child: Text(
                 viewmodel.currentQuestionDetail.value,
-                key: ValueKey<String>(viewmodel.currentQuestionDetail.value), // Key based on current detail
+                key: ValueKey<String>(viewmodel.currentQuestionDetail.value),
                 style: FontSystem.KR17M.copyWith(
                   color: ColorSystem.onboarding.fontGray,
                 ),

@@ -8,6 +8,16 @@ class MyPageUserModel {
 
   MyPageUserModel({required this.name, required this.bornedAt, required this.gender, required this.hasChildren});
 
+  // 빈 모델을 반환하는 factory 생성자
+  factory MyPageUserModel.empty() {
+    return MyPageUserModel(
+      name: '',
+      bornedAt: '',
+      gender: '',
+      hasChildren: false,
+    );
+  }
+
   factory MyPageUserModel.fromJson(Map<String, dynamic> json) {
     return MyPageUserModel(
         name: json['name'],
