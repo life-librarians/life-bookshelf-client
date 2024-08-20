@@ -45,9 +45,13 @@ class ImageUploadService extends GetxService {
       );
 
       if (response.statusCode == 200) {
-        final Map<String, dynamic> data = json.decode(response.body);
-        print('Presigned URL: ${data['presignedUrl']}');
-        return data['presignedUrl'] as String;
+        try {
+          final Map<String, dynamic> data = json.decode(response.body);
+          return data['presignedUrl'] as String;
+        } catch (e) {
+          // JSON 파싱에 실패하면 응답 본문을 직접 반환
+          return response.body.trim();
+        }
       } else {
         throw Exception('Failed to get presigned URL. Status code: ${response.statusCode}');
       }
