@@ -29,6 +29,8 @@ class LoginService {
     var responseBodyBytes = await response.stream.toBytes();
     var responseBody = utf8.decode(responseBodyBytes);
 
+    print('Response: $responseBody');
+
     if (response.statusCode == 200) {
       if (responseBody.isNotEmpty) {
         return Login.fromJson(json.decode(responseBody));
