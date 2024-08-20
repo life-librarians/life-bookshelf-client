@@ -68,8 +68,13 @@ class ChattingViewModel extends GetxController {
         .toList();
 
     if (chatBubbles.isEmpty) {
-      chatBubbles.add(ChatBubble(isUser: false, message: predefinedQuestions.first['questionText']));
-      print(predefinedQuestions.first['questionText']);
+      //TODO: 시간 설정 필요
+      conversations.add(Conversation(
+        conversationType: 'AI',
+        content: predefinedQuestions.first['questionText'],
+      ));
+      chatBubbles.add(ChatBubble(isUser: false, message: predefinedQuestions.first['questionText'], isFinal: true));
+      print("첫 질문 업데이트: ${predefinedQuestions.first['questionText']}");
     }
   }
 
