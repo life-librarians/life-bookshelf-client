@@ -81,7 +81,7 @@ class _TopCurrentPage extends StatelessWidget {
         if (true) {
           print("현재 인터뷰로 이동");
           // TODO: 인터뷰 이동 네비게이션 수정
-          Get.to(() => const ChattingScreen(currentChapterId: 3));
+          Get.to(() => ChattingScreen(currentChapter: viewmodel.currentChapter.value!));
         }
       },
       child: Column(children: [

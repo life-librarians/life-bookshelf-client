@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:life_bookshelf/models/home/autobiography.dart';
+import 'package:life_bookshelf/models/home/chapter.dart';
 import 'package:life_bookshelf/utilities/color_system.dart';
 import 'package:life_bookshelf/utilities/font_system.dart';
 import 'package:life_bookshelf/utilities/screen_utils.dart';
@@ -10,15 +11,16 @@ import 'package:life_bookshelf/viewModels/chatting/chatting_viewmodel.dart';
 import 'package:life_bookshelf/views/base/base_screen.dart';
 
 class ChattingScreen extends BaseScreen<ChattingViewModel> {
-  final int? currentChapterId;
+  final HomeChapter? currentChapter;
 
-  const ChattingScreen({super.key, required this.currentChapterId});
+  const ChattingScreen({super.key, required this.currentChapter});
 
   @override
   void initViewModel() {
     super.initViewModel();
     // TODO: Null Checking
-    viewModel.loadConversations(currentChapterId!);
+    viewModel.loadConversations(currentChapter!);
+    print('Chatting Screen Initialized: currentChapterId: $currentChapter');
   }
 
   @override

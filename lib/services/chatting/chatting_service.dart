@@ -4,15 +4,69 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
 import 'package:life_bookshelf/models/chatting/conversation_model.dart';
+import 'package:life_bookshelf/models/home/chapter.dart';
 import 'package:life_bookshelf/services/image_upload_service.dart';
 import 'package:life_bookshelf/services/userpreferences_service.dart';
 
 class ChattingService extends GetxService {
   final ImageUploadService _imageUploadService = Get.find<ImageUploadService>();
 
-  // TODO: Null Checking
   final String baseUrl = dotenv.env['API'] ?? "";
   String token = UserPreferences.getUserToken();
+
+  /// Autobiography가 생성되었는 지 확인
+  Future<int?> checkAutobiography(int chapterId) async {
+    // 전체 자서전 목록 조회 후, 해당 chapterId가 있는지 확인
+    try {
+      final response = await http.get(Uri.parse('$baseUrl/autobiographies'), headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $token',
+      });
+
+      if (response.statusCode == 200) {
+        // 응답 본문을 JSON으로 디코딩
+        final Map<String, dynamic> autobiographies = jsonDecode(response.body);
+
+        // 각 자서전을 순회하며 chapterId가 있는지 확인
+        for (var autobiography in autobiographies['results']) {
+          if (autobiography['chapterId'] == chapterId) {
+            // chapterId가 있는 경우 autobiographyId 반환
+            return autobiography['autobiographyId'];
+          }
+        }
+        // chapterId를 찾지 못한 경우
+        return null;
+      }
+    } catch (e) {
+      throw Exception('자서전 목록 조회 중 오류 발생: $e');
+    }
+    return null;
+  }
+
+  /// Autobiography 생성
+  Future<int> createAutobiography(HomeChapter chapter) async {
+    try {
+      final response = await http.post(Uri.parse('$baseUrl/autobiographies'),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+            'Authorization': 'Bearer $token',
+          },
+          body: jsonEncode({
+            'chapterId': chapter.chapterId,
+            'title': chapter.chapterName,
+            // 'content': chapter.,
+          }));
+
+      if (response.statusCode == 201) {
+        final Map<String, dynamic> data = json.decode(response.body);
+        return data['autobiographyId'] as int;
+      } else {
+        throw Exception('자서전 생성 중 오류가 발생했습니다. 상태 코드: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('자서전 생성 중 오류가 발생했습니다: $e');
+    }
+  }
 
   // TODO: Pagination에 따른 Paging 구현 필요
   Future<List<Conversation>> getConversations(int autobiographyId, int page, int size) async {
@@ -20,8 +74,7 @@ class ChattingService extends GetxService {
       print(token);
       final response =
           // ! API URL 수정 필요
-          // await http.get(Uri.parse('$baseUrl/interviews/$autobiographyId/conversations?page=$page&size=$size'), headers: <String, String>{
-          await http.get(Uri.parse('$baseUrl/interviews/3/conversations?page=$page&size=$size'), headers: <String, String>{
+          await http.get(Uri.parse('$baseUrl/interviews/$autobiographyId/conversations?page=$page&size=$size'), headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'Bearer $token',
       });

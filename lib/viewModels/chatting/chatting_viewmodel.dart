@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:life_bookshelf/models/chatting/conversation_model.dart';
+import 'package:life_bookshelf/models/home/chapter.dart';
 import 'package:life_bookshelf/services/chatting/chatting_service.dart';
 import 'package:life_bookshelf/views/chatting/chatBubble.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
@@ -35,9 +36,15 @@ class ChattingViewModel extends GetxController {
   String get currentSpeech => _currentSpeech.value;
 
   /// 현재 진행 중인 페이지에 들어갈 시 진행 중이던 대화 initializing.
-  Future<void> loadConversations(int autobiographyId, {int page = 1, int size = 20}) async {
+  Future<void> loadConversations(HomeChapter currentChapter, {int page = 1, int size = 20}) async {
+    int chapterId = currentChapter.chapterId;
     try {
       isLoading(true);
+      // autobiography 존재하는지 확인
+      int? autobiographyId = await _apiService.checkAutobiography(chapterId);
+      // 없으면 생성
+      autobiographyId ??= await _apiService.createAutobiography(currentChapter);
+
       final loadedConversations = await _apiService.getConversations(autobiographyId, page, size);
       conversations.value = loadedConversations;
       updateChatBubbles();

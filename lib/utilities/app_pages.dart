@@ -27,9 +27,9 @@ List<GetPage> appPages = [
   ),
   GetPage(
     name: Routes.CHATTING,
-    // TODO: 네비게이팅 수정
+    // TODO: get.argumentsfh ㅊ
     page: () => ChattingScreen(
-      currentChapterId: Get.arguments['currentChapterId'],
+      currentChapter: Get.arguments['currentChapter'],
       // currentAutobiographies: Get.arguments['currentAutobiographies'],
     ),
     binding: RootBinding(),
