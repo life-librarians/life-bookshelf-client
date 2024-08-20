@@ -21,8 +21,10 @@ class ChattingService extends GetxService {
         'Authorization': 'Bearer $token',
       });
 
+      Map<String, dynamic> responseData = jsonDecode(utf8.decode(response.bodyBytes));
+
       if (response.statusCode == 200) {
-        final Map<String, dynamic> data = json.decode(response.body);
+        final Map<String, dynamic> data = responseData;
         return data;
       } else {
         throw Exception('인터뷰 정보를 불러오는 중 오류가 발생했습니다. 상태 코드: ${response.statusCode}');
@@ -116,7 +118,7 @@ class ChattingService extends GetxService {
     }
   }
 
-  Future<Map<String, dynamic>> getNextQuestion(List<Map<String, dynamic>> conversations, List<String> predefinedQuestions) async {
+  Future<Map<String, dynamic>> getNextQuestion(List<Map<String, dynamic>> conversations, List<dynamic> predefinedQuestions) async {
     try {
       final response = await http.post(
         // TODO: API URL 수정 필요 (ai 서버 측)

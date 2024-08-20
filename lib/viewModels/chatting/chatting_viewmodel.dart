@@ -17,7 +17,7 @@ class ChattingViewModel extends GetxController {
   final RxBool isLoading = true.obs;
 
   // 사전에 생성한 질문 리스트 (예시)
-  List<String> predefinedQuestions = [];
+  List<dynamic> predefinedQuestions = [];
   int currentQuestionId = 1;
 
   // Image Picker
@@ -49,7 +49,7 @@ class ChattingViewModel extends GetxController {
       final loadedConversations = await _apiService.getConversations(autobiographyId, page, size);
       final loadedQuestions = await _apiService.getInterview(interviewId);
       conversations.value = loadedConversations;
-      predefinedQuestions = loadedQuestions['questions'].cast<String>();
+      predefinedQuestions = loadedQuestions['results'];
       updateChatBubbles();
     } catch (e) {
       Get.snackbar('오류', e.toString());
@@ -68,7 +68,8 @@ class ChattingViewModel extends GetxController {
         .toList();
 
     if (chatBubbles.isEmpty) {
-      chatBubbles.add(ChatBubble(isUser: false, message: predefinedQuestions.first));
+      chatBubbles.add(ChatBubble(isUser: false, message: predefinedQuestions.first['questionText']));
+      print(predefinedQuestions.first['questionText']);
     }
   }
 
