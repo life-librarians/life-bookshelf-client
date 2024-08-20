@@ -17,13 +17,8 @@ class ChattingViewModel extends GetxController {
   final RxBool isLoading = true.obs;
 
   // 사전에 생성한 질문 리스트 (예시)
-  final List<String> predefinedQuestions = [
-    "어린 시절 가장 행복했던 순간은 언제인가요?",
-    "가장 힘들었던 경험은 무엇이었나요?",
-    "인생에서 가장 중요한 결정은 무엇이었나요?",
-    "가장 존경하는 인물은 누구인가요?",
-    "미래에 이루고 싶은 꿈은 무엇인가요?"
-  ];
+  List<String> predefinedQuestions = [];
+  int currentQuestionId = 1;
 
   // Image Picker
   final ImagePicker _picker = ImagePicker();
@@ -36,17 +31,25 @@ class ChattingViewModel extends GetxController {
   String get currentSpeech => _currentSpeech.value;
 
   /// 현재 진행 중인 페이지에 들어갈 시 진행 중이던 대화 initializing.
+  /// TODO: 페이징 처리
   Future<void> loadConversations(HomeChapter currentChapter, {int page = 1, int size = 20}) async {
     int chapterId = currentChapter.chapterId;
     try {
       isLoading(true);
       // autobiography 존재하는지 확인
-      int? autobiographyId = await _apiService.checkAutobiography(chapterId);
-      // 없으면 생성
-      autobiographyId ??= await _apiService.createAutobiography(currentChapter);
+      int? autobiographyId;
+      int? interviewId;
+      (autobiographyId, interviewId) = await _apiService.checkAutobiography(chapterId);
+      // TODO: 없으면 생성 (온보딩에서 생성 시 없을 수 없음) => 추후 온보딩과 함께 수정 필요
+      // autobiographyId ??= await _apiService.createAutobiography(currentChapter);
+      if (autobiographyId == null || interviewId == null) {
+        throw Exception('자서전 생성 실패');
+      }
 
       final loadedConversations = await _apiService.getConversations(autobiographyId, page, size);
+      final loadedQuestions = await _apiService.getInterview(interviewId);
       conversations.value = loadedConversations;
+      predefinedQuestions = loadedQuestions['questions'].cast<String>();
       updateChatBubbles();
     } catch (e) {
       Get.snackbar('오류', e.toString());
@@ -63,6 +66,10 @@ class ChattingViewModel extends GetxController {
               isFinal: true,
             ))
         .toList();
+
+    if (chatBubbles.isEmpty) {
+      chatBubbles.add(ChatBubble(isUser: false, message: predefinedQuestions.first));
+    }
   }
 
   /// 채팅 화면 아래 버튼 state 변경

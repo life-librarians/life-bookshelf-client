@@ -33,11 +33,21 @@ class PublishViewModel extends GetxController {
     print('Test');
     try {
       final Map<String, dynamic> requestBody = {
-        "title": "테스트 자서전",
-        "content": "이것은 테스트 내용입니다.",
+        "title": "20대의 대학 생활과 프로그래머 취업",
+        "content": "20대에 대학을 다니고 졸업을 하여 프로그래머로 취업하고, 그 후 일어나는 일들.",
         "interviewQuestions": [
-          {"order": 1, "questionText": "당신의 이름은 무엇인가요?"},
+          {"order": 1, "questionText": "어떤 동기로 대학에 진학하게 되었나요?"},
+          {"order": 2, "questionText": "대학 시절 가장 기억에 남는 수업이나 교수는 누구였나요?"},
+          {"order": 3, "questionText": "대학 생활 중 특별히 어려웠던 순간은 무엇이었나요?"},
+          {"order": 4, "questionText": "프로그래밍을 처음 접하게 된 계기는 무엇인가요?"},
+          {"order": 5, "questionText": "프로그래머로서의 커리어를 결심하게 된 이유는 무엇인가요?"},
+          {"order": 6, "questionText": "첫 취업 준비 과정에서 겪은 가장 큰 도전은 무엇이었나요?"},
+          {"order": 7, "questionText": "첫 직장에서 맡은 주요 프로젝트는 무엇이었나요?"},
+          {"order": 8, "questionText": "취업 후 가장 큰 성취감이나 보람을 느낀 순간은 언제였나요?"},
+          {"order": 9, "questionText": "직장 생활을 통해 얻은 가장 큰 교훈은 무엇인가요?"},
+          {"order": 10, "questionText": "미래의 프로그래머들에게 해주고 싶은 조언이 있다면 무엇인가요?"}
         ],
+        "chapterId": 9
       };
 
       print('Request Body: ${jsonEncode(requestBody)}'); // 요청 본문 로깅

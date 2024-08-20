@@ -14,8 +14,26 @@ class ChattingService extends GetxService {
   final String baseUrl = dotenv.env['API'] ?? "";
   String token = UserPreferences.getUserToken();
 
+  Future<Map<String, dynamic>> getInterview(int interviewId) async {
+    try {
+      final response = await http.get(Uri.parse('$baseUrl/interviews/$interviewId/questions'), headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $token',
+      });
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
+        return data;
+      } else {
+        throw Exception('인터뷰 정보를 불러오는 중 오류가 발생했습니다. 상태 코드: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('인터뷰 정보를 불러오는 중 오류가 발생했습니다: $e');
+    }
+  }
+
   /// Autobiography가 생성되었는 지 확인
-  Future<int?> checkAutobiography(int chapterId) async {
+  Future<(int?, int?)> checkAutobiography(int chapterId) async {
     // 전체 자서전 목록 조회 후, 해당 chapterId가 있는지 확인
     try {
       final response = await http.get(Uri.parse('$baseUrl/autobiographies'), headers: <String, String>{
@@ -31,19 +49,21 @@ class ChattingService extends GetxService {
         for (var autobiography in autobiographies['results']) {
           if (autobiography['chapterId'] == chapterId) {
             // chapterId가 있는 경우 autobiographyId 반환
-            return autobiography['autobiographyId'];
+            int interviewId = autobiography['interviewId'];
+            int autobiographyId = autobiography['autobiographyId'];
+            return (autobiographyId, interviewId);
           }
         }
         // chapterId를 찾지 못한 경우
-        return null;
+        return (null, null);
       }
     } catch (e) {
       throw Exception('자서전 목록 조회 중 오류 발생: $e');
     }
-    return null;
+    return (null, null);
   }
 
-  /// Autobiography 생성
+  //! Autobiography 생성 -> 삭제 예정
   Future<int> createAutobiography(HomeChapter chapter) async {
     try {
       final response = await http.post(Uri.parse('$baseUrl/autobiographies'),
