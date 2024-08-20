@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:life_bookshelf/services/image_upload_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:life_bookshelf/services/userpreferences_service.dart';
+import 'package:uuid/uuid.dart';
 
 class PublishViewModel extends GetxController {
   final ImageUploadService _imageUploadService = Get.find<ImageUploadService>();
@@ -25,6 +26,99 @@ class PublishViewModel extends GetxController {
   void setTitleLocation(String location) {
     titleLocation.value = location;
   }
+
+  //! For Testing
+  Future<void> test() async {
+    final String baseUrl = dotenv.env['API'] ?? "";
+    print('Test');
+    try {
+      final Map<String, dynamic> requestBody = {
+        "title": "테스트 자서전",
+        "content": "이것은 테스트 내용입니다.",
+        "interviewQuestions": [
+          {"order": 1, "questionText": "당신의 이름은 무엇인가요?"},
+        ],
+      };
+
+      print('Request Body: ${jsonEncode(requestBody)}'); // 요청 본문 로깅
+
+      final response = await http.post(
+        Uri.parse('$baseUrl/autobiographies'),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode(requestBody),
+      );
+
+      print('Response Status Code: ${response.statusCode}');
+      print('Response Headers: ${response.headers}');
+      print('Response Body: ${response.body}');
+
+      if (response.statusCode == 201) {
+        print('자서전이 성공적으로 생성되었습니다.');
+      } else {
+        final decodedBody = utf8.decode(response.bodyBytes);
+        print('오류 응답 본문: $decodedBody');
+
+        try {
+          final errorData = jsonDecode(decodedBody);
+          print('구조화된 오류 데이터: $errorData');
+        } catch (e) {
+          print('오류 응답을 JSON으로 파싱할 수 없습니다: $e');
+        }
+
+        throw Exception('자서전 생성 실패. 상태 코드: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('예외 발생: $e');
+      throw Exception('자서전 생성 중 오류 발생: $e');
+    }
+  }
+
+  // Future<void> test() async {
+  //   final String baseUrl = dotenv.env['API'] ?? "";
+  //   print('Test');
+  //   try {
+  //     final response = await http.post(
+  //       Uri.parse('$baseUrl/autobiographies/chapters'),
+  //       headers: <String, String>{
+  //         'accept': '*/*',
+  //         'Content-Type': 'application/json',
+  //         'Authorization': 'Bearer $token',
+  //       },
+  //       body: jsonEncode({
+  //         "chapters": [
+  //           {
+  //             "number": "1",
+  //             "name": "나의 첫번째 챕터",
+  //             "subchapters": [
+  //               {"number": "1.1", "name": "나의 첫번째 서브챕터"},
+  //               {"number": "1.2", "name": "나의 두번째 서브챕터"}
+  //             ]
+  //           },
+  //           {
+  //             "number": "2",
+  //             "name": "나의 두번째 챕터",
+  //             "subchapters": [
+  //               {"number": "2.1", "name": "나의 첫번째 서브챕터"},
+  //               {"number": "2.2", "name": "나의 두번째 서브챕터"}
+  //             ]
+  //           }
+  //         ]
+  //       }),
+  //     );
+
+  //     if (response.statusCode == 201) {
+  //       print(response.body);
+  //     } else {
+  //       print('Error response body: ${response.body}'); // 오류 응답 내용 출력
+  //       throw Exception('error on test. Status code: ${response.statusCode}');
+  //     }
+  //   } catch (e) {
+  //     throw Exception('Error on test: $e');
+  //   }
+  // }
 
   Future<void> pickCoverImage() async {
     final ImagePicker picker = ImagePicker();

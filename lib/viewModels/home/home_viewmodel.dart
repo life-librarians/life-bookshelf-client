@@ -28,7 +28,7 @@ class HomeViewModel extends GetxController {
   }
 
   Future<void> fetchChapters() async {
-    var fetchedChapters = await chapterService.fetchChapters(1, 10);
+    var fetchedChapters = await chapterService.fetchChapters(0, 10);
     chapters.value = fetchedChapters;
     print('Fetched chapters: $chapters');
   }

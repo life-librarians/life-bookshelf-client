@@ -34,9 +34,18 @@ class PublishScreen extends BaseScreen<PublishViewModel> {
             const SizedBox(height: 22),
             _publicationButton(),
             const SizedBox(height: 50),
+            _testButton(),
+            const SizedBox(height: 50),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _testButton() {
+    return ElevatedButton(
+      onPressed: controller.test,
+      child: const Text('Chatting Screen'),
     );
   }
 

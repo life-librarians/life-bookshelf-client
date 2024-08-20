@@ -5,17 +5,25 @@ import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
 import 'package:life_bookshelf/models/chatting/conversation_model.dart';
 import 'package:life_bookshelf/services/image_upload_service.dart';
+import 'package:life_bookshelf/services/userpreferences_service.dart';
 
 class ChattingService extends GetxService {
   final ImageUploadService _imageUploadService = Get.find<ImageUploadService>();
 
   // TODO: Null Checking
   final String baseUrl = dotenv.env['API'] ?? "";
+  String token = UserPreferences.getUserToken();
 
   // TODO: Pagination에 따른 Paging 구현 필요
   Future<List<Conversation>> getConversations(int autobiographyId, int page, int size) async {
     try {
-      final response = await http.get(Uri.parse('$baseUrl/api/v1/interviews/autobiographies/$autobiographyId/conversations?page=$page&size=$size'));
+      final response =
+          // ! API URL 수정 필요
+          // await http.get(Uri.parse('$baseUrl/interviews/$autobiographyId/conversations?page=$page&size=$size'), headers: <String, String>{
+          await http.get(Uri.parse('$baseUrl/interviews/3/conversations?page=$page&size=$size'), headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $token',
+      });
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body);
@@ -26,6 +34,7 @@ class ChattingService extends GetxService {
       } else if (response.statusCode == 403) {
         throw Exception('BIO009: 해당 자서전의 주인이 아닙니다.');
       } else {
+        print(response.body);
         throw Exception('서버 오류가 발생했습니다.');
       }
     } catch (e) {

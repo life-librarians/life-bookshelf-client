@@ -1,3 +1,4 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:life_bookshelf/services/login/login_service.dart';
 import 'package:life_bookshelf/services/chatting/chatting_service.dart';
@@ -18,15 +19,14 @@ import '../viewModels/register/register_viewmodel.dart';
 class RootBinding extends Bindings {
   @override
   void dependencies() {
-    const String baseUrl = 'https://jsonplaceholder.typicode.com';
+    String baseUrl = dotenv.env['API'] ?? "";
     // ParentViewModel is singleton
     Get.put(RootViewModel(), permanent: true);
 
-    Get.lazyPut(()=>LoginViewModel(LoginService()));
-    Get.lazyPut(()=>RegisterViewModel(RegisterService()));
-    
-    Get.put(HomeViewModel(
-        HomeChapterService(baseUrl)));
+    Get.lazyPut(() => LoginViewModel(LoginService()));
+    Get.lazyPut(() => RegisterViewModel(RegisterService()));
+
+    Get.put(HomeViewModel(HomeChapterService(baseUrl)));
     Get.put(ChatAutobiographyService());
     Get.put(AutobiographyViewModel(ChatAutobiographyService()));
     Get.put(ChattingService());
