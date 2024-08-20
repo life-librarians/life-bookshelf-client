@@ -17,6 +17,7 @@ class ChattingService extends GetxService {
   // TODO: Pagination에 따른 Paging 구현 필요
   Future<List<Conversation>> getConversations(int autobiographyId, int page, int size) async {
     try {
+      print(token);
       final response =
           // ! API URL 수정 필요
           // await http.get(Uri.parse('$baseUrl/interviews/$autobiographyId/conversations?page=$page&size=$size'), headers: <String, String>{
