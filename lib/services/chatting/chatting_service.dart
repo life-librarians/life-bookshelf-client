@@ -7,12 +7,15 @@ import 'package:life_bookshelf/models/chatting/conversation_model.dart';
 import 'package:life_bookshelf/models/home/chapter.dart';
 import 'package:life_bookshelf/services/image_upload_service.dart';
 import 'package:life_bookshelf/services/userpreferences_service.dart';
+import 'package:life_bookshelf/viewModels/mypage/mypage_viewmodel.dart';
 
 class ChattingService extends GetxService {
   final ImageUploadService _imageUploadService = Get.find<ImageUploadService>();
 
   final String baseUrl = dotenv.env['API'] ?? "";
+  final String aiUrl = dotenv.env['AI'] ?? "";
   String token = UserPreferences.getUserToken();
+  final Map<String, dynamic> userInfo = <String, dynamic>{}.obs;
 
   Future<Map<String, dynamic>> getInterview(int interviewId) async {
     try {
@@ -118,26 +121,60 @@ class ChattingService extends GetxService {
     }
   }
 
-  Future<Map<String, dynamic>> getNextQuestion(List<Map<String, dynamic>> conversations, List<dynamic> predefinedQuestions) async {
+  Future<Map<String, dynamic>> getNextQuestion(
+      List<Map<String, dynamic>> conversations, List<dynamic> predefinedQuestions, HomeChapter chapter) async {
+    if (userInfo.isEmpty) {
+      final response = await http.get(Uri.parse('$baseUrl/members/me'), headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $token',
+      });
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
+        userInfo['name'] = data['name'];
+        userInfo['bornedAt'] = data['bornedAt'];
+        userInfo['gender'] = data['gender'];
+        userInfo['hasChildren'] = data['hasChildren'];
+      }
+      print("userInfo: $userInfo");
+    }
+
     try {
       final response = await http.post(
         // TODO: API URL 수정 필요 (ai 서버 측)
-        Uri.parse(''),
+        Uri.parse('$aiUrl/interviews/interview-questions'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer $token',
         },
         body: jsonEncode({
-          'conversations': conversations,
-          'predefinedQuestions': predefinedQuestions,
+          'user_info': {
+            "user_name": userInfo['name'],
+            "date_of_birth": userInfo['bornedAt'],
+            "gender": userInfo['gender'],
+            "has_children": userInfo['hasChildren'],
+            "occupation": "프로그래머", //TODO: 온보딩 수정 시 정보 추가
+            "education_level": "대학교 재학",
+            "marital_status": "미혼",
+          },
+          'chapter_info': {
+            "chapter_id": chapter.chapterId,
+            "chapter_name": chapter.chapterName,
+          },
+          'conversation_history': conversations,
         }),
       );
 
       if (response.statusCode == 200) {
-        final Map<String, dynamic> data = json.decode(response.body);
+        final Map<String, dynamic> data = json.decode(utf8.decode(response.bodyBytes));
+        print("생성된 질문: $data");
         return {
           'nextQuestion': data['nextQuestion'] as String,
           'isPredefined': data['isPredefined'] as bool,
         };
+      } else if (response.statusCode == 422) {
+        print(response.body);
+        throw Exception('Validation Error: ${response.body}');
       } else {
         throw Exception('서버 오류가 발생했습니다. 상태 코드: ${response.statusCode}');
       }

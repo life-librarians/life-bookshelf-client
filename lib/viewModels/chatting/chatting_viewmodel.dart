@@ -20,6 +20,8 @@ class ChattingViewModel extends GetxController {
   List<dynamic> predefinedQuestions = [];
   int currentQuestionId = 1;
 
+  HomeChapter? currentChapter;
+
   // Image Picker
   final ImagePicker _picker = ImagePicker();
   final Rx<File?> selectedImage = Rx<File?>(null);
@@ -33,6 +35,7 @@ class ChattingViewModel extends GetxController {
   /// 현재 진행 중인 페이지에 들어갈 시 진행 중이던 대화 initializing.
   /// TODO: 페이징 처리
   Future<void> loadConversations(HomeChapter currentChapter, {int page = 1, int size = 20}) async {
+    this.currentChapter = currentChapter;
     int chapterId = currentChapter.chapterId;
     try {
       isLoading(true);
@@ -161,8 +164,9 @@ class ChattingViewModel extends GetxController {
       // 현재까지의 대화 내용을 JSON 형태로 변환
       conversations.sort((a, b) => a.timestamp.compareTo(b.timestamp)); // 시간순 정렬
       final conversationsJson = conversations.map((conv) => conv.toJson()).toList();
+      print(conversationsJson);
 
-      final result = await _apiService.getNextQuestion(conversationsJson, predefinedQuestions);
+      final result = await _apiService.getNextQuestion(conversationsJson, predefinedQuestions, currentChapter!);
 
       final String nextQuestion = result['nextQuestion'];
       final bool isPredefined = result['isPredefined'];
