@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -68,6 +69,34 @@ class ChattingService extends GetxService {
     return (null, null);
   }
 
+  Future<void> saveConversation(List<Conversation> conversations, int interviewId) async {
+    print(interviewId);
+    try {
+      final response = await http.post(Uri.parse('$baseUrl/interviews/$interviewId/conversations'),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+            'Authorization': 'Bearer $token',
+          },
+          body: jsonEncode({
+            'conversations': getLastTwo(conversations)
+                .map((conv) => {
+                      'content': conv.content,
+                      'conversationType': conv.conversationType == 'AI' ? 'BOT' : "HUMAN",
+                    })
+                .toList(),
+          }));
+
+      if (response.statusCode == 201) {
+        print('대화 저장 성공');
+      } else {
+        print(utf8.decode(response.bodyBytes));
+        throw Exception('대화 저장 중 오류가 발생했습니다. 상태 코드: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('대화 저장 중 오류가 발생했습니다: $e');
+    }
+  }
+
   //! Autobiography 생성 -> 삭제 예정
   Future<int> createAutobiography(HomeChapter chapter) async {
     try {
@@ -94,26 +123,29 @@ class ChattingService extends GetxService {
   }
 
   // TODO: Pagination에 따른 Paging 구현 필요
-  Future<List<Conversation>> getConversations(int autobiographyId, int page, int size) async {
+  Future<List<Conversation>> getConversations(int interviewId, int page, int size) async {
     try {
       print(token);
-      final response =
-          // ! API URL 수정 필요
-          await http.get(Uri.parse('$baseUrl/interviews/$autobiographyId/conversations?page=$page&size=$size'), headers: <String, String>{
+      final response = await http.get(Uri.parse('$baseUrl/interviews/$interviewId/conversations?page=$page&size=$size'), headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'Bearer $token',
       });
 
       if (response.statusCode == 200) {
-        final Map<String, dynamic> data = json.decode(response.body);
+        final Map<String, dynamic> data = json.decode(utf8.decode(response.bodyBytes));
         final List<dynamic> results = data['results'];
-        return results.map((item) => Conversation.fromJson(item)).toList();
+        return results
+            .map((item) => Conversation(
+                  conversationType: item['conversationType'] == 'BOT' ? 'AI' : 'HUMAN',
+                  content: item['content'],
+                  timestamp: DateTime.parse(item['createdAt']),
+                ))
+            .toList();
       } else if (response.statusCode == 404) {
         throw Exception('BIO008: 자서전 ID가 존재하지 않습니다.');
       } else if (response.statusCode == 403) {
         throw Exception('BIO009: 해당 자서전의 주인이 아닙니다.');
       } else {
-        print(response.body);
         throw Exception('서버 오류가 발생했습니다.');
       }
     } catch (e) {
@@ -121,8 +153,7 @@ class ChattingService extends GetxService {
     }
   }
 
-  Future<Map<String, dynamic>> getNextQuestion(
-      List<Map<String, dynamic>> conversations, List<dynamic> predefinedQuestions, HomeChapter chapter) async {
+  Future<String> getNextQuestion(List<Map<String, dynamic>> conversations, List<dynamic> predefinedQuestions, HomeChapter chapter) async {
     if (userInfo.isEmpty) {
       final response = await http.get(Uri.parse('$baseUrl/members/me'), headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
@@ -138,47 +169,68 @@ class ChattingService extends GetxService {
       }
       print("userInfo: $userInfo");
     }
+    final url = '$aiUrl/interviews/interview-chat';
+
+    final body = jsonEncode({
+      // 'user_info': {
+      //   "user_name": userInfo['name'],
+      //   "date_of_birth": userInfo['bornedAt'],
+      //   "gender": userInfo['gender'],
+      //   "has_children": userInfo['hasChildren'],
+      //   "occupation": "프로그래머",
+      //   "education_level": "대학교 재학",
+      //   "marital_status": "미혼",
+      // },
+      // 'chapter_info': {
+      //   "title": chapter.chapterName,
+      //   "description": "프로그래머로써의 생활",
+      // },
+      // 'sub_chapter_info': {
+      //   "title": "즐거운 학교생활",
+      //   "description": "학교는 너무 재밌어",
+      // },
+      'user_info': {
+        "user_name": userInfo['name'],
+        "date_of_birth": userInfo['bornedAt'],
+        "gender": userInfo['gender'],
+        "has_children": userInfo['hasChildren'],
+        "occupation": "프로그래머",
+        "education_level": "대학교 재학",
+        "marital_status": "미혼",
+      },
+      'chapter_info': {
+        "title": "20대에 일어난 일들",
+        "description": "프로그래머와 컴퓨터공학과 학생으로써 20대에 일어난 일들",
+      },
+      'sub_chapter_info': {
+        "title": "동국대학교 컴퓨터공학과를 재학하며",
+        "description": "동국대학교 컴퓨터공학과에 다니며 겪은 학교에서의 일들과 프로그래밍 공부, 동아리 활동, 친구들과의 추억들",
+      },
+      'conversation_history': convertConversationFormat(conversations),
+      'current_answer': conversations.last['content'],
+      'question_limit': 1
+    });
 
     try {
       final response = await http.post(
-        // TODO: API URL 수정 필요 (ai 서버 측)
-        Uri.parse('$aiUrl/interviews/interview-questions'),
+        Uri.parse(url),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
           'Authorization': 'Bearer $token',
         },
-        body: jsonEncode({
-          'user_info': {
-            "user_name": userInfo['name'],
-            "date_of_birth": userInfo['bornedAt'],
-            "gender": userInfo['gender'],
-            "has_children": userInfo['hasChildren'],
-            "occupation": "프로그래머", //TODO: 온보딩 수정 시 정보 추가
-            "education_level": "대학교 재학",
-            "marital_status": "미혼",
-          },
-          'chapter_info': {
-            "chapter_id": chapter.chapterId,
-            "chapter_name": chapter.chapterName,
-          },
-          'conversation_history': conversations,
-        }),
+        body: body,
       );
 
       if (response.statusCode == 200) {
-        final Map<String, dynamic> data = json.decode(utf8.decode(response.bodyBytes));
+        final String data = utf8.decode(response.bodyBytes);
         print("생성된 질문: $data");
-        return {
-          'nextQuestion': data['nextQuestion'] as String,
-          'isPredefined': data['isPredefined'] as bool,
-        };
-      } else if (response.statusCode == 422) {
-        print(response.body);
-        throw Exception('Validation Error: ${response.body}');
+        return data;
       } else {
-        throw Exception('서버 오류가 발생했습니다. 상태 코드: ${response.statusCode}');
+        print(utf8.decode(response.bodyBytes));
+        throw Exception('서버 오류: ${response.statusCode}');
       }
     } catch (e) {
+      print('오류 발생: $e');
       throw Exception('다음 질문을 가져오는 중 오류가 발생했습니다: $e');
     }
   }
@@ -187,4 +239,25 @@ class ChattingService extends GetxService {
   Future<String> uploadImage(File imageFile) async {
     return await _imageUploadService.uploadImage(imageFile, ImageUploadFolder.bioCoverImages);
   }
+
+  /// AI 서버 req 형식에 따라 변환
+  List<Map<String, dynamic>> convertConversationFormat(List<Map<String, dynamic>> originalList) {
+    return originalList.map((item) {
+      // conversationType을 conversation_type으로 변환
+      String conversationType = item['conversationType'] == 'AI' ? 'BOT' : 'HUMAN';
+
+      // 새로운 형식의 맵 생성
+      return {
+        'content': item['content'],
+        'conversation_type': conversationType,
+      };
+    }).toList();
+  }
+}
+
+List<T> getLastTwo<T>(List<T> list) {
+  if (list.length < 2) {
+    return List.from(list); // 리스트의 모든 요소 반환 (0개 또는 1개)
+  }
+  return list.sublist(list.length - 2);
 }
