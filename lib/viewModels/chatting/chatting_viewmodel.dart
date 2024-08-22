@@ -22,6 +22,9 @@ class ChattingViewModel extends GetxController {
 
   HomeChapter? currentChapter;
 
+  int? autobiographyId;
+  int? interviewId;
+
   // Image Picker
   final ImagePicker _picker = ImagePicker();
   final Rx<File?> selectedImage = Rx<File?>(null);
@@ -34,23 +37,25 @@ class ChattingViewModel extends GetxController {
 
   /// 현재 진행 중인 페이지에 들어갈 시 진행 중이던 대화 initializing.
   /// TODO: 페이징 처리
-  Future<void> loadConversations(HomeChapter currentChapter, {int page = 1, int size = 20}) async {
+  Future<void> loadConversations(HomeChapter currentChapter, {int page = 0, int size = 40}) async {
     this.currentChapter = currentChapter;
     int chapterId = currentChapter.chapterId;
     try {
       isLoading(true);
-      // autobiography 존재하는지 확인
-      int? autobiographyId;
-      int? interviewId;
-      (autobiographyId, interviewId) = await _apiService.checkAutobiography(chapterId);
+      // autobiography 존재하는지 확인 후 id 저장
+      int? autoid, intid;
+      (autoid, intid) = await _apiService.checkAutobiography(chapterId);
+      autobiographyId = autoid;
+      interviewId = intid;
+
       // TODO: 없으면 생성 (온보딩에서 생성 시 없을 수 없음) => 추후 온보딩과 함께 수정 필요
-      // autobiographyId ??= await _apiService.createAutobiography(currentChapter);
+      autobiographyId ??= await _apiService.createAutobiography(currentChapter);
       if (autobiographyId == null || interviewId == null) {
         throw Exception('자서전 생성 실패');
       }
 
-      final loadedConversations = await _apiService.getConversations(autobiographyId, page, size);
-      final loadedQuestions = await _apiService.getInterview(interviewId);
+      final loadedConversations = await _apiService.getConversations(interviewId!, page, size);
+      final loadedQuestions = await _apiService.getInterview(interviewId!);
       conversations.value = loadedConversations;
       predefinedQuestions = loadedQuestions['results'];
       updateChatBubbles();
@@ -71,7 +76,6 @@ class ChattingViewModel extends GetxController {
         .toList();
 
     if (chatBubbles.isEmpty) {
-      //TODO: 시간 설정 필요
       conversations.add(Conversation(
         conversationType: 'AI',
         content: predefinedQuestions.first['questionText'],
@@ -168,8 +172,7 @@ class ChattingViewModel extends GetxController {
 
       final result = await _apiService.getNextQuestion(conversationsJson, predefinedQuestions, currentChapter!);
 
-      final String nextQuestion = result['nextQuestion'];
-      final bool isPredefined = result['isPredefined'];
+      final String nextQuestion = result;
       // TODO: isPredefined에 따라 질문이 미리 정해진 경우 처리하여 진행도 계산.
 
       if (nextQuestion.isNotEmpty) {
@@ -178,6 +181,7 @@ class ChattingViewModel extends GetxController {
           content: nextQuestion,
         ));
         updateChatBubbles();
+        await _apiService.saveConversation(conversations, interviewId!);
       } else {
         // 더 이상 질문이 없는 경우 처리
         Get.snackbar('알림', '모든 질문이 완료되었습니다.');
