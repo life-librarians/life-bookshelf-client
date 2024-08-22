@@ -49,6 +49,7 @@ class OnboardingViewModel extends GetxController {
       try {
         // 온보딩 만들기
         await _userService.updateUser(user);
+        await _userService.createChapter();
         // 회원정보 넣기
         await _myPageApiService.fetchUserProfile(
           name: answers[0],
