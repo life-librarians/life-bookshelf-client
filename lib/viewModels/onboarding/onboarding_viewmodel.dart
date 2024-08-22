@@ -4,6 +4,7 @@ import 'package:life_bookshelf/services/onboarding/onboarding_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../services/mypage/mypage_service.dart';
+import '../home/home_viewmodel.dart';
 
 class OnboardingViewModel extends GetxController {
   var currentQuestionIndex = 0.obs;
@@ -58,6 +59,8 @@ class OnboardingViewModel extends GetxController {
           hasChildren: answers[3].toLowerCase() == 'yes',
         );
         await setOnboardingCompleted();
+
+        final viewmodel = Get.find<HomeViewModel>();
         Get.toNamed('/home');
       } catch (error, stackTrace) {
         // 에러와 스택 트레이스를 함께 출력
