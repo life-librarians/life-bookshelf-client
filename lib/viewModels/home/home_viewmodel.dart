@@ -28,9 +28,8 @@ class HomeViewModel extends GetxController {
   }
 
   Future<void> fetchChapters() async {
-    var fetchedChapters = await chapterService.fetchChapters(1, 10);
+    var fetchedChapters = await chapterService.fetchChapters(0, 10);
     chapters.value = fetchedChapters;
-    print('Fetched chapters: $chapters');
   }
 
   void setCurrentChapter() {
@@ -39,6 +38,7 @@ class HomeViewModel extends GetxController {
       if (currentId != null) {
         currentChapter.value = _findChapterById(currentId);
         if (currentChapter.value != null) {
+          print("current chapterid: ${currentChapter.value?.chapterId}");
           print('Current Chapter: ${currentChapter.value?.chapterName}');
         } else {
           print('No matching chapter found for the currentChapterId.');

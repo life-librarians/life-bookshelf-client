@@ -8,7 +8,7 @@ import '../userpreferences_service.dart';
 class OnboardingApiService {
   final String apiUrl = '${dotenv.env['AI']}/chapters/generate_chapters';
 
-  Future<void> updateUser(OnUserModel user) async {
+  Future<List<dynamic>?> updateUser(OnUserModel user) async {
     String token = UserPreferences.getUserToken();
 
     final headers = {
@@ -47,6 +47,9 @@ class OnboardingApiService {
         }
         print(''); // 챕터 구분을 위한 빈 줄
       }
+
+      // TODO: 챕터 데이터 활용하여 자서전 생성 중이라는 것을 로딩 화면에 표시
+      return chapterTimeline;
     } else if (response.statusCode == 400) {
       final errorResponse = jsonDecode(utf8.decode(response.bodyBytes));
       throw Exception('온보딩을 바탕으로 챕터 생성 실패: ${errorResponse['message']}');
@@ -54,4 +57,7 @@ class OnboardingApiService {
       throw Exception('온보딩을 바탕으로 챕터 생성 실패. 상태 코드: ${response.statusCode}, ${utf8.decode(response.bodyBytes)}');
     }
   }
+
+  /// 챕터 생성
+  Future<void> createChapter() async {}
 }

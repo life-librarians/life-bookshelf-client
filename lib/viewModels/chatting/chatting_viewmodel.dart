@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:life_bookshelf/models/chatting/conversation_model.dart';
+import 'package:life_bookshelf/models/home/chapter.dart';
 import 'package:life_bookshelf/services/chatting/chatting_service.dart';
 import 'package:life_bookshelf/views/chatting/chatBubble.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
@@ -16,13 +17,10 @@ class ChattingViewModel extends GetxController {
   final RxBool isLoading = true.obs;
 
   // 사전에 생성한 질문 리스트 (예시)
-  final List<String> predefinedQuestions = [
-    "어린 시절 가장 행복했던 순간은 언제인가요?",
-    "가장 힘들었던 경험은 무엇이었나요?",
-    "인생에서 가장 중요한 결정은 무엇이었나요?",
-    "가장 존경하는 인물은 누구인가요?",
-    "미래에 이루고 싶은 꿈은 무엇인가요?"
-  ];
+  List<dynamic> predefinedQuestions = [];
+  int currentQuestionId = 1;
+
+  HomeChapter? currentChapter;
 
   // Image Picker
   final ImagePicker _picker = ImagePicker();
@@ -35,11 +33,26 @@ class ChattingViewModel extends GetxController {
   String get currentSpeech => _currentSpeech.value;
 
   /// 현재 진행 중인 페이지에 들어갈 시 진행 중이던 대화 initializing.
-  Future<void> loadConversations(int autobiographyId, {int page = 1, int size = 20}) async {
+  /// TODO: 페이징 처리
+  Future<void> loadConversations(HomeChapter currentChapter, {int page = 1, int size = 20}) async {
+    this.currentChapter = currentChapter;
+    int chapterId = currentChapter.chapterId;
     try {
       isLoading(true);
+      // autobiography 존재하는지 확인
+      int? autobiographyId;
+      int? interviewId;
+      (autobiographyId, interviewId) = await _apiService.checkAutobiography(chapterId);
+      // TODO: 없으면 생성 (온보딩에서 생성 시 없을 수 없음) => 추후 온보딩과 함께 수정 필요
+      // autobiographyId ??= await _apiService.createAutobiography(currentChapter);
+      if (autobiographyId == null || interviewId == null) {
+        throw Exception('자서전 생성 실패');
+      }
+
       final loadedConversations = await _apiService.getConversations(autobiographyId, page, size);
+      final loadedQuestions = await _apiService.getInterview(interviewId);
       conversations.value = loadedConversations;
+      predefinedQuestions = loadedQuestions['results'];
       updateChatBubbles();
     } catch (e) {
       Get.snackbar('오류', e.toString());
@@ -56,6 +69,16 @@ class ChattingViewModel extends GetxController {
               isFinal: true,
             ))
         .toList();
+
+    if (chatBubbles.isEmpty) {
+      //TODO: 시간 설정 필요
+      conversations.add(Conversation(
+        conversationType: 'AI',
+        content: predefinedQuestions.first['questionText'],
+      ));
+      chatBubbles.add(ChatBubble(isUser: false, message: predefinedQuestions.first['questionText'], isFinal: true));
+      print("첫 질문 업데이트: ${predefinedQuestions.first['questionText']}");
+    }
   }
 
   /// 채팅 화면 아래 버튼 state 변경
@@ -141,8 +164,9 @@ class ChattingViewModel extends GetxController {
       // 현재까지의 대화 내용을 JSON 형태로 변환
       conversations.sort((a, b) => a.timestamp.compareTo(b.timestamp)); // 시간순 정렬
       final conversationsJson = conversations.map((conv) => conv.toJson()).toList();
+      print(conversationsJson);
 
-      final result = await _apiService.getNextQuestion(conversationsJson, predefinedQuestions);
+      final result = await _apiService.getNextQuestion(conversationsJson, predefinedQuestions, currentChapter!);
 
       final String nextQuestion = result['nextQuestion'];
       final bool isPredefined = result['isPredefined'];
