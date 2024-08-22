@@ -70,6 +70,7 @@ class ChattingService extends GetxService {
   }
 
   Future<void> saveConversation(List<Conversation> conversations, int interviewId) async {
+    print(interviewId);
     try {
       final response = await http.post(Uri.parse('$baseUrl/interviews/$interviewId/conversations'),
           headers: <String, String>{
@@ -77,7 +78,7 @@ class ChattingService extends GetxService {
             'Authorization': 'Bearer $token',
           },
           body: jsonEncode({
-            'conversations': conversations
+            'conversations': getLastTwo(conversations)
                 .map((conv) => {
                       'content': conv.content,
                       'conversationType': conv.conversationType == 'AI' ? 'BOT' : "HUMAN",
@@ -122,25 +123,29 @@ class ChattingService extends GetxService {
   }
 
   // TODO: Pagination에 따른 Paging 구현 필요
-  Future<List<Conversation>> getConversations(int autobiographyId, int page, int size) async {
+  Future<List<Conversation>> getConversations(int interviewId, int page, int size) async {
     try {
       print(token);
-      final response =
-          await http.get(Uri.parse('$baseUrl/interviews/$autobiographyId/conversations?page=$page&size=$size'), headers: <String, String>{
+      final response = await http.get(Uri.parse('$baseUrl/interviews/$interviewId/conversations?page=$page&size=$size'), headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'Bearer $token',
       });
 
       if (response.statusCode == 200) {
-        final Map<String, dynamic> data = json.decode(response.body);
+        final Map<String, dynamic> data = json.decode(utf8.decode(response.bodyBytes));
         final List<dynamic> results = data['results'];
-        return results.map((item) => Conversation.fromJson(item)).toList();
+        return results
+            .map((item) => Conversation(
+                  conversationType: item['conversationType'] == 'BOT' ? 'AI' : 'HUMAN',
+                  content: item['content'],
+                  timestamp: DateTime.parse(item['createdAt']),
+                ))
+            .toList();
       } else if (response.statusCode == 404) {
         throw Exception('BIO008: 자서전 ID가 존재하지 않습니다.');
       } else if (response.statusCode == 403) {
         throw Exception('BIO009: 해당 자서전의 주인이 아닙니다.');
       } else {
-        print(response.body);
         throw Exception('서버 오류가 발생했습니다.');
       }
     } catch (e) {
@@ -231,4 +236,11 @@ class ChattingService extends GetxService {
       };
     }).toList();
   }
+}
+
+List<T> getLastTwo<T>(List<T> list) {
+  if (list.length < 2) {
+    return List.from(list); // 리스트의 모든 요소 반환 (0개 또는 1개)
+  }
+  return list.sublist(list.length - 2);
 }

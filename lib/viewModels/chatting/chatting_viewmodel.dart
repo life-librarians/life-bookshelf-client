@@ -37,7 +37,7 @@ class ChattingViewModel extends GetxController {
 
   /// 현재 진행 중인 페이지에 들어갈 시 진행 중이던 대화 initializing.
   /// TODO: 페이징 처리
-  Future<void> loadConversations(HomeChapter currentChapter, {int page = 1, int size = 20}) async {
+  Future<void> loadConversations(HomeChapter currentChapter, {int page = 0, int size = 40}) async {
     this.currentChapter = currentChapter;
     int chapterId = currentChapter.chapterId;
     try {
@@ -49,12 +49,12 @@ class ChattingViewModel extends GetxController {
       interviewId = intid;
 
       // TODO: 없으면 생성 (온보딩에서 생성 시 없을 수 없음) => 추후 온보딩과 함께 수정 필요
-      // autobiographyId ??= await _apiService.createAutobiography(currentChapter);
+      autobiographyId ??= await _apiService.createAutobiography(currentChapter);
       if (autobiographyId == null || interviewId == null) {
         throw Exception('자서전 생성 실패');
       }
 
-      final loadedConversations = await _apiService.getConversations(autobiographyId!, page, size);
+      final loadedConversations = await _apiService.getConversations(interviewId!, page, size);
       final loadedQuestions = await _apiService.getInterview(interviewId!);
       conversations.value = loadedConversations;
       predefinedQuestions = loadedQuestions['results'];
