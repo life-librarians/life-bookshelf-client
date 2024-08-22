@@ -69,6 +69,33 @@ class ChattingService extends GetxService {
     return (null, null);
   }
 
+  Future<void> saveConversation(List<Conversation> conversations, int interviewId) async {
+    try {
+      final response = await http.post(Uri.parse('$baseUrl/interviews/$interviewId/conversations'),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+            'Authorization': 'Bearer $token',
+          },
+          body: jsonEncode({
+            'conversations': conversations
+                .map((conv) => {
+                      'content': conv.content,
+                      'conversationType': conv.conversationType == 'AI' ? 'BOT' : "HUMAN",
+                    })
+                .toList(),
+          }));
+
+      if (response.statusCode == 201) {
+        print('대화 저장 성공');
+      } else {
+        print(utf8.decode(response.bodyBytes));
+        throw Exception('대화 저장 중 오류가 발생했습니다. 상태 코드: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('대화 저장 중 오류가 발생했습니다: $e');
+    }
+  }
+
   //! Autobiography 생성 -> 삭제 예정
   Future<int> createAutobiography(HomeChapter chapter) async {
     try {

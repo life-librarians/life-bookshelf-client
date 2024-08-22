@@ -58,7 +58,7 @@ class ChatBubble extends StatelessWidget {
               ),
             ),
           ),
-          // TODO: TimeStamp 실제 값 수정
+          // TODO: TimeStamp 추가?
           if (!isFinal) ...[
             Container(
               margin: EdgeInsets.only(top: timeStampMargin),
@@ -70,13 +70,13 @@ class ChatBubble extends StatelessWidget {
               ),
             )
           ] else ...[
-            Container(
-              margin: EdgeInsets.only(top: timeStampMargin),
-              child: Text(
-                "01:30 PM",
-                style: FontSystem.KR14SB.copyWith(color: ColorSystem.chatting.timeStamp),
-              ),
-            )
+            // Container(
+            //   margin: EdgeInsets.only(top: timeStampMargin),
+            //   child: Text(
+            //     "01:30 PM",
+            //     style: FontSystem.KR14SB.copyWith(color: ColorSystem.chatting.timeStamp),
+            //   ),
+            // )
           ]
         ],
       ),
