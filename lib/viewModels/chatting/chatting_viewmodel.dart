@@ -168,8 +168,7 @@ class ChattingViewModel extends GetxController {
 
       final result = await _apiService.getNextQuestion(conversationsJson, predefinedQuestions, currentChapter!);
 
-      final String nextQuestion = result['nextQuestion'];
-      final bool isPredefined = result['isPredefined'];
+      final String nextQuestion = result;
       // TODO: isPredefined에 따라 질문이 미리 정해진 경우 처리하여 진행도 계산.
 
       if (nextQuestion.isNotEmpty) {

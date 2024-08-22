@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -98,7 +99,6 @@ class ChattingService extends GetxService {
     try {
       print(token);
       final response =
-          // ! API URL 수정 필요
           await http.get(Uri.parse('$baseUrl/interviews/$autobiographyId/conversations?page=$page&size=$size'), headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'Bearer $token',
@@ -121,8 +121,7 @@ class ChattingService extends GetxService {
     }
   }
 
-  Future<Map<String, dynamic>> getNextQuestion(
-      List<Map<String, dynamic>> conversations, List<dynamic> predefinedQuestions, HomeChapter chapter) async {
+  Future<String> getNextQuestion(List<Map<String, dynamic>> conversations, List<dynamic> predefinedQuestions, HomeChapter chapter) async {
     if (userInfo.isEmpty) {
       final response = await http.get(Uri.parse('$baseUrl/members/me'), headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
@@ -138,47 +137,51 @@ class ChattingService extends GetxService {
       }
       print("userInfo: $userInfo");
     }
+    final url = '$aiUrl/interviews/interview-chat';
+
+    final body = jsonEncode({
+      'user_info': {
+        "user_name": userInfo['name'],
+        "date_of_birth": userInfo['bornedAt'],
+        "gender": userInfo['gender'],
+        "has_children": userInfo['hasChildren'],
+        "occupation": "프로그래머",
+        "education_level": "대학교 재학",
+        "marital_status": "미혼",
+      },
+      'chapter_info': {
+        "title": chapter.chapterName,
+        "description": "프로그래머로써의 생활",
+      },
+      'sub_chapter_info': {
+        "title": "즐거운 학교생활",
+        "description": "학교는 너무 재밌어",
+      },
+      'conversation_history': convertConversationFormat(conversations),
+      'current_answer': conversations.last['content'],
+      'question_limit': 1
+    });
 
     try {
       final response = await http.post(
-        // TODO: API URL 수정 필요 (ai 서버 측)
-        Uri.parse('$aiUrl/interviews/interview-questions'),
+        Uri.parse(url),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
           'Authorization': 'Bearer $token',
         },
-        body: jsonEncode({
-          'user_info': {
-            "user_name": userInfo['name'],
-            "date_of_birth": userInfo['bornedAt'],
-            "gender": userInfo['gender'],
-            "has_children": userInfo['hasChildren'],
-            "occupation": "프로그래머", //TODO: 온보딩 수정 시 정보 추가
-            "education_level": "대학교 재학",
-            "marital_status": "미혼",
-          },
-          'chapter_info': {
-            "chapter_id": chapter.chapterId,
-            "chapter_name": chapter.chapterName,
-          },
-          'conversation_history': conversations,
-        }),
+        body: body,
       );
 
       if (response.statusCode == 200) {
-        final Map<String, dynamic> data = json.decode(utf8.decode(response.bodyBytes));
+        final String data = utf8.decode(response.bodyBytes);
         print("생성된 질문: $data");
-        return {
-          'nextQuestion': data['nextQuestion'] as String,
-          'isPredefined': data['isPredefined'] as bool,
-        };
-      } else if (response.statusCode == 422) {
-        print(response.body);
-        throw Exception('Validation Error: ${response.body}');
+        return data;
       } else {
-        throw Exception('서버 오류가 발생했습니다. 상태 코드: ${response.statusCode}');
+        print(utf8.decode(response.bodyBytes));
+        throw Exception('서버 오류: ${response.statusCode}');
       }
     } catch (e) {
+      print('오류 발생: $e');
       throw Exception('다음 질문을 가져오는 중 오류가 발생했습니다: $e');
     }
   }
@@ -186,5 +189,19 @@ class ChattingService extends GetxService {
   /// presigned URL을 통해 이미지를 S3에 업로드
   Future<String> uploadImage(File imageFile) async {
     return await _imageUploadService.uploadImage(imageFile, ImageUploadFolder.bioCoverImages);
+  }
+
+  /// AI 서버 req 형식에 따라 변환
+  List<Map<String, dynamic>> convertConversationFormat(List<Map<String, dynamic>> originalList) {
+    return originalList.map((item) {
+      // conversationType을 conversation_type으로 변환
+      String conversationType = item['conversationType'] == 'AI' ? 'BOT' : 'HUMAN';
+
+      // 새로운 형식의 맵 생성
+      return {
+        'content': item['content'],
+        'conversation_type': conversationType,
+      };
+    }).toList();
   }
 }
