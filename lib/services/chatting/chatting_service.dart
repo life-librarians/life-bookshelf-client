@@ -172,6 +172,23 @@ class ChattingService extends GetxService {
     final url = '$aiUrl/interviews/interview-chat';
 
     final body = jsonEncode({
+      // 'user_info': {
+      //   "user_name": userInfo['name'],
+      //   "date_of_birth": userInfo['bornedAt'],
+      //   "gender": userInfo['gender'],
+      //   "has_children": userInfo['hasChildren'],
+      //   "occupation": "프로그래머",
+      //   "education_level": "대학교 재학",
+      //   "marital_status": "미혼",
+      // },
+      // 'chapter_info': {
+      //   "title": chapter.chapterName,
+      //   "description": "프로그래머로써의 생활",
+      // },
+      // 'sub_chapter_info': {
+      //   "title": "즐거운 학교생활",
+      //   "description": "학교는 너무 재밌어",
+      // },
       'user_info': {
         "user_name": userInfo['name'],
         "date_of_birth": userInfo['bornedAt'],
@@ -182,12 +199,12 @@ class ChattingService extends GetxService {
         "marital_status": "미혼",
       },
       'chapter_info': {
-        "title": chapter.chapterName,
-        "description": "프로그래머로써의 생활",
+        "title": "20대에 일어난 일들",
+        "description": "프로그래머와 컴퓨터공학과 학생으로써 20대에 일어난 일들",
       },
       'sub_chapter_info': {
-        "title": "즐거운 학교생활",
-        "description": "학교는 너무 재밌어",
+        "title": "동국대학교 컴퓨터공학과를 재학하며",
+        "description": "동국대학교 컴퓨터공학과에 다니며 겪은 학교에서의 일들과 프로그래밍 공부, 동아리 활동, 친구들과의 추억들",
       },
       'conversation_history': convertConversationFormat(conversations),
       'current_answer': conversations.last['content'],
