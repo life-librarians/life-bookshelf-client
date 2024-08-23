@@ -8,7 +8,6 @@ import 'package:life_bookshelf/models/chatting/conversation_model.dart';
 import 'package:life_bookshelf/models/home/chapter.dart';
 import 'package:life_bookshelf/services/image_upload_service.dart';
 import 'package:life_bookshelf/services/userpreferences_service.dart';
-import 'package:life_bookshelf/viewModels/mypage/mypage_viewmodel.dart';
 
 class ChattingService extends GetxService {
   final ImageUploadService _imageUploadService = Get.find<ImageUploadService>();
@@ -17,6 +16,20 @@ class ChattingService extends GetxService {
   final String aiUrl = dotenv.env['AI'] ?? "";
   String token = UserPreferences.getUserToken();
   final Map<String, dynamic> userInfo = <String, dynamic>{}.obs;
+
+  final Map<String, dynamic> bodyinfo = {
+    "occupation": "프로그래머",
+    "education_level": "대학교 재학",
+    "marital_status": "미혼",
+    'chapter_info': {
+      "title": "대학교 입학 전, 어린기와 청소년 시절",
+      "description": "황현정으로써 살아온 어린 시절과 청소년 시절에 대한 이야기",
+    },
+    'sub_chapter_info': {
+      "title": "초등학교 입학",
+      "description": "황현정이 초등학교에 입학하고, 중학교에 들어가기 전까지 학교를 다니며 겪은 일들에 대한 이야기",
+    }
+  };
 
   Future<Map<String, dynamic>> getInterview(int interviewId) async {
     try {
@@ -97,7 +110,6 @@ class ChattingService extends GetxService {
     }
   }
 
-  //! Autobiography 생성 -> 삭제 예정
   Future<int> createAutobiography(HomeChapter chapter) async {
     try {
       final response = await http.post(Uri.parse('$baseUrl/autobiographies'),
@@ -172,40 +184,17 @@ class ChattingService extends GetxService {
     final url = '$aiUrl/interviews/interview-chat';
 
     final body = jsonEncode({
-      // 'user_info': {
-      //   "user_name": userInfo['name'],
-      //   "date_of_birth": userInfo['bornedAt'],
-      //   "gender": userInfo['gender'],
-      //   "has_children": userInfo['hasChildren'],
-      //   "occupation": "프로그래머",
-      //   "education_level": "대학교 재학",
-      //   "marital_status": "미혼",
-      // },
-      // 'chapter_info': {
-      //   "title": chapter.chapterName,
-      //   "description": "프로그래머로써의 생활",
-      // },
-      // 'sub_chapter_info': {
-      //   "title": "즐거운 학교생활",
-      //   "description": "학교는 너무 재밌어",
-      // },
       'user_info': {
         "user_name": userInfo['name'],
         "date_of_birth": userInfo['bornedAt'],
         "gender": userInfo['gender'],
         "has_children": userInfo['hasChildren'],
-        "occupation": "프로그래머",
-        "education_level": "대학교 재학",
-        "marital_status": "미혼",
+        "occupation": bodyinfo["occupation"],
+        "education_level": bodyinfo["education_level"],
+        "marital_status": bodyinfo["marital_status"],
       },
-      'chapter_info': {
-        "title": "20대에 일어난 일들",
-        "description": "프로그래머와 컴퓨터공학과 학생으로써 20대에 일어난 일들",
-      },
-      'sub_chapter_info': {
-        "title": "동국대학교 컴퓨터공학과를 재학하며",
-        "description": "동국대학교 컴퓨터공학과에 다니며 겪은 학교에서의 일들과 프로그래밍 공부, 동아리 활동, 친구들과의 추억들",
-      },
+      'chapter_info': bodyinfo['chapter_info'],
+      'sub_chapter_info': bodyinfo['sub_chapter_info'],
       'conversation_history': convertConversationFormat(conversations),
       'current_answer': conversations.last['content'],
       'question_limit': 1

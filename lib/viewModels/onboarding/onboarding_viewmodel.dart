@@ -87,8 +87,7 @@ class OnboardingViewModel extends GetxController {
   }
 
   void validateDate() {
-    if (answers.length <= currentQuestionIndex.value &&
-        isButtonPressed.value == true) {
+    if (answers.length <= currentQuestionIndex.value && isButtonPressed.value == true) {
       isDateValid(false);
     } else {
       isDateValid(true);
@@ -96,8 +95,7 @@ class OnboardingViewModel extends GetxController {
   }
 
   void validateName(String newName) {
-    if (answers.length <= currentQuestionIndex.value &&
-        isButtonPressed.value == true) {
+    if (answers.length <= currentQuestionIndex.value && isButtonPressed.value == true) {
       isNameValid(false);
     } else {
       isNameValid(true);
@@ -112,7 +110,8 @@ class OnboardingViewModel extends GetxController {
   Future<bool> isOnboardingCompleted() async {
     final prefs = await SharedPreferences.getInstance();
     print("Onboarding completed: ${prefs.getBool('onboardingCompleted')}");
-    return prefs.getBool('onboardingCompleted') ?? false;
+    // return prefs.getBool('onboardingCompleted') ?? false;
+    return true; // TODO: 시연용 임시
   }
 
   Future<void> clearOnboardingStatus() async {

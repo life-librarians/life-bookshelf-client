@@ -70,24 +70,26 @@ class ChattingScreen extends BaseScreen<ChattingViewModel> {
               Get.back();
             },
           ),
-          Expanded(
+          const Expanded(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text("Interview Chat", style: FontSystem.KR18SB),
+                Text("Interview Chat", style: FontSystem.KR18SB),
                 // TODO: 진행도 수정 필요
-                Text("65% completed", style: FontSystem.KR10M.copyWith(color: Colors.black.withOpacity(0.5))),
-                const ProgressBar(progress: 65).paddingSymmetric(vertical: 3)
+                // TODO: 삭제한 코드들 복원 필요
+                // Text("65% completed", style: FontSystem.KR10M.copyWith(color: Colors.black.withOpacity(0.5))),
+                // const ProgressBar(progress: 65).paddingSymmetric(vertical: 3)
               ],
             ),
           ),
-          GestureDetector(
-            onTap: () {
-              // TODO: 임시 버튼. 추후 수정 바람.
-              _showFinishModal();
-            },
-            child: Container(width: 30, color: ColorSystem.mainBlue),
-          ),
+          // GestureDetector(
+          //   onTap: () {
+          //     // TODO: 임시 버튼. 추후 수정 바람.
+          //     _showFinishModal();
+          //   },
+          //   child: Container(width: 30, color: ColorSystem.mainBlue),
+          // ),
+          const SizedBox(width: 30),
         ],
       ),
     );
