@@ -44,6 +44,7 @@ class ChattingViewModel extends GetxController {
       isLoading(true);
       // autobiography 존재하는지 확인 후 id 저장
       int? autoid, intid;
+      print(chapterId);
       (autoid, intid) = await _apiService.checkAutobiography(chapterId);
       autobiographyId = autoid;
       interviewId = intid;
@@ -181,7 +182,7 @@ class ChattingViewModel extends GetxController {
           content: nextQuestion,
         ));
         updateChatBubbles();
-        await _apiService.saveConversation(conversations, interviewId!);
+        // await _apiService.saveConversation(conversations, interviewId!);
       } else {
         // 더 이상 질문이 없는 경우 처리
         Get.snackbar('알림', '모든 질문이 완료되었습니다.');

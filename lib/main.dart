@@ -21,7 +21,7 @@ void main() async {
   final OnboardingViewModel viewmodel = Get.find<OnboardingViewModel>();
   final onboardingCompleted = await viewmodel.isOnboardingCompleted();
   //온보딩 다시 하고싶을때 취소
-  //viewmodel.clearOnboardingStatus();
+  viewmodel.clearOnboardingStatus();
 
   runApp(MainApp(initialRoute: "/", onboardingCompleted: onboardingCompleted));
 }
