@@ -27,6 +27,12 @@ class OnboardingApiService {
       'has_children': user.hasChildren,
     });
 
+    // final response = await http.post(
+    //   Uri.parse(apiUrl),
+    //   headers: headers,
+    //   body: body,
+    // );
+
     final response = await http.post(
       Uri.parse(apiUrl),
       headers: headers,
@@ -109,4 +115,6 @@ class OnboardingApiService {
       throw Exception('챕터 생성 실패. 상태 코드: ${response.statusCode}, 응답 내용: $decodedResponse');
     }
   }
+
+
 }
