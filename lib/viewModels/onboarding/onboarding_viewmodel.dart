@@ -114,8 +114,8 @@ class OnboardingViewModel extends GetxController {
   Future<bool> isOnboardingCompleted() async {
     final prefs = await SharedPreferences.getInstance();
     print("Onboarding completed: ${prefs.getBool('onboardingCompleted')}");
-    // return prefs.getBool('onboardingCompleted') ?? false;
-    return true; // TODO: 시연용 임시
+    return prefs.getBool('onboardingCompleted') ?? false;
+    // return true; // TODO: 시연용 임시
   }
 
   Future<void> clearOnboardingStatus() async {
