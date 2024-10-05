@@ -120,7 +120,7 @@ class ChattingService extends GetxService {
           body: jsonEncode({
             'chapterId': chapter.chapterId,
             'title': chapter.chapterName,
-            // 'content': chapter.,
+            'description': chapter.description,
           }));
 
       if (response.statusCode == 201) {
