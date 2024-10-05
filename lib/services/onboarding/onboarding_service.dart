@@ -62,9 +62,6 @@ class OnboardingApiService {
 
   /// 챕터 생성
   Future<void> createChapter() async {
-    if (chapterTimeline == null) throw Exception('chapterTimeline이 비어있습니다.');
-
-    // chapterTimeline 데이터를 변환
     List<Map<String, dynamic>> chapters = [];
     for (int i = 0; i < chapterTimeline.length; i++) {
       var chapter = chapterTimeline[i];
@@ -76,6 +73,7 @@ class OnboardingApiService {
         subchapters.add({
           'number': '${i + 1}.${j + 1}',
           'name': event['event_title'],
+          'description': event['event_description'],
         });
       }
       // 메인 챕터 변환
@@ -83,6 +81,7 @@ class OnboardingApiService {
         'number': '${i + 1}',
         'name': chapter['chapter_title'],
         'subchapters': subchapters,
+        'description': chapter['description'],
       });
     }
 
