@@ -20,7 +20,7 @@ class HomeChapter {
       chapterId: json['chapterId'],
       chapterNumber: json['chapterNumber'],
       chapterName: json['chapterName'],
-      description: json['description'] as String?,
+      description: json['chapterDescription'] as String?,
       chapterCreatedAt: DateTime.parse(json['chapterCreatedAt']),
       subChapters: json['subChapters'] != null
           ? (json['subChapters'] as List).map((subChapter) => HomeChapter.fromJson(subChapter)).toList()

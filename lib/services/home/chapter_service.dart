@@ -26,8 +26,6 @@ class HomeChapterService {
       print(token);
       if (response.statusCode == 200) {
         var data = jsonDecode(utf8.decode(response.bodyBytes));
-        print('Decoded data: $data'); // 디코딩된 데이터 출력
-
         currentChapterId = data['currentChapterId'];
         //TODO: currentChapterId 상수값 변경 필요
         // currentChapterId = 51;
