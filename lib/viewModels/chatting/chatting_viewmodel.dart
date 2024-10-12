@@ -15,6 +15,7 @@ class ChattingViewModel extends GetxController {
   final RxList<ChatBubble> chatBubbles = <ChatBubble>[].obs;
   final RxList<Conversation> conversations = <Conversation>[].obs;
   final RxBool isLoading = true.obs;
+  final RxBool isInterviewFinished = false.obs;
 
   // 사전에 생성한 질문 리스트 (예시)
   List<String> predefinedQuestions = [];
@@ -68,7 +69,7 @@ class ChattingViewModel extends GetxController {
       conversations.value = loadedConversations;
       predefinedQuestions = loadedQuestions['results'].map<String>((q) => q['questionText'] as String).toList();
       currentPredefinedQuestionIndex = loadedQuestions['currentQuestionId'] - loadedQuestions['results'][0]['questionId'];
-      print('$currentPredefinedQuestionIndex, 현재 사전질문 번호');
+      print('현재 사전질문 인덱스: $currentPredefinedQuestionIndex');
       updateChatBubbles();
     } catch (e) {
       Get.snackbar('오류', e.toString());
@@ -198,6 +199,7 @@ class ChattingViewModel extends GetxController {
           _apiService.moveToNextQuestionIndex(interviewId!);
         } else {
           // 모든 질문이 끝난 경우
+          isInterviewFinished.value = true;
           Get.snackbar('알림', '모든 질문이 완료되었습니다.');
           return;
         }
