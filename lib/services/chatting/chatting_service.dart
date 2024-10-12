@@ -407,6 +407,29 @@ class ChattingService extends GetxService {
       return -1;
     }
   }
+
+  /// 인터뷰 질문 index (사전 생성 질문) 다음으로 넘기기
+  Future<void> moveToNextQuestionIndex(int interviewId) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/interviews/$interviewId/questions/current-question'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        print('사전 질문 인덱스를 다음으로 이동했습니다.');
+      } else {
+        print('사전 질문 인덱스를 다음으로 이동하는데 실패했습니다. 상태 코드: ${response.statusCode}');
+        throw Exception('다음 질문으로 이동 실패');
+      }
+    } catch (e) {
+      print('사전 질문 인덱스를 다음으로 이동 중 오류 발생: $e');
+      throw Exception('다음 질문으로 이동 중 오류 발생');
+    }
+  }
 }
 
 List<T> getLastTwo<T>(List<T> list) {

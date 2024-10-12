@@ -67,6 +67,8 @@ class ChattingViewModel extends GetxController {
       final loadedQuestions = await _apiService.getInterview(interviewId!);
       conversations.value = loadedConversations;
       predefinedQuestions = loadedQuestions['results'].map<String>((q) => q['questionText'] as String).toList();
+      currentPredefinedQuestionIndex = loadedQuestions['currentQuestionId'] - loadedQuestions['results'][0]['questionId'];
+      print('$currentPredefinedQuestionIndex, 현재 사전질문 번호');
       updateChatBubbles();
     } catch (e) {
       Get.snackbar('오류', e.toString());
@@ -193,6 +195,7 @@ class ChattingViewModel extends GetxController {
           nextQuestion = predefinedQuestions[currentPredefinedQuestionIndex];
           currentPredefinedQuestionIndex++;
           customQuestionCount = 0;
+          _apiService.moveToNextQuestionIndex(interviewId!);
         } else {
           // 모든 질문이 끝난 경우
           Get.snackbar('알림', '모든 질문이 완료되었습니다.');
