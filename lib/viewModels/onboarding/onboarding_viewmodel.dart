@@ -32,16 +32,16 @@ class OnboardingViewModel extends GetxController {
         marital_status: answers[6],
       );
       try {
-        // // 온보딩 만들기
-        // await _userService.updateUser(user);
-        // await _userService.createChapter();
-        // // 회원정보 넣기
-        // await _myPageApiService.fetchUserProfile(
-        //   name: answers[0],
-        //   bornedAt: answers[1],
-        //   gender: answers[2],
-        //   hasChildren: answers[3].toLowerCase() == 'yes',
-        // );
+        // 온보딩 만들기
+        await _userService.updateUser(user);
+        await _userService.createChapter();
+        // 회원정보 넣기
+        await _myPageApiService.fetchUserProfile(
+          name: answers[0],
+          bornedAt: answers[1],
+          gender: answers[2],
+          hasChildren: answers[3].toLowerCase() == 'yes',
+        );
         await setOnboardingCompleted();
 
         final viewmodel = Get.find<HomeViewModel>();
