@@ -20,7 +20,7 @@ class ChattingViewModel extends GetxController {
   // 사전에 생성한 질문 리스트 (예시)
   List<String> predefinedQuestions = [];
   int currentPredefinedQuestionIndex = 0;
-  int customQuestionCount = 0;
+  int additionalQuestionCount = 0;
   int currentQuestionId = 1;
 
   HomeChapter? currentChapter;
@@ -94,8 +94,14 @@ class ChattingViewModel extends GetxController {
       ));
       chatBubbles.add(ChatBubble(isUser: false, message: predefinedQuestions.first, isFinal: true));
       currentPredefinedQuestionIndex++; // 사전 정의 질문 카운트 up
+      saveChatBubbles();
       print("첫 질문 업데이트: ${predefinedQuestions.first}");
     }
+  }
+
+  void saveChatBubbles() async {
+    // API를 통해 서버에 대화 내용 저장
+    await _apiService.saveConversation(conversations, interviewId!);
   }
 
   /// 채팅 화면 아래 버튼 state 변경
@@ -183,19 +189,19 @@ class ChattingViewModel extends GetxController {
 
       String nextQuestion;
 
-      if (customQuestionCount < 2) {
+      if (additionalQuestionCount < 2) {
         // 사용자 정의 질문 생성
-        print("질문 생성, count = $customQuestionCount");
+        print("질문 생성, count = $additionalQuestionCount");
         final result = await _apiService.getNextQuestion(conversationsJson, predefinedQuestions, currentChapter!);
         nextQuestion = result;
-        customQuestionCount++; // 미리 준비한 질문 1개당 2개를 추가 질문 할 수 있도록
+        additionalQuestionCount++; // 미리 준비한 질문 1개당 2개를 추가 질문 할 수 있도록
       } else {
         print("질문 리스트 사용, 질문 index = $currentPredefinedQuestionIndex");
         // 미리 정의된 질문 사용
         if (currentPredefinedQuestionIndex < predefinedQuestions.length) {
           nextQuestion = predefinedQuestions[currentPredefinedQuestionIndex];
           currentPredefinedQuestionIndex++;
-          customQuestionCount = 0;
+          additionalQuestionCount = 0;
           _apiService.moveToNextQuestionIndex(interviewId!);
         } else {
           // 모든 질문이 끝난 경우
@@ -211,6 +217,7 @@ class ChattingViewModel extends GetxController {
           content: nextQuestion,
         ));
         updateChatBubbles();
+        saveChatBubbles();
       }
     } catch (e) {
       Get.snackbar('오류', e.toString());
