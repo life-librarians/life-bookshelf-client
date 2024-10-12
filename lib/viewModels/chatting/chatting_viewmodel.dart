@@ -49,8 +49,12 @@ class ChattingViewModel extends GetxController {
       autobiographyId = autoid;
       interviewId = intid;
 
-      // TODO: 없으면 생성 (온보딩에서 생성 시 없을 수 없음) => 추후 온보딩과 함께 수정 필요
-      autobiographyId ??= await _apiService.createAutobiography(currentChapter);
+      // autobiography 존재하지 않으면 생성 후 다시 체크
+      await _apiService.createAutobiography(currentChapter);
+      (autoid, intid) = await _apiService.checkAutobiography(chapterId);
+      autobiographyId = autoid;
+      interviewId = intid;
+
       if (autobiographyId == null || interviewId == null) {
         throw Exception('자서전 생성 실패');
       }

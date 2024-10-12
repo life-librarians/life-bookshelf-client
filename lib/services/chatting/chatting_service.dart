@@ -127,7 +127,7 @@ class ChattingService extends GetxService {
     }
   }
 
-  Future<int> createAutobiography(HomeChapter chapter) async {
+  Future<void> createAutobiography(HomeChapter chapter) async {
     List<String> interviewQuestions = await generateInterviewQuestions(chapter);
 
     try {
@@ -162,15 +162,16 @@ class ChattingService extends GetxService {
           }));
 
       if (response.statusCode == 201) {
-        if (response.body.isEmpty) {
-          print('경고: 자서전 생성 성공. 그러나 응답 본문이 비어 있음. - chatting_service.dart, createAutobiography()');
-          final autobiographyId = await fetchAutobiographyId(chapter);
-          print('응답 본문이 비어 있어 찾아온 자서전 ID: $autobiographyId');
-          return autobiographyId;
-        }
-        final Map<String, dynamic> data = json.decode(response.body);
-        print('자서전 생성 성공: $data');
-        return data['autobiographyId'] as int;
+        // TODO: 로직 변경으로 인해 주석 처리, 노션 참고
+        // if (response.body.isEmpty) {
+        //   print('경고: 자서전 생성 성공. 그러나 응답 본문이 비어 있음. - chatting_service.dart, createAutobiography()');
+        //   final autobiographyId = await fetchAutobiographyId(chapter);
+        //   print('응답 본문이 비어 있어 찾아온 자서전 ID: $autobiographyId');
+        //   return autobiographyId;
+        // }
+        // final Map<String, dynamic> data = json.decode(response.body);
+        print('자서전 생성 성공: ${utf8.decode(response.bodyBytes)}');
+        // return data['autobiographyId'] as int;
       } else {
         print(utf8.decode(response.bodyBytes));
         throw Exception('자서전 생성 중 오류가 발생했습니다. 상태 코드: ${response.statusCode}');
