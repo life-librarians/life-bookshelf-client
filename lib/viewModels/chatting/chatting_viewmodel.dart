@@ -17,7 +17,9 @@ class ChattingViewModel extends GetxController {
   final RxBool isLoading = true.obs;
 
   // 사전에 생성한 질문 리스트 (예시)
-  List<dynamic> predefinedQuestions = [];
+  List<String> predefinedQuestions = [];
+  int currentPredefinedQuestionIndex = 0;
+  int customQuestionCount = 0;
   int currentQuestionId = 1;
 
   HomeChapter? currentChapter;
@@ -50,10 +52,12 @@ class ChattingViewModel extends GetxController {
       interviewId = intid;
 
       // autobiography 존재하지 않으면 생성 후 다시 체크
-      await _apiService.createAutobiography(currentChapter);
-      (autoid, intid) = await _apiService.checkAutobiography(chapterId);
-      autobiographyId = autoid;
-      interviewId = intid;
+      if (autoid == null) {
+        await _apiService.createAutobiography(currentChapter);
+        (autoid, intid) = await _apiService.checkAutobiography(chapterId);
+        autobiographyId = autoid;
+        interviewId = intid;
+      }
 
       if (autobiographyId == null || interviewId == null) {
         throw Exception('자서전 생성 실패');
@@ -62,7 +66,7 @@ class ChattingViewModel extends GetxController {
       final loadedConversations = await _apiService.getConversations(interviewId!, page, size);
       final loadedQuestions = await _apiService.getInterview(interviewId!);
       conversations.value = loadedConversations;
-      predefinedQuestions = loadedQuestions['results'];
+      predefinedQuestions = loadedQuestions['results'].map<String>((q) => q['questionText'] as String).toList();
       updateChatBubbles();
     } catch (e) {
       Get.snackbar('오류', e.toString());
@@ -83,10 +87,11 @@ class ChattingViewModel extends GetxController {
     if (chatBubbles.isEmpty) {
       conversations.add(Conversation(
         conversationType: 'AI',
-        content: predefinedQuestions.first['questionText'],
+        content: predefinedQuestions.first,
       ));
-      chatBubbles.add(ChatBubble(isUser: false, message: predefinedQuestions.first['questionText'], isFinal: true));
-      print("첫 질문 업데이트: ${predefinedQuestions.first['questionText']}");
+      chatBubbles.add(ChatBubble(isUser: false, message: predefinedQuestions.first, isFinal: true));
+      currentPredefinedQuestionIndex++; // 사전 정의 질문 카운트 up
+      print("첫 질문 업데이트: ${predefinedQuestions.first}");
     }
   }
 
@@ -170,15 +175,30 @@ class ChattingViewModel extends GetxController {
     try {
       isLoading(true);
 
-      // 현재까지의 대화 내용을 JSON 형태로 변환
-      conversations.sort((a, b) => a.timestamp.compareTo(b.timestamp)); // 시간순 정렬
+      conversations.sort((a, b) => a.timestamp.compareTo(b.timestamp));
       final conversationsJson = conversations.map((conv) => conv.toJson()).toList();
-      print(conversationsJson);
 
-      final result = await _apiService.getNextQuestion(conversationsJson, predefinedQuestions, currentChapter!);
+      String nextQuestion;
 
-      final String nextQuestion = result;
-      // TODO: isPredefined에 따라 질문이 미리 정해진 경우 처리하여 진행도 계산.
+      if (customQuestionCount < 2) {
+        // 사용자 정의 질문 생성
+        print("질문 생성, count = $customQuestionCount");
+        final result = await _apiService.getNextQuestion(conversationsJson, predefinedQuestions, currentChapter!);
+        nextQuestion = result;
+        customQuestionCount++; // 미리 준비한 질문 1개당 2개를 추가 질문 할 수 있도록
+      } else {
+        print("질문 리스트 사용, 질문 index = $currentPredefinedQuestionIndex");
+        // 미리 정의된 질문 사용
+        if (currentPredefinedQuestionIndex < predefinedQuestions.length) {
+          nextQuestion = predefinedQuestions[currentPredefinedQuestionIndex];
+          currentPredefinedQuestionIndex++;
+          customQuestionCount = 0;
+        } else {
+          // 모든 질문이 끝난 경우
+          Get.snackbar('알림', '모든 질문이 완료되었습니다.');
+          return;
+        }
+      }
 
       if (nextQuestion.isNotEmpty) {
         conversations.add(Conversation(
@@ -186,10 +206,6 @@ class ChattingViewModel extends GetxController {
           content: nextQuestion,
         ));
         updateChatBubbles();
-        // await _apiService.saveConversation(conversations, interviewId!);
-      } else {
-        // 더 이상 질문이 없는 경우 처리
-        Get.snackbar('알림', '모든 질문이 완료되었습니다.');
       }
     } catch (e) {
       Get.snackbar('오류', e.toString());
