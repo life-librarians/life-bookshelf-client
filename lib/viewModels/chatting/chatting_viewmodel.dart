@@ -69,7 +69,9 @@ class ChattingViewModel extends GetxController {
       conversations.value = loadedConversations;
       predefinedQuestions = loadedQuestions['results'].map<String>((q) => q['questionText'] as String).toList();
       currentPredefinedQuestionIndex = loadedQuestions['currentQuestionId'] - loadedQuestions['results'][0]['questionId'];
+      additionalQuestionCount = conversations.where((conv) => conv.conversationType == 'AI').length % 3; // 추가질문 개수 - 질문의 개수에서 3을 나누어 나머지로 할당
       print('현재 사전질문 인덱스: $currentPredefinedQuestionIndex');
+      print('현재 추가질문 개수: $additionalQuestionCount');
       updateChatBubbles();
     } catch (e) {
       Get.snackbar('오류', e.toString());
