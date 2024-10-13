@@ -5,8 +5,9 @@ import 'package:life_bookshelf/viewModels/onboarding/onboarding_viewmodel.dart';
 
 class NameField extends StatelessWidget {
   final TextEditingController _controller = TextEditingController();
+  final String hintText;
 
-  NameField({super.key});
+  NameField({super.key, this.hintText = "Enter your name"});
 
   @override
   Widget build(BuildContext context) {
@@ -23,14 +24,12 @@ class NameField extends StatelessWidget {
         children: [
           SizedBox(height: 33),
           Obx(() => Container(
-              height: Get.height * 0.056,
+            height: Get.height * 0.056,
             child: TextField(
               controller: _controller,
               decoration: InputDecoration(
-                hintText: "Enter your name",
-                hintStyle: TextStyle(color: Color(0xFFD5D4DC,
-                ),
-                ),
+                hintText: hintText,
+                hintStyle: TextStyle(color: Color(0xFFD5D4DC)),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
                   borderSide: BorderSide(

@@ -21,10 +21,13 @@ class OnboardingApiService {
     };
 
     final body = jsonEncode({
-      'gender': user.gender,
       'user_name': user.name,
       'date_of_birth': user.bornedAt,
+      'gender': user.gender,
       'has_children': user.hasChildren,
+      'occupation': user.occupation,
+      'education_level': user.education_level,
+      'marital_status': user.marital_status,
     });
 
     final response = await http.post(
@@ -36,9 +39,9 @@ class OnboardingApiService {
     if (response.statusCode == 200) {
       print('온보딩을 바탕으로 챕터가 성공적으로 생성되었습니다.');
 
-      final Map<String, dynamic> responseData = jsonDecode(utf8.decode(response.bodyBytes));
+      final Map<String, dynamic> responseData =
+          jsonDecode(utf8.decode(response.bodyBytes));
 
-      // 콘솔에 출력
       chapterTimeline = responseData['chapter_timeline'];
       for (var chapter in chapterTimeline) {
         print('Chapter Title: ${chapter['chapter_title']}');
@@ -50,62 +53,65 @@ class OnboardingApiService {
         }
         print(''); // 챕터 구분을 위한 빈 줄
       }
-      // TODO: 챕터 데이터 활용하여 자서전 생성 중이라는 것을 로딩 화면에 표시
       return chapterTimeline;
     } else if (response.statusCode == 400) {
       final errorResponse = jsonDecode(utf8.decode(response.bodyBytes));
       throw Exception('온보딩을 바탕으로 챕터 생성 실패: ${errorResponse['message']}');
     } else {
-      throw Exception('온보딩을 바탕으로 챕터 생성 실패. 상태 코드: ${response.statusCode}, ${utf8.decode(response.bodyBytes)}');
+      throw Exception(
+          '온보딩을 바탕으로 챕터 생성 실패. 상태 코드: ${response.statusCode}, ${utf8.decode(response.bodyBytes)}');
     }
   }
 
   /// 챕터 생성
   Future<void> createChapter() async {
+    if (chapterTimeline == null) throw Exception('chapterTimeline이 비어있습니다.');
+
     List<Map<String, dynamic>> chapters = [];
     for (int i = 0; i < chapterTimeline.length; i++) {
       var chapter = chapterTimeline[i];
       List<Map<String, dynamic>> subchapters = [];
 
-      // 서브챕터 변환
       for (int j = 0; j < chapter['key_events'].length; j++) {
         var event = chapter['key_events'][j];
         subchapters.add({
           'number': '${i + 1}.${j + 1}',
           'name': event['event_title'],
-          'description': event['event_description'],
+          'description': event['event_description'] ?? '서브챕터에 대한 설명'
+        });
+        // 설명 필드 추가
+        chapters.add({
+          'number': '${i + 1}',
+          'name': chapter['chapter_title'],
+          'description':
+              chapter['chapter_description'] ?? '챕터에 대한 설명', // 설명 필드 추가
+          'subchapters': subchapters,
+          'description': chapter['description'],
         });
       }
-      // 메인 챕터 변환
-      chapters.add({
-        'number': '${i + 1}',
-        'name': chapter['chapter_title'],
-        'subchapters': subchapters,
-        'description': chapter['description'],
-      });
-    }
 
-    // 최종 데이터를 JSON 형식으로 준비
-    final body = jsonEncode({'chapters': chapters});
+      final body = jsonEncode({'chapters': chapters});
 
-    String token = UserPreferences.getUserToken();
-    final headers = {
-      'Authorization': 'Bearer $token',
-      'accept': 'application/json',
-      'Content-Type': 'application/json',
-    };
+      String token = UserPreferences.getUserToken();
+      final headers = {
+        'Authorization': 'Bearer $token',
+        'accept': 'application/json',
+        'Content-Type': 'application/json',
+      };
 
-    final response = await http.post(
-      Uri.parse(ChapterApiUrl),
-      headers: headers,
-      body: body,
-    );
+      final response = await http.post(
+        Uri.parse(ChapterApiUrl),
+        headers: headers,
+        body: body,
+      );
 
-    if (response.statusCode == 201) {
-      print('서버에 챕터가 성공적으로 생성 요청되었습니다.');
-    } else {
-      final decodedResponse = utf8.decode(response.bodyBytes);
-      throw Exception('챕터 생성 실패. 상태 코드: ${response.statusCode}, 응답 내용: $decodedResponse');
+      if (response.statusCode == 201) {
+        print('서버에 챕터가 성공적으로 생성 요청되었습니다.');
+      } else {
+        final decodedResponse = utf8.decode(response.bodyBytes);
+        throw Exception(
+            '챕터 생성 실패. 상태 코드: ${response.statusCode}, 응답 내용: $decodedResponse');
+      }
     }
   }
 }

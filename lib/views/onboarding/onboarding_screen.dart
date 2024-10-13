@@ -10,6 +10,7 @@ import 'package:life_bookshelf/views/onboarding/components/date_field.dart';
 import 'package:life_bookshelf/views/onboarding/components/disk_button.dart';
 import 'package:life_bookshelf/views/onboarding/components/name_field.dart';
 
+
 class OnboardingScreen extends BaseScreen<OnboardingViewModel> {
   const OnboardingScreen({super.key});
 
@@ -20,13 +21,9 @@ class OnboardingScreen extends BaseScreen<OnboardingViewModel> {
       children: [
         SizedBox(height: Get.height * 0.05),
         CloudWindow(),
-        SizedBox(
-          height: Get.height * 0.031,
-        ),
+        SizedBox(height: Get.height * 0.031),
         _Dots(),
-        SizedBox(
-          height: Get.height * 0.012,
-        ),
+        SizedBox(height: Get.height * 0.012),
         _QuestionTexts(),
         _BottomItems(),
       ],
@@ -36,7 +33,6 @@ class OnboardingScreen extends BaseScreen<OnboardingViewModel> {
   @override
   Color? get screenBackgroundColor => Color(0xFFF7F6FB);
 }
-
 
 class _BottomItems extends StatelessWidget {
   const _BottomItems({super.key});
@@ -50,16 +46,11 @@ class _BottomItems extends StatelessWidget {
           return Column(
             children: [
               NameField(),
-              SizedBox(
-                height: Get.height * 0.10,
-              ),
+              SizedBox(height: Get.height * 0.10),
               DiskButton(
                 onPressed: () {
-                  viewmodel.isButtonPressed.value = true;
                   if(viewmodel.isNameValid.value == false) return;
-                  viewmodel.addCurrentQuestionIndex();
-                  viewmodel.updateCurrentQuestion();
-                  viewmodel.isButtonPressed.value = false;
+                  viewmodel.nextQuestion();
                 },
                 text: 'Next',
               ),
@@ -69,16 +60,11 @@ class _BottomItems extends StatelessWidget {
           return Column(
             children: [
               DateField(),
-              SizedBox(
-                height: Get.height * 0.10,
-              ),
+              SizedBox(height: Get.height * 0.10),
               DiskButton(
                 onPressed: () {
-                  viewmodel.isButtonPressed.value = true;
                   if(viewmodel.isDateValid.value == false) return;
-                  viewmodel.addCurrentQuestionIndex();
-                  viewmodel.updateCurrentQuestion();
-                  viewmodel.isButtonPressed.value = false;
+                  viewmodel.nextQuestion();
                 },
                 text: 'Next',
               ),
@@ -89,19 +75,13 @@ class _BottomItems extends StatelessWidget {
             children: [
               SizedBox(height: Get.height*0.05),
               DiskButton(onPressed: (){
-                viewmodel.isButtonPressed.value = true;
                 viewmodel.updateAnswer("MALE");
-                viewmodel.addCurrentQuestionIndex();
-                viewmodel.updateCurrentQuestion();
-                viewmodel.isButtonPressed.value = false;
+                viewmodel.nextQuestion();
               }, text: "남자"),
               SizedBox(height: 20),
               DiskButton(onPressed: (){
-                viewmodel.isButtonPressed.value = true;
                 viewmodel.updateAnswer("FEMALE");
-                viewmodel.addCurrentQuestionIndex();
-                viewmodel.updateCurrentQuestion();
-                viewmodel.isButtonPressed.value = false;
+                viewmodel.nextQuestion();
               }, text: "여자"),
             ],
           );
@@ -110,23 +90,60 @@ class _BottomItems extends StatelessWidget {
             children: [
               SizedBox(height: Get.height*0.05),
               DiskButton(onPressed: (){
-                viewmodel.isButtonPressed.value = true;
                 viewmodel.updateAnswer("true");
-                viewmodel.addCurrentQuestionIndex();
-                viewmodel.updateCurrentQuestion();
-                viewmodel.isButtonPressed.value = false;
+                viewmodel.nextQuestion();
               }, text: "있어"),
               SizedBox(height: 20),
               DiskButton(onPressed: (){
-                viewmodel.isButtonPressed.value = true;
                 viewmodel.updateAnswer("false");
-                viewmodel.addCurrentQuestionIndex();
-                viewmodel.updateCurrentQuestion();
-                viewmodel.isButtonPressed.value = false;
+                viewmodel.nextQuestion();
               }, text: "없어"),
             ],
           );
         case 4:
+          return Column(
+            children: [
+              NameField(hintText: "직업을 입력해주세요"),
+              SizedBox(height: Get.height * 0.10),
+              DiskButton(
+                onPressed: () {
+                  if(viewmodel.isNameValid.value == false) return;
+                  viewmodel.nextQuestion();
+                },
+                text: 'Next',
+              ),
+            ],
+          );
+        case 5:
+          return Column(
+            children: [
+              NameField(hintText: "학력을 입력해주세요"),
+              SizedBox(height: Get.height * 0.10),
+              DiskButton(
+                onPressed: () {
+                  if(viewmodel.isNameValid.value == false) return;
+                  viewmodel.nextQuestion();
+                },
+                text: 'Next',
+              ),
+            ],
+          );
+        case 6:
+          return Column(
+            children: [
+              SizedBox(height: Get.height*0.05),
+              DiskButton(onPressed: (){
+                viewmodel.updateAnswer("true");
+                viewmodel.nextQuestion();
+              }, text: "네"),
+              SizedBox(height: 20),
+              DiskButton(onPressed: (){
+                viewmodel.updateAnswer("false");
+                viewmodel.nextQuestion();
+              }, text: "아니오"),
+            ],
+          );
+        case 7:
           viewmodel.updateUserInformation();
           return Image.asset("assets/images/AirplaneLoading.gif", width: 250,);
         default:
@@ -136,6 +153,7 @@ class _BottomItems extends StatelessWidget {
   }
 }
 
+
 class _Dots extends StatelessWidget {
   const _Dots({super.key});
 
@@ -143,9 +161,9 @@ class _Dots extends StatelessWidget {
   Widget build(BuildContext context) {
     final OnboardingViewModel viewModel = Get.find<OnboardingViewModel>();
 
-    return Obx(() => viewModel.currentQuestionIndex <= 3 ? Row(
+    return Obx(() => viewModel.currentQuestionIndex <= 6 ? Row(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: List.generate(4, (index) => buildDot(index, viewModel)),
+      children: List.generate(7, (index) => buildDot(index, viewModel)),
     ): SizedBox());
   }
 
@@ -187,9 +205,7 @@ class _QuestionTexts extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(
-            height: Get.height * 0.017,
-          ),
+          SizedBox(height: Get.height * 0.017),
           Container(
             alignment: Alignment.center,
             child: AnimatedSwitcher(

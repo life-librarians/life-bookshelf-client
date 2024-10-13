@@ -4,6 +4,15 @@ import 'package:flutter/material.dart';
 
 abstract class FontSystem {
   /* Korean */
+
+  static const TextStyle KR67B = TextStyle(
+    fontSize: 67,
+    fontWeight: FontWeight.w700,
+    fontFamily: 'Pretendard',
+    color: Colors.black,
+  );
+
+
   static const TextStyle KR42EB = TextStyle(
     fontSize: 42,
     fontWeight: FontWeight.w800,
@@ -88,6 +97,21 @@ abstract class FontSystem {
     color: Colors.black,
   );
 
+  static const TextStyle KR26B = TextStyle(
+    fontSize: 26,
+    fontWeight: FontWeight.w700,
+    fontFamily: 'Pretendard',
+    color: Colors.black,
+  );
+
+
+  static const TextStyle KR25M = TextStyle(
+    fontSize: 25,
+    fontWeight: FontWeight.w500,
+    fontFamily: 'Pretendard',
+    color: Colors.black,
+  );
+
   static const TextStyle KR24EB = TextStyle(
     fontSize: 24,
     fontWeight: FontWeight.w800,
@@ -122,6 +146,14 @@ abstract class FontSystem {
     fontFamily: 'Pretendard',
     color: Colors.black,
   );
+
+  static const TextStyle KR22M = TextStyle(
+    fontSize: 22,
+    fontWeight: FontWeight.w500,
+    fontFamily: 'Pretendard',
+    color: Colors.black,
+  );
+
 
   static const TextStyle KR21SB = TextStyle(
     fontSize: 21,
