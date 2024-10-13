@@ -20,7 +20,13 @@ class ChattingScreen extends BaseScreen<ChattingViewModel> {
     super.initViewModel();
     // TODO: Null Checking
     viewModel.loadConversations(currentChapter!);
-    print('Chatting Screen Initialized: currentChapterId: $currentChapter');
+    print('Chatting Screen Initialized: currentChapterId: ${currentChapter!.chapterId}');
+
+    ever(viewModel.isInterviewFinished, (finished) {
+      if (finished) {
+        _showFinishModal();
+      }
+    });
   }
 
   @override

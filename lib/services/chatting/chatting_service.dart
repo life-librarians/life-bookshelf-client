@@ -51,6 +51,23 @@ class ChattingService extends GetxService {
     }
   }
 
+  Future<Map<String, dynamic>> getChaptersInfo() async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/autobiographies/chapters?size=100'), // TODO: 추후 페이징 처리 필요
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      return data;
+    } else {
+      throw Exception('자서전 정보를 불러오는 중 오류가 발생했습니다. 상태 코드: ${response.statusCode}');
+    }
+  }
+
   /// Autobiography가 생성되었는 지 확인
   Future<(int?, int?)> checkAutobiography(int chapterId) async {
     // 전체 자서전 목록 조회 후, 해당 chapterId가 있는지 확인
@@ -106,31 +123,132 @@ class ChattingService extends GetxService {
         throw Exception('대화 저장 중 오류가 발생했습니다. 상태 코드: ${response.statusCode}');
       }
     } catch (e) {
-      throw Exception('대화 저장 중 오류가 발생했습니다: $e');
+      throw Exception('대화 저장 중 오류가 발생했습��다: $e');
     }
   }
 
-  Future<int> createAutobiography(HomeChapter chapter) async {
+  Future<void> createAutobiography(HomeChapter chapter) async {
+    List<String> interviewQuestions = await generateInterviewQuestions(chapter);
+
     try {
+      print('질문 개수: ${interviewQuestions.length}');
+
+      print('요청 본문:');
+      print(jsonEncode({
+        'title': chapter.chapterName,
+        'content': chapter.description,
+        'interviewQuestions': interviewQuestions
+            .map((question) => {
+                  'order': interviewQuestions.indexOf(question) + 1,
+                  'questionText': question,
+                })
+            .toList(),
+      }));
+
       final response = await http.post(Uri.parse('$baseUrl/autobiographies'),
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
             'Authorization': 'Bearer $token',
           },
           body: jsonEncode({
-            'chapterId': chapter.chapterId,
             'title': chapter.chapterName,
-            // 'content': chapter.,
+            'content': chapter.description,
+            'interviewQuestions': interviewQuestions
+                .map((question) => {
+                      'order': interviewQuestions.indexOf(question) + 1,
+                      'questionText': question.length > 60 ? '${question.substring(0, 60)}...' : question,
+                    })
+                .toList(),
           }));
 
       if (response.statusCode == 201) {
-        final Map<String, dynamic> data = json.decode(response.body);
-        return data['autobiographyId'] as int;
+        // TODO: 로직 변경으로 인해 주석 처리, 노션 참고
+        // if (response.body.isEmpty) {
+        //   print('경고: 자서전 생성 성공. 그러나 응답 본문이 비어 있음. - chatting_service.dart, createAutobiography()');
+        //   final autobiographyId = await fetchAutobiographyId(chapter);
+        //   print('응답 본문이 비어 있어 찾아온 자서전 ID: $autobiographyId');
+        //   return autobiographyId;
+        // }
+        // final Map<String, dynamic> data = json.decode(response.body);
+        print('자서전 생성 성공: ${utf8.decode(response.bodyBytes)}');
+        // return data['autobiographyId'] as int;
       } else {
+        print(utf8.decode(response.bodyBytes));
         throw Exception('자서전 생성 중 오류가 발생했습니다. 상태 코드: ${response.statusCode}');
       }
     } catch (e) {
+      print(e);
       throw Exception('자서전 생성 중 오류가 발생했습니다: $e');
+    }
+  }
+
+  Future<List<String>> generateInterviewQuestions(HomeChapter chapter) async {
+    final url = '$aiUrl/interviews/interview-questions';
+    await fetchUserInfo();
+    final chaptersInfo = await getChaptersInfo();
+    Map<String, dynamic> chapterInfo = {};
+    Map<String, dynamic> subChapterInfo = {};
+
+    for (var c in chaptersInfo['results']) {
+      for (var subChapter in c['subChapters']) {
+        if (subChapter['chapterId'] == chapter.chapterId) {
+          chapterInfo = {
+            'title': chapter.chapterName,
+            'description': chapter.description ?? "",
+          };
+          subChapterInfo = {
+            'title': subChapter['chapterName'],
+            'description': subChapter['chapterDescription'] ?? "",
+          };
+          break;
+        }
+      }
+      if (chapterInfo.isNotEmpty) break;
+    }
+    if (chapterInfo.isEmpty || subChapterInfo.isEmpty) {
+      throw Exception('해당 챕터 정보를 찾을 수 없습니다.');
+    }
+
+    final body = jsonEncode({
+      'user_info': {
+        "user_name": userInfo['name'],
+        "date_of_birth": userInfo['bornedAt'],
+        "gender": userInfo['gender'],
+        // "has_children": userInfo['hasChildren'], // TODO: api 수정 후 다시 추가
+        "occupation": bodyinfo["occupation"],
+        "education_level": bodyinfo["education_level"],
+        "marital_status": bodyinfo["marital_status"],
+      },
+      'chapter_info': {
+        'title': chapterInfo['title'],
+        'description': chapterInfo['description'],
+      },
+      'sub_chapter_info': {
+        'title': subChapterInfo['title'],
+        'description': subChapterInfo['description'],
+      }
+    });
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer $token',
+        },
+        body: body,
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(utf8.decode(response.bodyBytes));
+        print("성공적으로 인터뷰 질문 생성: $data");
+        return List<String>.from(data['interview_questions']);
+      } else {
+        print(utf8.decode(response.bodyBytes));
+        throw Exception('질문 생성 중 오류가 발생했습니다. 상태 코드: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('질문 생성 중 오류가 발생했습니다: $e');
     }
   }
 
@@ -165,7 +283,9 @@ class ChattingService extends GetxService {
     }
   }
 
-  Future<String> getNextQuestion(List<Map<String, dynamic>> conversations, List<dynamic> predefinedQuestions, HomeChapter chapter) async {
+  /// 사용자 정보 가져오기
+  /// TODO: 추후 유저 정보를 전역에서 받아올 수 있게 되면, 삭제 필요
+  Future<void> fetchUserInfo() async {
     if (userInfo.isEmpty) {
       final response = await http.get(Uri.parse('$baseUrl/members/me'), headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
@@ -178,9 +298,18 @@ class ChattingService extends GetxService {
         userInfo['bornedAt'] = data['bornedAt'];
         userInfo['gender'] = data['gender'];
         userInfo['hasChildren'] = data['hasChildren'];
+      } else {
+        throw Exception('사용자 정보를 가져오는 데 실패했습니다. 상태 코드: ${response.statusCode}');
       }
-      print("userInfo: $userInfo");
+
+      final Map<String, dynamic> responseData = json.decode(utf8.decode(response.bodyBytes));
+      print('응답 데이터: $responseData');
     }
+  }
+
+  // TODO: 추후 온보딩 화면에서 받아오는 값으로 변경 필요
+  Future<String> getNextQuestion(List<Map<String, dynamic>> conversations, List<dynamic> predefinedQuestions, HomeChapter chapter) async {
+    await fetchUserInfo();
     final url = '$aiUrl/interviews/interview-chat';
 
     final body = jsonEncode({
@@ -241,6 +370,65 @@ class ChattingService extends GetxService {
         'conversation_type': conversationType,
       };
     }).toList();
+  }
+
+  Future<int> fetchAutobiographyId(HomeChapter chapter) async {
+    try {
+      final autobiographyResponse = await http.get(
+        Uri.parse('$baseUrl/autobiographies'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (autobiographyResponse.statusCode == 200) {
+        final Map<String, dynamic> autobiographyData = json.decode(autobiographyResponse.body);
+        final List<dynamic> results = autobiographyData['results'];
+
+        // chapterId와 일치하는 자서전 찾기
+        final matchingAutobiography = results.firstWhere(
+          (autobiography) => autobiography['chapterId'] == chapter.chapterId,
+          orElse: () => null,
+        );
+
+        if (matchingAutobiography != null) {
+          return matchingAutobiography['autobiographyId'];
+        } else {
+          print('경고: 해당 챕터에 대한 자서전을 찾을 수 없습니다.');
+          return -1;
+        }
+      } else {
+        print('자서전 정보를 가져오는 데 실패했습니다. 상태 코드: ${autobiographyResponse.statusCode}');
+        return -1;
+      }
+    } catch (e) {
+      print('자서전 ID를 가져오는 중 오류 발생: $e');
+      return -1;
+    }
+  }
+
+  /// 인터뷰 질문 index (사전 생성 질문) 다음으로 넘기기
+  Future<void> moveToNextQuestionIndex(int interviewId) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/interviews/$interviewId/questions/current-question'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        print('사전 질문 인덱스를 다음으로 이동했습니다.');
+      } else {
+        print('사전 질문 인덱스를 다음으로 이동하는데 실패했습니다. 상태 코드: ${response.statusCode}');
+        throw Exception('다음 질문으로 이동 실패');
+      }
+    } catch (e) {
+      print('사전 질문 인덱스를 다음으로 이동 중 오류 발생: $e');
+      throw Exception('다음 질문으로 이동 중 오류 발생');
+    }
   }
 }
 

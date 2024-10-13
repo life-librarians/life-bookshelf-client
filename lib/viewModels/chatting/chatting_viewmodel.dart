@@ -15,9 +15,12 @@ class ChattingViewModel extends GetxController {
   final RxList<ChatBubble> chatBubbles = <ChatBubble>[].obs;
   final RxList<Conversation> conversations = <Conversation>[].obs;
   final RxBool isLoading = true.obs;
+  final RxBool isInterviewFinished = false.obs;
 
   // 사전에 생성한 질문 리스트 (예시)
-  List<dynamic> predefinedQuestions = [];
+  List<String> predefinedQuestions = [];
+  int currentPredefinedQuestionIndex = 0;
+  int additionalQuestionCount = 0;
   int currentQuestionId = 1;
 
   HomeChapter? currentChapter;
@@ -49,8 +52,14 @@ class ChattingViewModel extends GetxController {
       autobiographyId = autoid;
       interviewId = intid;
 
-      // TODO: 없으면 생성 (온보딩에서 생성 시 없을 수 없음) => 추후 온보딩과 함께 수정 필요
-      autobiographyId ??= await _apiService.createAutobiography(currentChapter);
+      // autobiography 존재하지 않으면 생성 후 다시 체크
+      if (autoid == null) {
+        await _apiService.createAutobiography(currentChapter);
+        (autoid, intid) = await _apiService.checkAutobiography(chapterId);
+        autobiographyId = autoid;
+        interviewId = intid;
+      }
+
       if (autobiographyId == null || interviewId == null) {
         throw Exception('자서전 생성 실패');
       }
@@ -58,7 +67,11 @@ class ChattingViewModel extends GetxController {
       final loadedConversations = await _apiService.getConversations(interviewId!, page, size);
       final loadedQuestions = await _apiService.getInterview(interviewId!);
       conversations.value = loadedConversations;
-      predefinedQuestions = loadedQuestions['results'];
+      predefinedQuestions = loadedQuestions['results'].map<String>((q) => q['questionText'] as String).toList();
+      currentPredefinedQuestionIndex = loadedQuestions['currentQuestionId'] - loadedQuestions['results'][0]['questionId'];
+      additionalQuestionCount = conversations.where((conv) => conv.conversationType == 'AI').length % 3; // 추가질문 개수 - 질문의 개수에서 3을 나누어 나머지로 할당
+      print('현재 사전질문 인덱스: $currentPredefinedQuestionIndex');
+      print('현재 추가질문 개수: $additionalQuestionCount');
       updateChatBubbles();
     } catch (e) {
       Get.snackbar('오류', e.toString());
@@ -79,11 +92,18 @@ class ChattingViewModel extends GetxController {
     if (chatBubbles.isEmpty) {
       conversations.add(Conversation(
         conversationType: 'AI',
-        content: predefinedQuestions.first['questionText'],
+        content: predefinedQuestions.first,
       ));
-      chatBubbles.add(ChatBubble(isUser: false, message: predefinedQuestions.first['questionText'], isFinal: true));
-      print("첫 질문 업데이트: ${predefinedQuestions.first['questionText']}");
+      chatBubbles.add(ChatBubble(isUser: false, message: predefinedQuestions.first, isFinal: true));
+      currentPredefinedQuestionIndex++; // 사전 정의 질문 카운트 up
+      saveChatBubbles();
+      print("첫 질문 업데이트: ${predefinedQuestions.first}");
     }
+  }
+
+  void saveChatBubbles() async {
+    // API를 통해 서버에 대화 내용 저장
+    await _apiService.saveConversation(conversations, interviewId!);
   }
 
   /// 채팅 화면 아래 버튼 state 변경
@@ -166,15 +186,32 @@ class ChattingViewModel extends GetxController {
     try {
       isLoading(true);
 
-      // 현재까지의 대화 내용을 JSON 형태로 변환
-      conversations.sort((a, b) => a.timestamp.compareTo(b.timestamp)); // 시간순 정렬
+      conversations.sort((a, b) => a.timestamp.compareTo(b.timestamp));
       final conversationsJson = conversations.map((conv) => conv.toJson()).toList();
-      print(conversationsJson);
 
-      final result = await _apiService.getNextQuestion(conversationsJson, predefinedQuestions, currentChapter!);
+      String nextQuestion;
 
-      final String nextQuestion = result;
-      // TODO: isPredefined에 따라 질문이 미리 정해진 경우 처리하여 진행도 계산.
+      if (additionalQuestionCount < 2) {
+        // 사용자 정의 질문 생성
+        print("질문 생성, 추가 질문 count = $additionalQuestionCount");
+        final result = await _apiService.getNextQuestion(conversationsJson, predefinedQuestions, currentChapter!);
+        nextQuestion = result;
+        additionalQuestionCount++; // 미리 준비한 질문 1개당 2개를 추가 질문 할 수 있도록
+      } else {
+        print("질문 리스트 사용, 질문 index = $currentPredefinedQuestionIndex");
+        // 미리 정의된 질문 사용
+        if (currentPredefinedQuestionIndex + 1 < predefinedQuestions.length) {
+          nextQuestion = predefinedQuestions[currentPredefinedQuestionIndex];
+          currentPredefinedQuestionIndex++;
+          additionalQuestionCount = 0;
+          _apiService.moveToNextQuestionIndex(interviewId!);
+        } else {
+          // 모든 질문이 끝난 경우
+          isInterviewFinished.value = true;
+          Get.snackbar('알림', '모든 질문이 완료되었습니다.');
+          return;
+        }
+      }
 
       if (nextQuestion.isNotEmpty) {
         conversations.add(Conversation(
@@ -182,10 +219,7 @@ class ChattingViewModel extends GetxController {
           content: nextQuestion,
         ));
         updateChatBubbles();
-        // await _apiService.saveConversation(conversations, interviewId!);
-      } else {
-        // 더 이상 질문이 없는 경우 처리
-        Get.snackbar('알림', '모든 질문이 완료되었습니다.');
+        saveChatBubbles();
       }
     } catch (e) {
       Get.snackbar('오류', e.toString());

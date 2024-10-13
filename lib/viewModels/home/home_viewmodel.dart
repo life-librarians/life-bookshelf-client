@@ -28,8 +28,25 @@ class HomeViewModel extends GetxController {
   }
 
   Future<void> fetchChapters() async {
-    var fetchedChapters = await chapterService.fetchChapters(0, 10);
+    var fetchedChapters = await chapterService.fetchChapters(0, 100);
     chapters.value = fetchedChapters;
+    // print('Chapters:');
+    // for (var chapter in chapters) {
+    //   print('  Chapter ID: ${chapter.chapterId}');
+    //   print('  Chapter Number: ${chapter.chapterNumber}');
+    //   print('  Chapter Name: ${chapter.chapterName}');
+    //   print('  Description: ${chapter.description}');
+    //   print('  Created At: ${chapter.chapterCreatedAt}');
+    //   print('  Sub Chapters:');
+    //   for (var subChapter in chapter.subChapters) {
+    //     print('    Sub Chapter ID: ${subChapter.chapterId}');
+    //     print('    Sub Chapter Number: ${subChapter.chapterNumber}');
+    //     print('    Sub Chapter Name: ${subChapter.chapterName}');
+    //     print('    Sub Description: ${subChapter.description}');
+    //     print('    Sub Created At: ${subChapter.chapterCreatedAt}');
+    //   }
+    //   print('  ---');
+    // }
   }
 
   void setCurrentChapter() {
@@ -39,7 +56,7 @@ class HomeViewModel extends GetxController {
         currentChapter.value = _findChapterById(currentId);
         if (currentChapter.value != null) {
           print("current chapterid: ${currentChapter.value?.chapterId}");
-          print('Current Chapter: ${currentChapter.value?.chapterName}');
+          print('Current ChapterName: ${currentChapter.value?.chapterName}');
         } else {
           print('No matching chapter found for the currentChapterId.');
         }

@@ -21,9 +21,11 @@ void main() async {
 
   final OnboardingViewModel viewmodel = Get.find<OnboardingViewModel>();
   final onboardingCompleted = await viewmodel.isOnboardingCompleted();
-  viewmodel.clearOnboardingStatus();
+  //온보딩 다시 하고싶을때 취소
+  // viewmodel.clearOnboardingStatus();
 
-  final mainApp = MainApp(initialRoute: "/", onboardingCompleted: onboardingCompleted);
+  final mainApp =
+      MainApp(initialRoute: "/", onboardingCompleted: onboardingCompleted);
 
   if (kIsWeb) {
     runApp(WebLayoutWrapper(child: mainApp));
@@ -69,10 +71,9 @@ class WebLayoutWrapper extends StatelessWidget {
                     // Top row with "Powered by" text and logo
                     Row(
                       children: [
-                        Text(
-                          "Powered by 이분의 일",
-                          style: FontSystem.KR13B.copyWith(color: Color(0xFF4F5E71))
-                        ),
+                        Text("Powered by 이분의 일",
+                            style: FontSystem.KR13B
+                                .copyWith(color: Color(0xFF4F5E71))),
                         SizedBox(width: 0),
                         Image.asset('assets/web/2_1_icon.png', height: 25),
                       ],
@@ -86,7 +87,8 @@ class WebLayoutWrapper extends StatelessWidget {
                         SizedBox(width: 10),
                         Text(
                           "M E M O I R  A R C H I T E C T",
-                          style: FontSystem.KR22M.copyWith(color: Color(0xFF697D95)),
+                          style: FontSystem.KR22M
+                              .copyWith(color: Color(0xFF697D95)),
                         ),
                       ],
                     ),
@@ -106,11 +108,13 @@ class WebLayoutWrapper extends StatelessWidget {
                     // Subheadings
                     Text(
                       "정리하기 힘들었던 나만의 이야기",
-                      style: FontSystem.KR25M.copyWith(color: Color(0xFF4F5E71)),
+                      style:
+                          FontSystem.KR25M.copyWith(color: Color(0xFF4F5E71)),
                     ),
                     Text(
                       "인생책장에서 편하고, 빠르게 적어나가요.",
-                      style: FontSystem.KR25M.copyWith(color: Color(0xFF4F5E71)),
+                      style:
+                          FontSystem.KR25M.copyWith(color: Color(0xFF4F5E71)),
                     ),
                     SizedBox(height: 40),
 
@@ -133,9 +137,12 @@ class WebLayoutWrapper extends StatelessWidget {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                Image.asset('assets/web/play_icon.png', height: 45),
+                                Image.asset('assets/web/play_icon.png',
+                                    height: 45),
                                 SizedBox(width: 5),
-                                Text('Google Play', style: FontSystem.KR24B.copyWith(color: Colors.white)),
+                                Text('Google Play',
+                                    style: FontSystem.KR24B
+                                        .copyWith(color: Colors.white)),
                               ],
                             ),
                           ),
@@ -157,14 +164,16 @@ class WebLayoutWrapper extends StatelessWidget {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                Image.asset('assets/web/apple_icon.png', height: 45),
+                                Image.asset('assets/web/apple_icon.png',
+                                    height: 45),
                                 SizedBox(width: 5),
-                                Text('App Store', style: FontSystem.KR24B.copyWith(color: Colors.white)),
+                                Text('App Store',
+                                    style: FontSystem.KR24B
+                                        .copyWith(color: Colors.white)),
                               ],
                             ),
                           ),
                         ),
-
                       ],
                     ),
                   ],
