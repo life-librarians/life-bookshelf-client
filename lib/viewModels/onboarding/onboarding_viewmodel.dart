@@ -115,7 +115,7 @@ class OnboardingViewModel extends GetxController {
     final prefs = await SharedPreferences.getInstance();
     print("Onboarding completed: ${prefs.getBool('onboardingCompleted')}");
     return prefs.getBool('onboardingCompleted') ?? false;
-    // return true; // TODO: 시연용 임시
+    // return true; // TODO: 다른 기기, 온보딩을 완료한 계정으로 수행 시 onboarding == null인 문제
   }
 
   Future<void> clearOnboardingStatus() async {

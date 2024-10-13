@@ -1,4 +1,3 @@
-
 class OnUserModel {
   String name;
   String bornedAt;
