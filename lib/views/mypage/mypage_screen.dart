@@ -68,7 +68,7 @@ class _Profile extends StatelessWidget {
       width: Get.width * 0.89,
       height: 76,
       child: Padding(
-        padding: const EdgeInsets.only(left: 23, top: 17, bottom: 17),
+        padding: const EdgeInsets.only(left: 23, top: 15, bottom: 13),
         child: Row(
           children:[
             SvgPicture.asset(
@@ -81,12 +81,12 @@ class _Profile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  viewmodel.userModel.value?.name ?? '황현정',
-                  style: FontSystem.KR16M.copyWith(color: Colors.white),
+                  viewmodel.userModel.value?.name ?? 'Dummy',
+                  style: FontSystem.KR16M.copyWith(color: Colors.white, height: 1),
                 ),
                 Text(
                   viewmodel.userModel.value?.bornedAt ?? '2001-02-24',
-                  style: FontSystem.KR11M.copyWith(color: ColorSystem.white),
+                  style: FontSystem.KR11M.copyWith(color: Colors.white, height: 1),
                 ),
               ],
             ),
@@ -300,27 +300,98 @@ class _Remind extends StatelessWidget {
 class _Withdrawal extends StatelessWidget {
   const _Withdrawal({super.key});
 
+  void _showWithdrawalDialog(BuildContext context, MypageViewModel viewModel) {
+    Get.dialog(
+      AlertDialog(
+        title: const Center(
+          child: Text(
+            '회원탈퇴',
+            style: FontSystem.KR20B,
+          ),
+        ),
+        content: Padding(
+          padding: const EdgeInsets.all(5),
+          child: Text(
+            '정말로 회원탈퇴를 진행하시겠습니까? 탈퇴 후 데이터는 30일 뒤에 삭제됩니다.',
+            style: FontSystem.KR13R.copyWith(color: Colors.black),
+          ),
+        ),
+        actions: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Expanded(
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: ColorSystem.white,
+                    backgroundColor: ColorSystem.accentBlue,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
+                  ),
+                  child: Text('취소', style: FontSystem.KR14SB.copyWith(color: ColorSystem.white)),
+                  onPressed: () => Get.back(), // 다이얼로그 닫기
+                ),
+              ),
+              SizedBox(width: 10),
+              Expanded(
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: ColorSystem.white,
+                    backgroundColor: ColorSystem.accentBlue,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
+                  ),
+                  child: Text('확인', style: FontSystem.KR14SB.copyWith(color: ColorSystem.white)),
+                  onPressed: () async {
+                    await viewModel.deleteUser();
+                  },
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(left: 16, top: 23),
-      child: Row(
-        children: [
-          SvgPicture.asset('assets/icons/mypage/out.svg'),
-          SizedBox(width: 16,),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text("회원탈퇴",style:FontSystem.KR13M,),
-              Text("여행자님의 데이터는 30일 뒤에 삭제되어요.",style: FontSystem.KR11M.copyWith(color: ColorSystem.mypage.fontGray),),
-            ]
-          ),
-          SizedBox(width: Get.width * 0.18),
-          Container(
-            margin: const EdgeInsets.only(top: 10),
-              child: SvgPicture.asset('assets/icons/mypage/arrow.svg')),
+    final MypageViewModel viewModel = Get.find<MypageViewModel>(); // ViewModel 가져오기
 
-        ],
+    return GestureDetector(
+      onTap: () {
+        _showWithdrawalDialog(context, viewModel); // 탈퇴 모달 띄우기
+      },
+      child: Container(
+        margin: const EdgeInsets.only(left: 16, top: 23),
+        child: Row(
+          children: [
+            SvgPicture.asset('assets/icons/mypage/out.svg'),
+            SizedBox(width: 16),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "회원탈퇴",
+                  style: FontSystem.KR13M,
+                ),
+                Text(
+                  "여행자님의 데이터는 30일 뒤에 삭제되어요.",
+                  style: FontSystem.KR11M.copyWith(color: ColorSystem.mypage.fontGray),
+                ),
+              ],
+            ),
+            SizedBox(width: Get.width * 0.18),
+            Container(
+              margin: const EdgeInsets.only(top: 10),
+              child: SvgPicture.asset('assets/icons/mypage/arrow.svg'),
+            ),
+          ],
+        ),
       ),
     );
   }

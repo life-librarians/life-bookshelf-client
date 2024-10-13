@@ -54,6 +54,7 @@ class LoginViewModel extends GetxController {
         Get.toNamed('/home');
       } else {
         Get.to(OnboardingScreen());
+        // Get.toNamed('/home');
       }
 
       return true;

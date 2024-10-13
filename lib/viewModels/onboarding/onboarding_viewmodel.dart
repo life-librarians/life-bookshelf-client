@@ -16,7 +16,6 @@ class OnboardingViewModel extends GetxController {
   var isNameValid = false.obs;
   var isButtonPressed = false.obs;
 
-
   final OnboardingApiService _userService = OnboardingApiService();
   final MyPageApiService _myPageApiService = MyPageApiService();
 
@@ -43,7 +42,6 @@ class OnboardingViewModel extends GetxController {
           hasChildren: answers[3].toLowerCase() == 'yes',
         );
         await setOnboardingCompleted();
-
         final viewmodel = Get.find<HomeViewModel>();
         Get.toNamed('/home');
       } catch (error, stackTrace) {
@@ -70,8 +68,10 @@ class OnboardingViewModel extends GetxController {
   }
 
   void updateCurrentQuestion() {
-    currentQuestion.value = OnboardingQuestions.questions[currentQuestionIndex.value];
-    currentQuestionDetail.value = OnboardingQuestions.questionsDetails[currentQuestionIndex.value];
+    currentQuestion.value =
+        OnboardingQuestions.questions[currentQuestionIndex.value];
+    currentQuestionDetail.value =
+        OnboardingQuestions.questionsDetails[currentQuestionIndex.value];
   }
 
   void nextQuestion() {
@@ -82,7 +82,8 @@ class OnboardingViewModel extends GetxController {
   }
 
   void validateDate() {
-    if (answers.length <= currentQuestionIndex.value && isButtonPressed.value == true) {
+    if (answers.length <= currentQuestionIndex.value &&
+        isButtonPressed.value == true) {
       isDateValid(false);
     } else {
       isDateValid(true);
@@ -90,7 +91,8 @@ class OnboardingViewModel extends GetxController {
   }
 
   void validateName(String newName) {
-    if (answers.length <= currentQuestionIndex.value && isButtonPressed.value == true) {
+    if (answers.length <= currentQuestionIndex.value &&
+        isButtonPressed.value == true) {
       isNameValid(false);
     } else {
       isNameValid(true);

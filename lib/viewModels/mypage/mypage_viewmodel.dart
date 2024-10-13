@@ -2,6 +2,8 @@ import 'package:get/get.dart';
 import 'package:life_bookshelf/models/mypage/mypage_model.dart';
 import 'package:life_bookshelf/services/mypage/mypage_service.dart';
 
+import '../../views/login/login_screen.dart';
+
 class MypageViewModel extends GetxController {
   List<RxBool> switches = List.generate(6, (_) => false.obs);
 
@@ -9,7 +11,6 @@ class MypageViewModel extends GetxController {
   // Additional Rx properties for books
   Rx<BookDetailModel?> bookDetail = Rx<BookDetailModel?>(null);
   Rx<BookListModel?> bookList = Rx<BookListModel?>(null);
-
   Rx<int?> latestPublicationId = Rx<int?>(null);
   RxBool isLoading = true.obs; // 로딩 상태 관리
   RxString publishingStatus = 'IN_PUBLISHING'.obs;
@@ -119,6 +120,16 @@ class MypageViewModel extends GetxController {
     await loadPublishedBooks(1, 10);
     await fetchNotifications();
     isLoading.value = false; // Indicate that data loading is complete.
+  }
+
+  Future<void> deleteUser() async {
+    try {
+      final result = await apiService.deleteUser();
+      print("회원 탈퇴가 되었습니다.");
+      Get.to(LoginScreen());
+    } catch (e) {
+      print("Failed to delete User: $e");
+    }
   }
 
   @override
