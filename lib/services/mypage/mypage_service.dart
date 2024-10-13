@@ -53,12 +53,13 @@ class MyPageApiService {
           'Content-Type': 'application/json',
         },
       );
+      var decodedResponseBody = utf8.decode(response.bodyBytes);
       if (response.statusCode == 200) {
-        if (response.body.isEmpty) {
+        if (decodedResponseBody.isEmpty) {
           print("회원정보 조회가 완료되었습니다. 리턴되는 값은 없습니다.");
           return MyPageUserModel.empty();
         } else {
-          return MyPageUserModel.fromJson(json.decode(response.body));
+          return MyPageUserModel.fromJson(json.decode(decodedResponseBody));
         }
       } else {
         throw Exception('Failed to load user profile ${response.statusCode}');
@@ -66,11 +67,9 @@ class MyPageApiService {
     }
   }
 
-
-
   Future<BookDetailModel> fetchBookDetails(int publicationId) async {
     // Commented out real API call for demonstration purposes
-    /*
+
     final response = await http.get(Uri.parse('$baseUrl/v1/publications/$publicationId/progress'));
     if (response.statusCode == 200) {
       return BookDetailModel.fromJson(json.decode(response.body));
@@ -78,69 +77,75 @@ class MyPageApiService {
       Map<String, dynamic> errorResponse = json.decode(response.body);
       throw Exception('${errorResponse['code']}: ${errorResponse['message']}');
     }
-    */
-    // Mock response for testing
-    var responseJson = json.encode({
-      "bookId": 2,
-      "title": "나의 두번째 출판 책",
-      "coverImageUrl": "https://my_second_book",
-      "visibleScope": "PRIVATE",
-      "page": 104,
-      "createdAt": "2023-01-02T00:00:00Z",
-      "price": 100000,
-      "titlePosition": "TOP",
-      "publishStatus": "REQUESTED",
-      "requestAt": "2023-01-03T00:00:00Z",
-      "willPublishedAt": "2023-01-16T00:00:00Z"
-    });
 
-    return BookDetailModel.fromJson(json.decode(responseJson));
+    // Mock response for testing
+    // var responseJson = json.encode({
+    //   "bookId": 2,
+    //   "title": "나의 두번째 출판 책",
+    //   "coverImageUrl": "https://my_second_book",
+    //   "visibleScope": "PRIVATE",
+    //   "page": 104,
+    //   "createdAt": "2023-01-02T00:00:00Z",
+    //   "price": 100000,
+    //   "titlePosition": "TOP",
+    //   "publishStatus": "REQUESTED",
+    //   "requestAt": "2023-01-03T00:00:00Z",
+    //   "willPublishedAt": "2023-01-16T00:00:00Z"
+    // });
+
+    // return BookDetailModel.fromJson(json.decode(responseJson));
   }
 
   Future<BookListModel> fetchPublishedBooks(int page, int size) async {
     // Commented out real API call for demonstration purposes
-    /*
-    final response = await http.get(Uri.parse('$baseUrl/books?page=$page&size=$size'));
+    final String url = '$baseUrl/publications/me?page=$page&size=$size';
+    String token = UserPreferences.getUserToken();
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+    );
     if (response.statusCode == 200) {
       return BookListModel.fromJson(json.decode(response.body));
     } else {
-      Map<String, dynamic> errorResponse = json.decode(response.body);
+      Map<String, dynamic> errorResponse = json.decode(utf8.decode(response.bodyBytes));
       throw Exception('${errorResponse['code']}: ${errorResponse['message']}');
     }
-    */
-    // Mock response for testing
-    print("Fetching published books for page $page with size $size");
-    var responseJson = json.encode({
-      "results": [
-        {
-          "bookId": 1,
-          "publicationId": 1,
-          "title": "나의 첫 출판 책",
-          "contentPreview": "This is the story of my early life...",
-          "coverImageUrl": "https://my_first_book",
-          "visibleScope": "PUBLIC",
-          "page": 142,
-          "createdAt": "2023-01-01T00:00:00Z"
-        },
-        {
-          "bookId": 2,
-          "publicationId": 2,
-          "title": "나의 두번째 출판 책",
-          "contentPreview": "Continuing my journey...",
-          "coverImageUrl": "https://my_second_book",
-          "visibleScope": "PRIVATE",
-          "page": 104,
-          "createdAt": "2023-01-02T00:00:00Z"
-        }
-      ],
-      "currentPage": 1,
-      "totalElements": 3,
-      "totalPages": 1,
-      "hasNextPage": false,
-      "hasPreviousPage": false
-    });
 
-    return BookListModel.fromJson(json.decode(responseJson));
+    // Mock response for testing
+    // print("Fetching published books for page $page with size $size");
+    // var responseJson = json.encode({
+    //   "results": [
+    //     {
+    //       "bookId": 1,
+    //       "publicationId": 1,
+    //       "title": "나의 첫 출판 책",
+    //       "contentPreview": "This is the story of my early life...",
+    //       "coverImageUrl": "https://my_first_book",
+    //       "visibleScope": "PUBLIC",
+    //       "page": 142,
+    //       "createdAt": "2023-01-01T00:00:00Z"
+    //     },
+    //     {
+    //       "bookId": 2,
+    //       "publicationId": 2,
+    //       "title": "나의 두번째 출판 책",
+    //       "contentPreview": "Continuing my journey...",
+    //       "coverImageUrl": "https://my_second_book",
+    //       "visibleScope": "PRIVATE",
+    //       "page": 104,
+    //       "createdAt": "2023-01-02T00:00:00Z"
+    //     }
+    //   ],
+    //   "currentPage": 1,
+    //   "totalElements": 3,
+    //   "totalPages": 1,
+    //   "hasNextPage": false,
+    //   "hasPreviousPage": false
+    // });
+    // return BookListModel.fromJson(json.decode(responseJson));
   }
 
   Future<List<NotificationModel>> fetchNotifications() async {
@@ -215,6 +220,23 @@ class MyPageApiService {
     print("Mock update: Switch at index $index set to $state");
 
     // 테스트 시뮬레이션 지연 시간
+  }
+
+  Future<void> deleteUser() async {
+    String token = UserPreferences.getUserToken();
+
+    final response = await http.delete(
+      Uri.parse('$baseUrl/auth/unregister'),
+      headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer $token'},
+    );
+
+    if (response.statusCode == 204) {
+      print("회원탈퇴 성공");
+    } else {
+      var decodedBody = utf8.decode(response.bodyBytes);
+      print("회원탈퇴 실패: ${response.statusCode} - $decodedBody");
+      throw Exception('회원탈퇴 실패: ${response.statusCode} - $decodedBody');
+    }
   }
 }
 

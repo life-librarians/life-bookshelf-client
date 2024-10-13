@@ -48,7 +48,7 @@ class OnboardingViewModel extends GetxController {
         hasChildren: answers[3].toLowerCase() == 'yes',
       );
       try {
-        // // 온보딩 만들기
+        // 온보딩 만들기
         // await _userService.updateUser(user);
         // await _userService.createChapter();
         // // 회원정보 넣기
@@ -59,7 +59,6 @@ class OnboardingViewModel extends GetxController {
         //   hasChildren: answers[3].toLowerCase() == 'yes',
         // );
         await setOnboardingCompleted();
-
         final viewmodel = Get.find<HomeViewModel>();
         Get.toNamed('/home');
       } catch (error, stackTrace) {

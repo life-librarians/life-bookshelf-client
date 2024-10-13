@@ -26,7 +26,9 @@ class HomeChapterService {
       print(token);
       if (response.statusCode == 200) {
         var data = jsonDecode(utf8.decode(response.bodyBytes));
+
         currentChapterId = data['currentChapterId'];
+
         print('Current Chapter ID: $currentChapterId');
 
         return (data['results'] as List).map((chapterJson) => HomeChapter.fromJson(chapterJson)).toList();
