@@ -109,7 +109,7 @@ class ChattingViewModel extends GetxController {
 
     // 빈 말풍선 추가
     int bubbleIndex = chatBubbles.length;
-    chatBubbles.add(const ChatBubble(isUser: true, message: ''));
+    chatBubbles.add(const ChatBubble(isUser: true, message: ""));
 
     if (available) {
       await _speech.listen(
@@ -118,11 +118,14 @@ class ChattingViewModel extends GetxController {
 
           // 실시간으로 말풍선 업데이트
           chatBubbles[bubbleIndex] = ChatBubble(isUser: true, message: _currentSpeech.value);
+          // chatBubbles[bubbleIndex] = ChatBubble(isUser: true, message: "맨날 콜팝을 먹었던 게 기억이 나.");
 
           if (result.finalResult) {
+            // TODO: for test
             conversations.add(Conversation(
               conversationType: 'HUMAN',
               content: _currentSpeech.value,
+              // content: "맨날 콜팝을 먹었던 게 기억이 나.",
             ));
             updateChatBubbles();
             _currentSpeech.value = '';

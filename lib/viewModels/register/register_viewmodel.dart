@@ -47,7 +47,8 @@ class RegisterViewModel extends GetxController {
       return true;
     } catch (e) {
       registerError.value = e.toString();
-      print('Login failed: $registerError');
+      print('Error Type: ${e.runtimeType}'); // 에러의 타입 출력
+      print('Register failed: ${registerError.value}');
       return false;
     } finally {
       isLoading(false);

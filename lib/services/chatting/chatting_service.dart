@@ -185,10 +185,14 @@ class ChattingService extends GetxService {
 
     final body = jsonEncode({
       'user_info': {
-        "user_name": userInfo['name'],
-        "date_of_birth": userInfo['bornedAt'],
-        "gender": userInfo['gender'],
-        "has_children": userInfo['hasChildren'],
+        // "user_name": userInfo['name'],
+        // "date_of_birth": userInfo['bornedAt'],
+        // "gender": userInfo['gender'],
+        // "has_children": userInfo['hasChildren'],
+        "user_name": "황현정",
+        "date_of_birth": "2001-02-24",
+        "gender": "FEMALE",
+        "has_children": false,
         "occupation": bodyinfo["occupation"],
         "education_level": bodyinfo["education_level"],
         "marital_status": bodyinfo["marital_status"],

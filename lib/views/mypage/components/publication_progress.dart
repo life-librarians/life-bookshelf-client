@@ -176,8 +176,6 @@ class _PubInProgress extends StatelessWidget {
 
 class _PubCompleted extends StatelessWidget {
   const _PubCompleted({super.key});
-
-
   @override
   Widget build(BuildContext context) {
 
