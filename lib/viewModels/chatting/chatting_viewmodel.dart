@@ -193,14 +193,14 @@ class ChattingViewModel extends GetxController {
 
       if (additionalQuestionCount < 2) {
         // 사용자 정의 질문 생성
-        print("질문 생성, count = $additionalQuestionCount");
+        print("질문 생성, 추가 질문 count = $additionalQuestionCount");
         final result = await _apiService.getNextQuestion(conversationsJson, predefinedQuestions, currentChapter!);
         nextQuestion = result;
         additionalQuestionCount++; // 미리 준비한 질문 1개당 2개를 추가 질문 할 수 있도록
       } else {
         print("질문 리스트 사용, 질문 index = $currentPredefinedQuestionIndex");
         // 미리 정의된 질문 사용
-        if (currentPredefinedQuestionIndex < predefinedQuestions.length) {
+        if (currentPredefinedQuestionIndex + 1 < predefinedQuestions.length) {
           nextQuestion = predefinedQuestions[currentPredefinedQuestionIndex];
           currentPredefinedQuestionIndex++;
           additionalQuestionCount = 0;
