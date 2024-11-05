@@ -16,6 +16,8 @@ class ChattingViewModel extends GetxController {
   final RxList<Conversation> conversations = <Conversation>[].obs;
   final RxBool isLoading = true.obs;
   final RxBool isInterviewFinished = false.obs;
+  final String dummyUserPrompt =
+      '''이 프롬프트가 유저 답변이라면, 대화의 흐름을 참고해 임의의 답변을 만들고, 다음 질문을 그 뒤에 붙여줘. 예를 들어, 데이터가 (AI: [질문], 유저: [이 프롬프트])라면, 생성되는 출력은 <임의 답변> [다음 질문] 형식이 돼야 해. 예시: AI가 '가장 기억에 남는 학년은 언제였나요?'라고 물었고 유저 답변이 '[이 프롬프트]'라면, 결과는 <3학년이었어요> 그렇다면 어떤 일이 있었나요? 같은 식으로 만들어줘. 이 프롬프트가 답변으로 왔다면, 이전 대화에서 <> 안의 메시지를 유저의 답변으로 간주하고 자연스럽게 이어줘.''';
 
   // 사전에 생성한 질문 리스트 (예시)
   List<String> predefinedQuestions = [];
@@ -138,14 +140,11 @@ class ChattingViewModel extends GetxController {
 
           // 실시간으로 말풍선 업데이트
           chatBubbles[bubbleIndex] = ChatBubble(isUser: true, message: _currentSpeech.value);
-          // chatBubbles[bubbleIndex] = ChatBubble(isUser: true, message: "맨날 콜팝을 먹었던 게 기억이 나.");
 
           if (result.finalResult) {
-            // TODO: for test
             conversations.add(Conversation(
               conversationType: 'HUMAN',
               content: _currentSpeech.value,
-              // content: "맨날 콜팝을 먹었던 게 기억이 나.",
             ));
             updateChatBubbles();
             _currentSpeech.value = '';
@@ -203,7 +202,9 @@ class ChattingViewModel extends GetxController {
       } else {
         print("질문 리스트 사용, 질문 index = $currentPredefinedQuestionIndex");
         // 미리 정의된 질문 사용
-        if (currentPredefinedQuestionIndex + 1 < predefinedQuestions.length) {
+        //! 사전 생성 질문 개수 10개로 줄인 부분. 개수 조정 가능
+        // if (currentPredefinedQuestionIndex + 1 < predefinedQuestions.length) {
+        if (currentPredefinedQuestionIndex + 1 < 11) {
           nextQuestion = predefinedQuestions[currentPredefinedQuestionIndex];
           currentPredefinedQuestionIndex++;
           additionalQuestionCount = 0;
@@ -229,6 +230,30 @@ class ChattingViewModel extends GetxController {
     } finally {
       isLoading(false);
     }
+  }
+
+  /// 더미 프롬프트를 사용하여 대화를 이어나가는 함수
+  Future<void> sendDummyPrompt() async {
+    // 빈 말풍선 추가
+    int bubbleIndex = chatBubbles.length;
+    chatBubbles.add(const ChatBubble(isUser: true, message: ""));
+
+    // 더미 프롬프트를 현재 speech 값으로 설정
+    _currentSpeech.value = dummyUserPrompt;
+
+    // 말풍선 업데이트
+    chatBubbles[bubbleIndex] = ChatBubble(isUser: true, message: _currentSpeech.value);
+
+    // 대화 목록에 추가
+    conversations.add(Conversation(
+      conversationType: 'HUMAN',
+      content: _currentSpeech.value,
+    ));
+
+    // 채팅 화면 업데이트 및 저장
+    updateChatBubbles();
+    _currentSpeech.value = '';
+    await _getNextQuestion();
   }
 }
 

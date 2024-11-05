@@ -17,20 +17,6 @@ class ChattingService extends GetxService {
   String token = UserPreferences.getUserToken();
   final Map<String, dynamic> userInfo = <String, dynamic>{}.obs;
 
-  final Map<String, dynamic> bodyinfo = {
-    "occupation": "프로그래머",
-    "education_level": "대학교 재학",
-    "marital_status": "미혼",
-    'chapter_info': {
-      "title": "대학교 입학 전, 어린기와 청소년 시절",
-      "description": "황현정으로써 살아온 어린 시절과 청소년 시절에 대한 이야기",
-    },
-    'sub_chapter_info': {
-      "title": "초등학교 입학",
-      "description": "황현정이 초등학교에 입학하고, 중학교에 들어가기 전까지 학교를 다니며 겪은 일들에 대한 이야기",
-    }
-  };
-
   Future<Map<String, dynamic>> getInterview(int interviewId) async {
     try {
       final response = await http.get(Uri.parse('$baseUrl/interviews/$interviewId/questions'), headers: <String, String>{
@@ -214,10 +200,11 @@ class ChattingService extends GetxService {
         "user_name": userInfo['name'],
         "date_of_birth": userInfo['bornedAt'],
         "gender": userInfo['gender'],
-        // "has_children": userInfo['hasChildren'], // TODO: api 수정 후 다시 추가
-        "occupation": bodyinfo["occupation"],
-        "education_level": bodyinfo["education_level"],
-        "marital_status": bodyinfo["marital_status"],
+        "has_children": userInfo['hasChildren'],
+        // TODO: api 수정 후 다시 추가 (userInfo fetching부터)
+        "occupation": "",
+        "education_level": "",
+        "marital_status": "",
       },
       'chapter_info': {
         'title': chapterInfo['title'],
@@ -311,23 +298,50 @@ class ChattingService extends GetxService {
   Future<String> getNextQuestion(List<Map<String, dynamic>> conversations, List<dynamic> predefinedQuestions, HomeChapter chapter) async {
     await fetchUserInfo();
     final url = '$aiUrl/interviews/interview-chat';
+    //TODO: GenerateInterviewQuestions 함수와 중복되는 부분
+    final chaptersInfo = await getChaptersInfo();
+    Map<String, dynamic> chapterInfo = {};
+    Map<String, dynamic> subChapterInfo = {};
+
+    for (var c in chaptersInfo['results']) {
+      for (var subChapter in c['subChapters']) {
+        if (subChapter['chapterId'] == chapter.chapterId) {
+          chapterInfo = {
+            'title': chapter.chapterName,
+            'description': chapter.description ?? "",
+          };
+          subChapterInfo = {
+            'title': subChapter['chapterName'],
+            'description': subChapter['chapterDescription'] ?? "",
+          };
+          break;
+        }
+      }
+      if (chapterInfo.isNotEmpty) break;
+    }
+    if (chapterInfo.isEmpty || subChapterInfo.isEmpty) {
+      throw Exception('해당 챕터 정보를 찾을 수 없습니다.');
+    }
 
     final body = jsonEncode({
       'user_info': {
-        // "user_name": userInfo['name'],
-        // "date_of_birth": userInfo['bornedAt'],
-        // "gender": userInfo['gender'],
-        // "has_children": userInfo['hasChildren'],
-        "user_name": "황현정",
-        "date_of_birth": "2001-02-24",
-        "gender": "FEMALE",
-        "has_children": false,
-        "occupation": bodyinfo["occupation"],
-        "education_level": bodyinfo["education_level"],
-        "marital_status": bodyinfo["marital_status"],
+        "user_name": userInfo['name'],
+        "date_of_birth": userInfo['bornedAt'],
+        "gender": userInfo['gender'],
+        "has_children": userInfo['hasChildren'],
+        // TODO: api 수정 후 다시 추가 (userInfo fetching부터)
+        "occupation": "",
+        "education_level": "",
+        "marital_status": "",
       },
-      'chapter_info': bodyinfo['chapter_info'],
-      'sub_chapter_info': bodyinfo['sub_chapter_info'],
+      'chapter_info': {
+        'title': chapterInfo['title'],
+        'description': chapterInfo['description'],
+      },
+      'sub_chapter_info': {
+        'title': subChapterInfo['title'],
+        'description': subChapterInfo['description'],
+      },
       'conversation_history': convertConversationFormat(conversations),
       'current_answer': conversations.last['content'],
       'question_limit': 1

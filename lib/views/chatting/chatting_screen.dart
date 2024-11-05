@@ -50,9 +50,40 @@ class ChattingScreen extends BaseScreen<ChattingViewModel> {
               ],
             ).paddingSymmetric(horizontal: 15),
           ),
+          // 마이크 버튼
           MicButton(
             micState: viewModel.micState,
             buttonFunction: viewModel.changeMicState,
+          ),
+          // 더미 프롬프트 버튼
+          Positioned(
+            right: 40,
+            bottom: 40,
+            child: Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: ColorSystem.mainBlue,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.2),
+                    spreadRadius: 0,
+                    blurRadius: 10,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: CupertinoButton(
+                onPressed: () => viewModel.sendDummyPrompt(),
+                padding: EdgeInsets.zero,
+                child: const Icon(
+                  CupertinoIcons.add,
+                  color: ColorSystem.white,
+                  size: 20,
+                ),
+              ),
+            ),
           ),
         ],
       ),
@@ -250,33 +281,36 @@ class MicButton extends StatelessWidget {
     return Positioned(
       left: 0,
       right: 0,
-      bottom: 20, // 화면 하단에서의 거리
-      child: Center(
-        child: Container(
-          width: 80,
-          height: 80,
-          decoration: BoxDecoration(
-            color: buttonColor,
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.2),
-                spreadRadius: 0,
-                blurRadius: 10,
-                offset: const Offset(0, 3),
+      bottom: 20,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Container(
+            width: 80,
+            height: 80,
+            decoration: BoxDecoration(
+              color: buttonColor,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.2),
+                  spreadRadius: 0,
+                  blurRadius: 10,
+                  offset: const Offset(0, 3),
+                ),
+              ],
+            ),
+            child: CupertinoButton(
+              onPressed: buttonFunction,
+              padding: EdgeInsets.zero,
+              child: Icon(
+                buttonIcon,
+                color: ColorSystem.white,
+                size: (micState == MicState.finish) ? 55 : 40,
               ),
-            ],
-          ),
-          child: CupertinoButton(
-            onPressed: buttonFunction,
-            padding: EdgeInsets.zero,
-            child: Icon(
-              buttonIcon,
-              color: ColorSystem.white,
-              size: (micState == MicState.finish) ? 55 : 40,
             ),
           ),
-        ),
+        ],
       ),
     );
   }
