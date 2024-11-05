@@ -16,8 +16,13 @@ class ChattingViewModel extends GetxController {
   final RxList<Conversation> conversations = <Conversation>[].obs;
   final RxBool isLoading = true.obs;
   final RxBool isInterviewFinished = false.obs;
-  final String dummyUserPrompt =
-      '''이 프롬프트가 유저 답변이라면, 대화의 흐름을 참고해 임의의 답변을 만들고, 다음 질문을 그 뒤에 붙여줘. 예를 들어, 데이터가 (AI: [질문], 유저: [이 프롬프트])라면, 생성되는 출력은 <임의 답변> [다음 질문] 형식이 돼야 해. 예시: AI가 '가장 기억에 남는 학년은 언제였나요?'라고 물었고 유저 답변이 '[이 프롬프트]'라면, 결과는 <3학년이었어요> 그렇다면 어떤 일이 있었나요? 같은 식으로 만들어줘. 이 프롬프트가 답변으로 왔다면, 이전 대화에서 <> 안의 메시지를 유저의 답변으로 간주하고 자연스럽게 이어줘.''';
+  final String dummyUserPrompt = '''만약 이 메시지가 유저의 답변으로 전달되었다면, 유저 데이터, 챕터 정보, 대화의 전후 맥락을 활용하여 유저의 답변을 임의로 생성하고, 그 답변을 다음에 네가 할 질문 앞에 포함하여 다음 질문을 생성해줘.
+예를 들면, 너에게 주어진 데이터가 (AI: [질문], 유저 답변: [이 프롬프트])와 같다면, 네가 생성할 문자열은 "<[임의로 생성한 유저 답변]> [다음으로 생성한 질문]"이 되는 거야.
+예시를 들어 줄게. 
+    {AI: "가장 인상깊었던 일이 있던 학년은 몇학년인가요?", User: "[이 프롬프트]"}
+    와 같은 데이터가 주어지면, 아래와 같이 유저의 답변과 다음 질문을 생성하여 string을 반환해.
+    "<가장 인상깊었던 학년은 3학년이야> 그렇다면, 그 일은 무엇이였나요?"
+    추가로, 이 프롬프트가 답변으로 전달되었다면, 이전 질문 데이터의 <> 안에 있는 메시지가 이전 유저의 데이터라는 것을 유념하여 이전 대화의 맥락으로 사용하면 돼.''';
 
   // 사전에 생성한 질문 리스트 (예시)
   List<String> predefinedQuestions = [];
@@ -49,7 +54,7 @@ class ChattingViewModel extends GetxController {
       isLoading(true);
       // autobiography 존재하는지 확인 후 id 저장
       int? autoid, intid;
-      print(chapterId);
+      // print(chapterId);
       (autoid, intid) = await _apiService.checkAutobiography(chapterId);
       autobiographyId = autoid;
       interviewId = intid;

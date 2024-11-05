@@ -330,9 +330,9 @@ class ChattingService extends GetxService {
         "gender": userInfo['gender'],
         "has_children": userInfo['hasChildren'],
         // TODO: api 수정 후 다시 추가 (userInfo fetching부터)
-        "occupation": "",
-        "education_level": "",
-        "marital_status": "",
+        "occupation": " ",
+        "education_level": " ",
+        "marital_status": " ",
       },
       'chapter_info': {
         'title': chapterInfo['title'],
@@ -346,6 +346,8 @@ class ChattingService extends GetxService {
       'current_answer': conversations.last['content'],
       'question_limit': 1
     });
+
+    // print(body);
 
     try {
       final response = await http.post(
