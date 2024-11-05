@@ -68,6 +68,7 @@ class OnboardingApiService {
     if (chapterTimeline == null) throw Exception('chapterTimeline이 비어있습니다.');
 
     List<Map<String, dynamic>> chapters = [];
+
     for (int i = 0; i < chapterTimeline.length; i++) {
       var chapter = chapterTimeline[i];
       List<Map<String, dynamic>> subchapters = [];
@@ -79,39 +80,43 @@ class OnboardingApiService {
           'name': event['event_title'],
           'description': event['event_description'] ?? '서브챕터에 대한 설명'
         });
-        // 설명 필드 추가
-        chapters.add({
-          'number': '${i + 1}',
-          'name': chapter['chapter_title'],
-          'description':
-              chapter['chapter_description'] ?? '챕터에 대한 설명', // 설명 필드 추가
-          'subchapters': subchapters,
-          'description': chapter['description'],
-        });
       }
 
-      final body = jsonEncode({'chapters': chapters});
+      chapters.add({
+        'number': '${i + 1}',
+        'name': chapter['chapter_title'],
+        'description': chapter['chapter_description'] ?? '챕터에 대한 설명',
+        'subchapters': subchapters,
+      });
+    }
 
-      String token = UserPreferences.getUserToken();
-      final headers = {
-        'Authorization': 'Bearer $token',
-        'accept': 'application/json',
-        'Content-Type': 'application/json',
-      };
+    final body = jsonEncode({'chapters': chapters});
 
-      final response = await http.post(
-        Uri.parse(ChapterApiUrl),
-        headers: headers,
-        body: body,
-      );
+    // 여기에 요청 데이터 로그 추가
+    print('Request body: $body');
 
-      if (response.statusCode == 201) {
-        print('서버에 챕터가 성공적으로 생성 요청되었습니다.');
-      } else {
-        final decodedResponse = utf8.decode(response.bodyBytes);
-        throw Exception(
-            '챕터 생성 실패. 상태 코드: ${response.statusCode}, 응답 내용: $decodedResponse');
-      }
+    String token = UserPreferences.getUserToken();
+    final headers = {
+      'Authorization': 'Bearer $token',
+      'accept': 'application/json',
+      'Content-Type': 'application/json',
+    };
+
+    final response = await http.post(
+      Uri.parse(ChapterApiUrl),
+      headers: headers,
+      body: body,
+    );
+
+    // 여기에 응답 확인 로그 추가
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+
+    if (response.statusCode == 201) {
+      print('서버에 챕터가 성공적으로 생성 요청되었습니다.');
+    } else {
+      final decodedResponse = utf8.decode(response.bodyBytes);
+      throw Exception('챕터 생성 실패. 상태 코드: ${response.statusCode}, 응답 내용: $decodedResponse');
     }
   }
 }
