@@ -17,20 +17,6 @@ class ChattingService extends GetxService {
   String token = UserPreferences.getUserToken();
   final Map<String, dynamic> userInfo = <String, dynamic>{}.obs;
 
-  final Map<String, dynamic> bodyinfo = {
-    "occupation": "프로그래머",
-    "education_level": "대학교 재학",
-    "marital_status": "미혼",
-    'chapter_info': {
-      "title": "대학교 입학 전, 어린기와 청소년 시절",
-      "description": "황현정으로써 살아온 어린 시절과 청소년 시절에 대한 이야기",
-    },
-    'sub_chapter_info': {
-      "title": "초등학교 입학",
-      "description": "황현정이 초등학교에 입학하고, 중학교에 들어가기 전까지 학교를 다니며 겪은 일들에 대한 이야기",
-    }
-  };
-
   Future<Map<String, dynamic>> getInterview(int interviewId) async {
     try {
       final response = await http.get(Uri.parse('$baseUrl/interviews/$interviewId/questions'), headers: <String, String>{
@@ -123,7 +109,7 @@ class ChattingService extends GetxService {
         throw Exception('대화 저장 중 오류가 발생했습니다. 상태 코드: ${response.statusCode}');
       }
     } catch (e) {
-      throw Exception('대화 저장 중 오류가 발생했습��다: $e');
+      throw Exception('대화 저장 중 오류가 발생했습니다: $e');
     }
   }
 
@@ -214,10 +200,11 @@ class ChattingService extends GetxService {
         "user_name": userInfo['name'],
         "date_of_birth": userInfo['bornedAt'],
         "gender": userInfo['gender'],
-        // "has_children": userInfo['hasChildren'], // TODO: api 수정 후 다시 추가
-        "occupation": bodyinfo["occupation"],
-        "education_level": bodyinfo["education_level"],
-        "marital_status": bodyinfo["marital_status"],
+        "has_children": userInfo['hasChildren'],
+        // TODO: api 수정 후 다시 추가 (userInfo fetching부터)
+        "occupation": "",
+        "education_level": "",
+        "marital_status": "",
       },
       'chapter_info': {
         'title': chapterInfo['title'],
@@ -311,27 +298,56 @@ class ChattingService extends GetxService {
   Future<String> getNextQuestion(List<Map<String, dynamic>> conversations, List<dynamic> predefinedQuestions, HomeChapter chapter) async {
     await fetchUserInfo();
     final url = '$aiUrl/interviews/interview-chat';
+    //TODO: GenerateInterviewQuestions 함수와 중복되는 부분
+    final chaptersInfo = await getChaptersInfo();
+    Map<String, dynamic> chapterInfo = {};
+    Map<String, dynamic> subChapterInfo = {};
+
+    for (var c in chaptersInfo['results']) {
+      for (var subChapter in c['subChapters']) {
+        if (subChapter['chapterId'] == chapter.chapterId) {
+          chapterInfo = {
+            'title': chapter.chapterName,
+            'description': chapter.description ?? "",
+          };
+          subChapterInfo = {
+            'title': subChapter['chapterName'],
+            'description': subChapter['chapterDescription'] ?? "",
+          };
+          break;
+        }
+      }
+      if (chapterInfo.isNotEmpty) break;
+    }
+    if (chapterInfo.isEmpty || subChapterInfo.isEmpty) {
+      throw Exception('해당 챕터 정보를 찾을 수 없습니다.');
+    }
 
     final body = jsonEncode({
       'user_info': {
-        // "user_name": userInfo['name'],
-        // "date_of_birth": userInfo['bornedAt'],
-        // "gender": userInfo['gender'],
-        // "has_children": userInfo['hasChildren'],
-        "user_name": "황현정",
-        "date_of_birth": "2001-02-24",
-        "gender": "FEMALE",
-        "has_children": false,
-        "occupation": bodyinfo["occupation"],
-        "education_level": bodyinfo["education_level"],
-        "marital_status": bodyinfo["marital_status"],
+        "user_name": userInfo['name'],
+        "date_of_birth": userInfo['bornedAt'],
+        "gender": userInfo['gender'],
+        "has_children": userInfo['hasChildren'],
+        // TODO: api 수정 후 다시 추가 (userInfo fetching부터)
+        "occupation": " ",
+        "education_level": " ",
+        "marital_status": " ",
       },
-      'chapter_info': bodyinfo['chapter_info'],
-      'sub_chapter_info': bodyinfo['sub_chapter_info'],
+      'chapter_info': {
+        'title': chapterInfo['title'],
+        'description': chapterInfo['description'],
+      },
+      'sub_chapter_info': {
+        'title': subChapterInfo['title'],
+        'description': subChapterInfo['description'],
+      },
       'conversation_history': convertConversationFormat(conversations),
       'current_answer': conversations.last['content'],
       'question_limit': 1
     });
+
+    // print(body);
 
     try {
       final response = await http.post(
@@ -432,6 +448,130 @@ class ChattingService extends GetxService {
     } catch (e) {
       print('사전 질문 인덱스를 다음으로 이동 중 오류 발생: $e');
       throw Exception('다음 질문으로 이동 중 오류 발생');
+    }
+  }
+
+  /// 최종적으로 자서전 텍스트를 생성
+  Future<String> createAutobiographyText(List<Conversation> conversations, int interviewId, HomeChapter chapter) async {
+    // 필요한 정보 가져오기
+    await fetchUserInfo();
+    final chaptersInfo = await getChaptersInfo();
+    Map<String, dynamic> chapterInfo = {};
+    Map<String, dynamic> subChapterInfo = {};
+
+    // 챕터 정보 찾기
+    for (var c in chaptersInfo['results']) {
+      for (var subChapter in c['subChapters']) {
+        if (subChapter['chapterId'] == chapter.chapterId) {
+          chapterInfo = {
+            'title': chapter.chapterName,
+            'description': chapter.description ?? "",
+          };
+          subChapterInfo = {
+            'title': subChapter['chapterName'],
+            'description': subChapter['chapterDescription'] ?? "",
+          };
+          break;
+        }
+      }
+      if (chapterInfo.isNotEmpty) break;
+    }
+
+    // 대화 내용을 API 형식에 맞게 변환
+    final List<Map<String, dynamic>> formattedConversations = conversations
+        .map((conv) => {
+              'content': conv.content,
+              'conversation_type': conv.conversationType == 'AI' ? 'BOT' : 'HUMAN',
+            })
+        .toList();
+
+    final body = jsonEncode({
+      'user_info': {
+        "user_name": userInfo['name'],
+        "date_of_birth": userInfo['bornedAt'],
+        "gender": userInfo['gender'],
+        "has_children": userInfo['hasChildren'],
+        "occupation": " ",
+        "education_level": " ",
+        "marital_status": " ",
+      },
+      'chapter_info': chapterInfo,
+      'sub_chapter_info': subChapterInfo,
+      'interviews': formattedConversations,
+    });
+
+    try {
+      final response = await http.post(
+        Uri.parse('$aiUrl/autobiographies/generate'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer $token',
+        },
+        body: body,
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(utf8.decode(response.bodyBytes));
+        return data['autobiographical_text'];
+      } else {
+        print(utf8.decode(response.bodyBytes));
+        throw Exception('자서전 텍스트 생성 중 오류가 발생했습니다. 상태 코드: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('자서전 텍스트 생성 중 오류가 발생했습니다: $e');
+    }
+  }
+
+  /// 자서전 내용 확정
+  Future<void> finishAutobiography(int autobiographyId, HomeChapter chapter, String autobiographyText, String preSignedImageUrl) async {
+    try {
+      // 요청 본문 구성
+      final request = http.MultipartRequest(
+        'POST',
+        Uri.parse('$baseUrl/autobiographies/$autobiographyId'),
+      );
+
+      // 헤더 설정
+      request.headers.addAll({
+        'Authorization': 'Bearer $token',
+      });
+
+      // multipart/form-data에 추가할 필드 설정
+      request.fields['title'] = chapter.chapterName;
+      request.fields['content'] = autobiographyText;
+      // print(preSignedImageUrl);
+      request.fields['preSignedCoverImageUrl'] = preSignedImageUrl;
+
+      // 요청 보내기
+      final response = await request.send();
+
+      // 응답 처리
+      if (response.statusCode == 200) {
+        print('자서전 수정(확정)이 성공적으로 완료되었습니다.');
+      } else {
+        final responseBody = await response.stream.bytesToString();
+        print(responseBody);
+        throw Exception('자서전 완료 중 오류가 발생했습니다. 상태 코드: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('자서전 완료 중 오류가 발생했습니다: $e');
+    }
+  }
+
+  Future<void> turnOverChapter() async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/autobiographies/chapters/current-chapter'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      print('챕터 갱신 요청이 성공적으로 완료되었습니다.');
+    } else {
+      print(utf8.decode(response.bodyBytes));
+      throw Exception('챕터 갱신 중 오류가 발생했습니다. 상태 코드: ${response.statusCode}');
     }
   }
 }
