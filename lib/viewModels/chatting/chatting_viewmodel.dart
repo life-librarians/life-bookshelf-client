@@ -181,9 +181,10 @@ class ChattingViewModel extends GetxController {
     if (selectedImage.value != null) {
       presignedUrl = await _apiService.uploadImage(selectedImage.value!);
     }
-    // TODO: 이미지 업로드 완료 후 자서전 내용 서버에 업로드 (이미지 url과 함께)
     final String autobiographyText = await generateAutobiographyText();
     await _apiService.finishAutobiography(autobiographyId!, currentChapter!, autobiographyText, presignedUrl ?? "");
+    // 다음 챕터 갱신 요청
+    await _apiService.turnOverChapter();
     selectedImage.value = null;
   }
 

@@ -536,11 +536,13 @@ class ChattingService extends GetxService {
       final response = await http.post(
         Uri.parse('$baseUrl/autobiographies/$autobiographyId'),
         headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
+          'Content-Type': 'multipart/form-data',
           'Authorization': 'Bearer $token',
         },
         body: jsonEncode(requestBody),
       );
+
+      print(requestBody);
 
       if (response.statusCode == 200) {
         print('자서전 수정(확정)이 성공적으로 완료되었습니다.');
@@ -550,6 +552,23 @@ class ChattingService extends GetxService {
       }
     } catch (e) {
       throw Exception('자서전 완료 중 오류가 발생했습니다: $e');
+    }
+  }
+
+  Future<void> turnOverChapter() async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/autobiographies/chapters/current-chapter'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      print('챕터 갱신 요청이 성공적으로 완료되었습니다.');
+    } else {
+      print(utf8.decode(response.bodyBytes));
+      throw Exception('챕터 갱신 중 오류가 발생했습니다. 상태 코드: ${response.statusCode}');
     }
   }
 }
