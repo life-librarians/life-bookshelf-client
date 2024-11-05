@@ -1,3 +1,5 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -9,11 +11,23 @@ import 'package:life_bookshelf/services/userpreferences_service.dart';
 import 'package:life_bookshelf/utilities/font_system.dart';
 import 'package:life_bookshelf/viewModels/onboarding/onboarding_viewmodel.dart';
 import 'package:life_bookshelf/viewModels/root/root_viewmodel.dart';
+import 'firebase_options.dart';
+
 
 void main() async {
   await dotenv.load(fileName: "assets/config/.env");
   await initializeDateFormatting();
   await UserPreferences.init();
+
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  // // FirebaseMessaging 인스턴스 생성 및 디바이스 토큰 가져오기
+  // FirebaseMessaging messaging = FirebaseMessaging.instance;
+  // String? token = await messaging.getToken();
+  // print('FCM Device Token: $token');  // 디바이스 토큰 출력
 
   Get.put(OnboardingViewModel());
   Get.put(RootViewModel());

@@ -10,7 +10,6 @@ import 'views/root/root_screen.dart';
 
 class MainApp extends StatelessWidget {
   final bool onboardingCompleted;
-
   const MainApp({
     super.key,
     required this.onboardingCompleted,

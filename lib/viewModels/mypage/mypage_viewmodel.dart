@@ -18,6 +18,26 @@ class MypageViewModel extends GetxController {
   final MyPageApiService apiService = MyPageApiService();
   RxBool isRemindSubscribed = false.obs;
 
+  // FCM 토큰을 저장하는 변수
+  RxString deviceToken = ''.obs;
+
+  // @override
+  // void onInit() {
+  //   super.onInit();
+  //   loadAllData(); // Load all data when initializing.
+  //   _initializeFCMToken(); // FCM 토큰 초기화
+  // }
+  //
+  // // FCM 토큰을 가져와서 deviceToken 변수에 저장하는 메서드
+  // Future<void> _initializeFCMToken() async {
+  //   try {
+  //     deviceToken.value = await FirebaseMessaging.instance.getToken() ?? '';
+  //     print("FCM Device Token: ${deviceToken.value}");
+  //   } catch (e) {
+  //     print("Failed to get FCM token: $e");
+  //   }
+  // }
+
   void toggleSwitch(int index, bool value) {
     if (index >= 0 && index < switches.length) {
       switches[index].value = value;
@@ -81,6 +101,24 @@ class MypageViewModel extends GetxController {
     }
   }
 
+  // 알림 구독 상태를 서버에 업데이트하면서 FCM 토큰을 전달하는 메서드
+  // Future<void> updateSubscriptions() async {
+  //   List<int> subscribedIds = notifications
+  //       .where((n) => n.subscribedAt != null)
+  //       .map((n) => n.notificationId)
+  //       .toList();
+  //   try {
+  //     await apiService.updateNotificationSubscriptions(
+  //       subscribedIds,
+  //       deviceToken.value, // FCM 디바이스 토큰 전달
+  //     );
+  //     await fetchNotifications();  // Re-fetch to ensure UI is updated with server state
+  //     print("Notifications updated and refreshed.");
+  //   } catch (e) {
+  //     print("Failed to update notifications: $e");
+  //   }
+  // }
+
   Future<void> loadUserProfile() async {
     try {
       final result = await apiService.fetchUserProfile();
@@ -122,8 +160,13 @@ class MypageViewModel extends GetxController {
     isLoading.value = false; // Indicate that data loading is complete.
   }
 
+  // 회원 탈퇴 시 호출되는 메서드
   Future<void> deleteUser() async {
     try {
+      // FCM 토큰 삭제 로직
+      // await FirebaseMessaging.instance.deleteToken();
+      // print("FCM 토큰이 삭제되었습니다."); // FCM 토큰 삭제 확인 로그
+
       final result = await apiService.deleteUser();
       print("회원 탈퇴가 되었습니다.");
       Get.to(LoginScreen());
