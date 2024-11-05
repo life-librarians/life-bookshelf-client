@@ -91,7 +91,7 @@ class ImageUploadService extends GetxService {
     try {
       final (imageUrl, presignedUrl) = await getPresignedUrl(imageFile, folder);
       await uploadToS3(imageUrl, imageFile);
-      return imageUrl;
+      return presignedUrl;
     } catch (e) {
       print(e);
       throw Exception('Error in image upload process: $e');

@@ -526,28 +526,31 @@ class ChattingService extends GetxService {
   Future<void> finishAutobiography(int autobiographyId, HomeChapter chapter, String autobiographyText, String preSignedImageUrl) async {
     try {
       // 요청 본문 구성
-      final Map<String, dynamic> requestBody = {
-        'title': chapter.chapterName,
-        'content': autobiographyText,
-        'preSignedCoverImageUrl': preSignedImageUrl,
-      };
-
-      // POST 요청 보내기
-      final response = await http.post(
+      final request = http.MultipartRequest(
+        'POST',
         Uri.parse('$baseUrl/autobiographies/$autobiographyId'),
-        headers: <String, String>{
-          'Content-Type': 'multipart/form-data',
-          'Authorization': 'Bearer $token',
-        },
-        body: jsonEncode(requestBody),
       );
 
-      print(requestBody);
+      // 헤더 설정
+      request.headers.addAll({
+        'Authorization': 'Bearer $token',
+      });
 
+      // multipart/form-data에 추가할 필드 설정
+      request.fields['title'] = chapter.chapterName;
+      request.fields['content'] = autobiographyText;
+      // print(preSignedImageUrl);
+      request.fields['preSignedCoverImageUrl'] = preSignedImageUrl;
+
+      // 요청 보내기
+      final response = await request.send();
+
+      // 응답 처리
       if (response.statusCode == 200) {
         print('자서전 수정(확정)이 성공적으로 완료되었습니다.');
       } else {
-        print(utf8.decode(response.bodyBytes));
+        final responseBody = await response.stream.bytesToString();
+        print(responseBody);
         throw Exception('자서전 완료 중 오류가 발생했습니다. 상태 코드: ${response.statusCode}');
       }
     } catch (e) {

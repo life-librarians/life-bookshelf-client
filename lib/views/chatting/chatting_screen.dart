@@ -242,6 +242,7 @@ class ChattingScreen extends BaseScreen<ChattingViewModel> {
             onPressed: () async {
               await viewModel.finishInterview();
               Get.back();
+              Get.back();
             },
             child: Text('확인', style: FontSystem.KR14SB.copyWith(color: ColorSystem.white)),
           ),
