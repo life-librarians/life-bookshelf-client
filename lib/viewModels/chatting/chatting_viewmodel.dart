@@ -16,6 +16,13 @@ class ChattingViewModel extends GetxController {
   final RxList<Conversation> conversations = <Conversation>[].obs;
   final RxBool isLoading = true.obs;
   final RxBool isInterviewFinished = false.obs;
+  final String dummyUserPrompt = '''만약 이 메시지가 유저의 답변으로 전달되었다면, 유저 데이터, 챕터 정보, 대화의 전후 맥락을 활용하여 유저의 답변을 임의로 생성하고, 그 답변을 다음에 네가 할 질문 앞에 포함하여 다음 질문을 생성해줘.
+예를 들면, 너에게 주어진 데이터가 (AI: [질문], 유저 답변: [이 프롬프트])와 같다면, 네가 생성할 문자열은 "<[임의로 생성한 유저 답변]> [다음으로 생성한 질문]"이 되는 거야.
+예시를 들어 줄게. 
+    {AI: "가장 인상깊었던 일이 있던 학년은 몇학년인가요?", User: "[이 프롬프트]"}
+    와 같은 데이터가 주어지면, 아래와 같이 유저의 답변과 다음 질문을 생성하여 string을 반환해.
+    "<가장 인상깊었던 학년은 3학년이야> 그렇다면, 그 일은 무엇이였나요?"
+    추가로, 이 프롬프트가 답변으로 전달되었다면, 이전 질문 데이터의 <> 안에 있는 메시지가 이전 유저의 데이터라는 것을 유념하여 이전 대화의 맥락으로 사용하면 돼.''';
 
   // 사전에 생성한 질문 리스트 (예시)
   List<String> predefinedQuestions = [];
@@ -47,7 +54,7 @@ class ChattingViewModel extends GetxController {
       isLoading(true);
       // autobiography 존재하는지 확인 후 id 저장
       int? autoid, intid;
-      print(chapterId);
+      // print(chapterId);
       (autoid, intid) = await _apiService.checkAutobiography(chapterId);
       autobiographyId = autoid;
       interviewId = intid;
@@ -138,14 +145,11 @@ class ChattingViewModel extends GetxController {
 
           // 실시간으로 말풍선 업데이트
           chatBubbles[bubbleIndex] = ChatBubble(isUser: true, message: _currentSpeech.value);
-          // chatBubbles[bubbleIndex] = ChatBubble(isUser: true, message: "맨날 콜팝을 먹었던 게 기억이 나.");
 
           if (result.finalResult) {
-            // TODO: for test
             conversations.add(Conversation(
               conversationType: 'HUMAN',
               content: _currentSpeech.value,
-              // content: "맨날 콜팝을 먹었던 게 기억이 나.",
             ));
             updateChatBubbles();
             _currentSpeech.value = '';
@@ -171,13 +175,17 @@ class ChattingViewModel extends GetxController {
     }
   }
 
-  Future<void> saveImage() async {
+  /// save Image 및 자서전 텍스트 생성을 통한 자서전 내용 확정
+  Future<void> finishInterview() async {
+    String? presignedUrl;
     if (selectedImage.value != null) {
-      final presignedUrl = await _apiService.uploadImage(selectedImage.value!);
-      // TODO: 이미지 업로드 완료 후 자서전 내용 서버에 업로드 (이미지 url과 함께)
-      // ~
-      selectedImage.value = null;
+      presignedUrl = await _apiService.uploadImage(selectedImage.value!);
     }
+    final String autobiographyText = await generateAutobiographyText();
+    await _apiService.finishAutobiography(autobiographyId!, currentChapter!, autobiographyText, presignedUrl ?? "");
+    // 다음 챕터 갱신 요청
+    await _apiService.turnOverChapter();
+    selectedImage.value = null;
   }
 
   void clearSelectedImage() {
@@ -203,7 +211,9 @@ class ChattingViewModel extends GetxController {
       } else {
         print("질문 리스트 사용, 질문 index = $currentPredefinedQuestionIndex");
         // 미리 정의된 질문 사용
-        if (currentPredefinedQuestionIndex + 1 < predefinedQuestions.length) {
+        //! 사전 생성 질문 개수 10개로 줄인 부분. 개수 조정 가능
+        // if (currentPredefinedQuestionIndex + 1 < predefinedQuestions.length) {
+        if (currentPredefinedQuestionIndex + 1 < 11) {
           nextQuestion = predefinedQuestions[currentPredefinedQuestionIndex];
           currentPredefinedQuestionIndex++;
           additionalQuestionCount = 0;
@@ -228,6 +238,46 @@ class ChattingViewModel extends GetxController {
       Get.snackbar('오류', e.toString());
     } finally {
       isLoading(false);
+    }
+  }
+
+  /// 더미 프롬프트를 사용하여 대화를 이어나가는 함수
+  Future<void> sendDummyPrompt() async {
+    // 빈 말풍선 추가
+    int bubbleIndex = chatBubbles.length;
+    chatBubbles.add(const ChatBubble(isUser: true, message: ""));
+
+    // 더미 프롬프트를 현재 speech 값으로 설정
+    _currentSpeech.value = dummyUserPrompt;
+
+    // 말풍선 업데이트
+    chatBubbles[bubbleIndex] = ChatBubble(isUser: true, message: _currentSpeech.value);
+
+    // 대화 목록에 추가
+    conversations.add(Conversation(
+      conversationType: 'HUMAN',
+      content: _currentSpeech.value,
+    ));
+
+    // 채팅 화면 업데이트 및 저장
+    updateChatBubbles();
+    _currentSpeech.value = '';
+    await _getNextQuestion();
+  }
+
+  /// 자서전 텍스트 생성
+  Future<String> generateAutobiographyText() async {
+    try {
+      if (interviewId == null || currentChapter == null) {
+        throw Exception('인터뷰 ID 또는 챕터 정보가 없습니다.');
+      }
+
+      final autobiographyText = await _apiService.createAutobiographyText(conversations, interviewId!, currentChapter!);
+      print(autobiographyText);
+      return autobiographyText;
+    } catch (e) {
+      Get.snackbar('오류', '자서전 텍스트 생성 중 오류가 발생했습니다: $e');
+      rethrow;
     }
   }
 }
