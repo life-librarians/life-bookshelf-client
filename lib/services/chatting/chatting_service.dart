@@ -109,7 +109,7 @@ class ChattingService extends GetxService {
         throw Exception('대화 저장 중 오류가 발생했습니다. 상태 코드: ${response.statusCode}');
       }
     } catch (e) {
-      throw Exception('대화 저장 중 오류가 발생했습��다: $e');
+      throw Exception('대화 저장 중 오류가 발생했습니다: $e');
     }
   }
 
@@ -448,6 +448,77 @@ class ChattingService extends GetxService {
     } catch (e) {
       print('사전 질문 인덱스를 다음으로 이동 중 오류 발생: $e');
       throw Exception('다음 질문으로 이동 중 오류 발생');
+    }
+  }
+
+  /// 최종적으로 자서전 텍스트를 생성
+  Future<String> createAutobiographyText(List<Conversation> conversations, int interviewId, HomeChapter chapter) async {
+    // 필요한 정보 가져오기
+    await fetchUserInfo();
+    final chaptersInfo = await getChaptersInfo();
+    Map<String, dynamic> chapterInfo = {};
+    Map<String, dynamic> subChapterInfo = {};
+
+    // 챕터 정보 찾기
+    for (var c in chaptersInfo['results']) {
+      for (var subChapter in c['subChapters']) {
+        if (subChapter['chapterId'] == chapter.chapterId) {
+          chapterInfo = {
+            'title': chapter.chapterName,
+            'description': chapter.description ?? "",
+          };
+          subChapterInfo = {
+            'title': subChapter['chapterName'],
+            'description': subChapter['chapterDescription'] ?? "",
+          };
+          break;
+        }
+      }
+      if (chapterInfo.isNotEmpty) break;
+    }
+
+    // 대화 내용을 API 형식에 맞게 변환
+    final List<Map<String, dynamic>> formattedConversations = conversations
+        .map((conv) => {
+              'content': conv.content,
+              'conversation_type': conv.conversationType == 'AI' ? 'BOT' : 'HUMAN',
+            })
+        .toList();
+
+    final body = jsonEncode({
+      'user_info': {
+        "user_name": userInfo['name'],
+        "date_of_birth": userInfo['bornedAt'],
+        "gender": userInfo['gender'],
+        "has_children": userInfo['hasChildren'],
+        "occupation": " ",
+        "education_level": " ",
+        "marital_status": " ",
+      },
+      'chapter_info': chapterInfo,
+      'sub_chapter_info': subChapterInfo,
+      'interviews': formattedConversations,
+    });
+
+    try {
+      final response = await http.post(
+        Uri.parse('$aiUrl/autobiographies/generate'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer $token',
+        },
+        body: body,
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(utf8.decode(response.bodyBytes));
+        return data['autobiographical_text'];
+      } else {
+        print(utf8.decode(response.bodyBytes));
+        throw Exception('자서전 텍스트 생성 중 오류가 발생했습니다. 상태 코드: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('자서전 텍스트 생성 중 오류가 발생했습니다: $e');
     }
   }
 }

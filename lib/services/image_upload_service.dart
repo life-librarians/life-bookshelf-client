@@ -56,8 +56,8 @@ class ImageUploadService extends GetxService {
       print(key);
       if (response.statusCode == 200) {
         try {
-          final Map<String, dynamic> data = json.decode(response.body);
-          return (data['presignedUrl'] as String, key);
+          final String data = json.decode(response.body);
+          return (data, key);
         } catch (e) {
           // JSON 파싱에 실패하면 응답 본문을 직접 반환
           return (response.body.trim(), key);
@@ -90,7 +90,7 @@ class ImageUploadService extends GetxService {
   Future<String> uploadImage(File imageFile, ImageUploadFolder folder) async {
     try {
       final (imageUrl, presignedUrl) = await getPresignedUrl(imageFile, folder);
-      await uploadToS3(presignedUrl, imageFile);
+      await uploadToS3(imageUrl, imageFile);
       return imageUrl;
     } catch (e) {
       print(e);

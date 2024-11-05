@@ -175,13 +175,14 @@ class ChattingViewModel extends GetxController {
     }
   }
 
-  Future<void> saveImage() async {
+  /// save Image 및 자서전 텍스트 생성을 통한 자서전 내용 확정
+  Future<void> finishInterview() async {
     if (selectedImage.value != null) {
       final presignedUrl = await _apiService.uploadImage(selectedImage.value!);
-      // TODO: 이미지 업로드 완료 후 자서전 내용 서버에 업로드 (이미지 url과 함께)
-      // ~
-      selectedImage.value = null;
     }
+    // TODO: 이미지 업로드 완료 후 자서전 내용 서버에 업로드 (이미지 url과 함께)
+    final String autobiographyText = await generateAutobiographyText();
+    selectedImage.value = null;
   }
 
   void clearSelectedImage() {
@@ -259,6 +260,22 @@ class ChattingViewModel extends GetxController {
     updateChatBubbles();
     _currentSpeech.value = '';
     await _getNextQuestion();
+  }
+
+  /// 자서전 텍스트 생성
+  Future<String> generateAutobiographyText() async {
+    try {
+      if (interviewId == null || currentChapter == null) {
+        throw Exception('인터뷰 ID 또는 챕터 정보가 없습니다.');
+      }
+
+      final autobiographyText = await _apiService.createAutobiographyText(conversations, interviewId!, currentChapter!);
+      print(autobiographyText);
+      return autobiographyText;
+    } catch (e) {
+      Get.snackbar('오류', '자서전 텍스트 생성 중 오류가 발생했습니다: $e');
+      rethrow;
+    }
   }
 }
 

@@ -237,7 +237,7 @@ class ChattingScreen extends BaseScreen<ChattingViewModel> {
               ),
             ),
             onPressed: () {
-              viewModel.saveImage();
+              viewModel.finishInterview();
               Get.back();
             },
             child: Text('확인', style: FontSystem.KR14SB.copyWith(color: ColorSystem.white)),
