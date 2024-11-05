@@ -177,11 +177,13 @@ class ChattingViewModel extends GetxController {
 
   /// save Image 및 자서전 텍스트 생성을 통한 자서전 내용 확정
   Future<void> finishInterview() async {
+    String? presignedUrl;
     if (selectedImage.value != null) {
-      final presignedUrl = await _apiService.uploadImage(selectedImage.value!);
+      presignedUrl = await _apiService.uploadImage(selectedImage.value!);
     }
     // TODO: 이미지 업로드 완료 후 자서전 내용 서버에 업로드 (이미지 url과 함께)
     final String autobiographyText = await generateAutobiographyText();
+    await _apiService.finishAutobiography(autobiographyId!, currentChapter!, autobiographyText, presignedUrl ?? "");
     selectedImage.value = null;
   }
 

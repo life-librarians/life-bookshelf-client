@@ -166,7 +166,10 @@ class ChattingScreen extends BaseScreen<ChattingViewModel> {
                     fixedSize: Size.fromHeight(42.h),
                   ),
                   child: Text('없어요', style: FontSystem.KR14SB.copyWith(color: ColorSystem.chatting.modalContentColor)),
-                  onPressed: () => Get.back(),
+                  onPressed: () async {
+                    await viewModel.finishInterview();
+                    Get.back();
+                  },
                 ),
               ),
               const SizedBox(width: 8),
@@ -236,8 +239,8 @@ class ChattingScreen extends BaseScreen<ChattingViewModel> {
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
-            onPressed: () {
-              viewModel.finishInterview();
+            onPressed: () async {
+              await viewModel.finishInterview();
               Get.back();
             },
             child: Text('확인', style: FontSystem.KR14SB.copyWith(color: ColorSystem.white)),

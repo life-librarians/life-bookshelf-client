@@ -521,6 +521,37 @@ class ChattingService extends GetxService {
       throw Exception('자서전 텍스트 생성 중 오류가 발생했습니다: $e');
     }
   }
+
+  /// 자서전 내용 확정
+  Future<void> finishAutobiography(int autobiographyId, HomeChapter chapter, String autobiographyText, String preSignedImageUrl) async {
+    try {
+      // 요청 본문 구성
+      final Map<String, dynamic> requestBody = {
+        'title': chapter.chapterName,
+        'content': autobiographyText,
+        'preSignedCoverImageUrl': preSignedImageUrl,
+      };
+
+      // POST 요청 보내기
+      final response = await http.post(
+        Uri.parse('$baseUrl/autobiographies/$autobiographyId'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode(requestBody),
+      );
+
+      if (response.statusCode == 200) {
+        print('자서전 수정(확정)이 성공적으로 완료되었습니다.');
+      } else {
+        print(utf8.decode(response.bodyBytes));
+        throw Exception('자서전 완료 중 오류가 발생했습니다. 상태 코드: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('자서전 완료 중 오류가 발생했습니다: $e');
+    }
+  }
 }
 
 List<T> getLastTwo<T>(List<T> list) {
