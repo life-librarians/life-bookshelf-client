@@ -8,6 +8,8 @@ import 'package:life_bookshelf/views/base/base_screen.dart';
 import 'package:life_bookshelf/views/chatting/chatting_screen.dart';
 import 'package:life_bookshelf/views/chat-n/autobiography_detail_chapter_screen.dart';
 
+import '../../services/chatting/chatting_service.dart';
+
 class HomeScreen extends BaseScreen<HomeViewModel> {
   const HomeScreen({super.key});
 
@@ -217,6 +219,7 @@ class _ChapterBox extends GetView<HomeViewModel> {
   @override
   Widget build(BuildContext context) {
     String timeAgo = controller.getTimeAge(subChapter.chapterCreatedAt);
+    final ChattingService _apiService = Get.find<ChattingService>();
 
     List<String> chapterParts = subChapter.chapterNumber.split('.');
     int majorPart = int.parse(chapterParts[0]);
@@ -230,8 +233,17 @@ class _ChapterBox extends GetView<HomeViewModel> {
     int imageIndex = ((majorPart - 1) * 2 + (minorPart - 1)) % images.length;
 
     return GestureDetector(
-      onTap: () {
-        Get.to(() => AutobiographyDetailScreen(autobiographyId: subChapter.chapterId));
+      onTap: () async {
+        try {
+          final (autobiographyId, _) = await _apiService.checkAutobiography(subChapter.chapterId);
+          if (autobiographyId != null) {
+            Get.to(() => AutobiographyDetailScreen(autobiographyId: autobiographyId));
+          } else {
+            Get.snackbar('잠깐만요!', '먼저 인터뷰를 진행하시면, 자서전이 만들어져요.');
+          }
+        } catch (e) {
+          Get.snackbar('오류', e.toString());
+        }
       },
       child: Container(
         margin: const EdgeInsets.only(bottom: 17),

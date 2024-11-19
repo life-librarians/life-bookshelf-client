@@ -68,7 +68,7 @@ class _Profile extends StatelessWidget {
       width: Get.width * 0.89,
       height: 76,
       child: Padding(
-        padding: const EdgeInsets.only(left: 23, top: 15, bottom: 13),
+        padding: const EdgeInsets.only(left: 23, top: 16, bottom: 13),
         child: Row(
           children:[
             SvgPicture.asset(
@@ -84,6 +84,7 @@ class _Profile extends StatelessWidget {
                   viewmodel.userModel.value?.name ?? 'Dummy',
                   style: FontSystem.KR16M.copyWith(color: Colors.white, height: 1),
                 ),
+                SizedBox(height: 15),
                 Text(
                   viewmodel.userModel.value?.bornedAt ?? '2001-02-24',
                   style: FontSystem.KR11M.copyWith(color: Colors.white, height: 1),

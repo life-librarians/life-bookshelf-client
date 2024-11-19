@@ -2,15 +2,19 @@
 import 'package:get/get.dart';
 import 'package:life_bookshelf/models/home/chapter.dart';
 import 'package:life_bookshelf/services/home/chapter_service.dart';
+import '../../models/home/autobiography.dart';
+import '../../services/home/autobiography_service.dart';
 
 class HomeViewModel extends GetxController {
   final HomeChapterService chapterService;
+  final HomeAutobiographyService AutoBiographtService;
 
   var chapters = <HomeChapter>[].obs;
   var currentChapter = Rx<HomeChapter?>(null);
   var isLoading = true.obs;
+  final _chapterToAutobiographyMap = <int, int>{}.obs;
 
-  HomeViewModel(this.chapterService);
+  HomeViewModel(this.chapterService, this.AutoBiographtService);
 
   @override
   void onInit() {
@@ -96,5 +100,27 @@ class HomeViewModel extends GetxController {
       timeAgo = "$years years ago";
     }
     return timeAgo;
+  }
+
+  Future<void> fetchAutobiographyMapping() async {
+    try {
+      // Fetch autobiography data from the API
+      final List<HomeAutobiography> autobiographies = await AutoBiographtService.fetchAutobiographies();
+
+      // Clear existing mapping
+      _chapterToAutobiographyMap.clear();
+
+      // Create mapping from chapterId to autobiographyId
+      for (var autobiography in autobiographies) {
+        _chapterToAutobiographyMap[autobiography.autobiographyId] = autobiography.autobiographyId;
+      }
+    } catch (e) {
+      print('Error fetching autobiography mapping: $e');
+    }
+  }
+
+  // Get autobiographyId for a given chapterId
+  int? getAutobiographyId(int chapterId) {
+    return _chapterToAutobiographyMap[chapterId];
   }
 }

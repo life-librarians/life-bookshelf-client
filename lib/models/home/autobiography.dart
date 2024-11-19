@@ -10,7 +10,7 @@ class HomeAutobiography {
 
   factory HomeAutobiography.fromJson(Map<String, dynamic> json) {
     return HomeAutobiography(
-      autobiographyId: json['autobiographyId'],
+      autobiographyId: json['autobiographyId'] as int,
       title: json['title'],
       contentPreview: json['contentPreview'],
       coverImageUrl: json['coverImageUrl'],
