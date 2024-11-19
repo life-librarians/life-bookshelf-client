@@ -12,7 +12,7 @@ class HomeChapter {
     required this.chapterName,
     this.description,
     required this.chapterCreatedAt,
-    this.subChapters = const [], // 기본값을 빈 리스트로 설정
+    this.subChapters = const [],
   });
 
   factory HomeChapter.fromJson(Map<String, dynamic> json) {

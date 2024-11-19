@@ -4,7 +4,6 @@ import 'package:life_bookshelf/views/onboarding/onboarding_screen.dart';
 import '../../services/login/login_service.dart';
 import '../../services/userpreferences_service.dart';
 import '../onboarding/onboarding_viewmodel.dart';
-
 class LoginViewModel extends GetxController {
   final LoginService loginService;
   var isLoading = false.obs;
@@ -20,6 +19,8 @@ class LoginViewModel extends GetxController {
   var email = ''.obs;
   var password = ''.obs;
 
+  // FirebaseMessaging messaging = FirebaseMessaging.instance; // FirebaseMessaging 인스턴스 추가
+
   LoginViewModel(this.loginService) {
     // 포커스 노드 리스너 설정
     emailFocusNode.addListener(() {
@@ -29,6 +30,16 @@ class LoginViewModel extends GetxController {
       isPasswordFocused.value = passwordFocusNode.hasFocus;
     });
   }
+
+  // FCM 토큰 발급 메소드 추가
+  // Future<String?> getFcmToken() async {
+  //   try {
+  //     return await messaging.getToken();  // FCM 토큰 가져오기
+  //   } catch (e) {
+  //     print("Failed to get FCM token: $e");
+  //     return null;
+  //   }
+  // }
 
   @override
   void onClose() {
@@ -42,6 +53,12 @@ class LoginViewModel extends GetxController {
   Future<bool> login() async {
     isLoading(true);
     try {
+      // String? fcmToken = await getFcmToken();  // FCM 토큰 발급
+      // if (fcmToken == null) {
+      //   throw Exception("FCM 토큰 발급 실패");
+      // }
+
+      // final response = await loginService.postLogin(email.value, password.value, fcmToken);  // FCM 토큰을 함께 전달
       final response = await loginService.postLogin(email.value, password.value);
       authToken.value = response.accessToken;
       print('Login successful with token: ${authToken.value}');
@@ -54,7 +71,6 @@ class LoginViewModel extends GetxController {
         Get.toNamed('/home');
       } else {
         Get.to(OnboardingScreen());
-        // Get.toNamed('/home');
       }
 
       return true;

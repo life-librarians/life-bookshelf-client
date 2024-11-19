@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "65552918554",
+    "project_id": "life-bookshelf-1fea6",
+    "storage_bucket": "life-bookshelf-1fea6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:65552918554:android:f5775c975743e31c1e89a3",
+        "android_client_info": {
+          "package_name": "com.example.life_bookshelf"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBE2U1iiWjIk2BOtoSacSVm0QUfO2-SqOc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
