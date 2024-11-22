@@ -70,10 +70,9 @@ class MyPageApiService {
 
   Future<BookDetailModel> fetchBookDetails(int publicationId) async {
     final token = UserPreferences.getUserToken();
-
     final url = '$baseUrl/publications/$publicationId/progress';
 
-    print('Requesting URL: $url'); // 디버깅을 위한 URL 출력
+    print('Requesting URL: $url');
 
     final response = await http.get(
       Uri.parse(url),
@@ -84,8 +83,10 @@ class MyPageApiService {
       },
     );
 
-    print('Response status: ${response.statusCode}'); // 응답 상태 코드 출력
-    print('Response body: ${response.body}'); // 응답 내용 출력
+    print('Response status: ${response.statusCode}');
+
+    // 디버그 출력할 때도 UTF-8 디코딩 적용
+    print('Response body: ${utf8.decode(response.bodyBytes)}');
 
     if (response.statusCode == 200) {
       var decodedBody = utf8.decode(response.bodyBytes);
