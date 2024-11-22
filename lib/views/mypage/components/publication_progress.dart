@@ -124,18 +124,19 @@ class _PubInProgress extends StatelessWidget {
     Color textColor1;
     Color textColor2;
     String svgAsset;
+    print('지금 보면 ${viewmodel.publishingStatus}');
 
     if (viewmodel.publishingStatus == 'REQUESTED' || viewmodel.publishingStatus == 'REJECTED') {
       backgroundColor = ColorSystem.white;
       textColor1 = ColorSystem.mypage.fontGray;
       textColor2 = ColorSystem.mypage.fontGray;
       svgAsset = 'assets/icons/mypage/02.svg';
-    } else if (viewmodel.publishingStatus == 'REQUEST_CONFIRMED' ){
+    } else if (viewmodel.publishingStatus == 'REQUEST_CONFIRMED' || viewmodel.publishingStatus == 'IN_PUBLISHING'){
     backgroundColor = ColorSystem.mainBlue;
       textColor1 = ColorSystem.white;
       textColor2 = ColorSystem.white;
       svgAsset = 'assets/icons/mypage/02_w.svg'; // 체크 이미지 사용
-    } else {
+    } else{
       backgroundColor = Colors.white;
       textColor1 = ColorSystem.mypage.fontBlack;
       textColor2 = ColorSystem.mypage.fontGray;
@@ -185,21 +186,16 @@ class _PubCompleted extends StatelessWidget {
     Color textColor2;
     String svgAsset;
 
-    if (viewmodel.publishingStatus == 'REQUESTED' || viewmodel.publishingStatus == 'REQUEST_CONFIRMED' || viewmodel.publishingStatus == 'REJECTED')  {
+    if (viewmodel.publishingStatus == 'PUBLISHED') {  // PUBLISHED 상태일 때만 파란색
+      backgroundColor = ColorSystem.mainBlue;
+      textColor1 = ColorSystem.white;
+      textColor2 = ColorSystem.white;
+      svgAsset = 'assets/icons/mypage/03_w.svg';
+    } else {  // 나머지 모든 상태(REQUESTED, REQUEST_CONFIRMED, IN_PUBLISHING, REJECTED)
       backgroundColor = ColorSystem.white;
       textColor1 = ColorSystem.mypage.fontGray;
       textColor2 = ColorSystem.mypage.fontGray;
       svgAsset = 'assets/icons/mypage/03.svg';
-    } else if (viewmodel.publishingStatus == 'IN_PUBLISHING' ){
-      backgroundColor = ColorSystem.mainBlue; // 배경색 하얀색 유지
-      textColor1 = ColorSystem.white;
-      textColor2 = ColorSystem.white;
-      svgAsset = 'assets/icons/mypage/03_w.svg'; // 체크 이미지 사용
-    } else {
-      backgroundColor = Colors.white;
-      textColor1 = ColorSystem.mypage.fontBlack;
-      textColor2 = ColorSystem.mypage.fontGray;
-      svgAsset = 'assets/icons/mypage/check.svg';
     }
 
     return Container(

@@ -69,32 +69,33 @@ class MyPageApiService {
   }
 
   Future<BookDetailModel> fetchBookDetails(int publicationId) async {
-    // Commented out real API call for demonstration purposes
+    final token = UserPreferences.getUserToken();
+    final url = '$baseUrl/publications/$publicationId/progress';
 
-    final response = await http.get(Uri.parse('$baseUrl/v1/publications/$publicationId/progress'));
+    print('Requesting URL: $url');
+
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Accept': '*/*',
+        'Content-Type': 'application/json',
+      },
+    );
+
+    print('Response status: ${response.statusCode}');
+
+    // 디버그 출력할 때도 UTF-8 디코딩 적용
+    print('Response body: ${utf8.decode(response.bodyBytes)}');
+
     if (response.statusCode == 200) {
-      return BookDetailModel.fromJson(json.decode(response.body));
+      var decodedBody = utf8.decode(response.bodyBytes);
+      return BookDetailModel.fromJson(json.decode(decodedBody));
     } else {
-      Map<String, dynamic> errorResponse = json.decode(response.body);
+      var decodedBody = utf8.decode(response.bodyBytes);
+      Map<String, dynamic> errorResponse = json.decode(decodedBody);
       throw Exception('${errorResponse['code']}: ${errorResponse['message']}');
     }
-
-    // Mock response for testing
-    // var responseJson = json.encode({
-    //   "bookId": 2,
-    //   "title": "나의 두번째 출판 책",
-    //   "coverImageUrl": "https://my_second_book",
-    //   "visibleScope": "PRIVATE",
-    //   "page": 104,
-    //   "createdAt": "2023-01-02T00:00:00Z",
-    //   "price": 100000,
-    //   "titlePosition": "TOP",
-    //   "publishStatus": "REQUESTED",
-    //   "requestAt": "2023-01-03T00:00:00Z",
-    //   "willPublishedAt": "2023-01-16T00:00:00Z"
-    // });
-
-    // return BookDetailModel.fromJson(json.decode(responseJson));
   }
 
   Future<BookListModel> fetchPublishedBooks(int page, int size) async {
