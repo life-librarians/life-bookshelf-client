@@ -152,12 +152,25 @@ class MypageViewModel extends GetxController {
 
   Future<void> loadAllData() async {
     isLoading.value = true;
-    await loadUserProfile();
-    // Example: Load book details for a specific member ID and books list with pagination
-    await loadBookDetails(123); // Assuming 123 is a sample member ID
-    await loadPublishedBooks(1, 10);
-    await fetchNotifications();
-    isLoading.value = false; // Indicate that data loading is complete.
+    try {
+      await loadUserProfile();
+
+      await loadPublishedBooks(0, 10);  // page는 0부터 시작하는 것 같네요
+
+      if (bookList.value != null &&
+          bookList.value!.results != null &&
+          bookList.value!.results!.isNotEmpty) {
+        int firstPublicationId = bookList.value!.results![0].publicationId!;
+        await loadBookDetails(firstPublicationId);
+        latestPublicationId.value = firstPublicationId;  // 나중에 사용할 수 있도록 저장
+      }
+      await fetchNotifications();
+
+    } catch (e) {
+      print("Error loading data: $e");
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   // 회원 탈퇴 시 호출되는 메서드

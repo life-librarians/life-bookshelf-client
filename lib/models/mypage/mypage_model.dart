@@ -30,12 +30,13 @@ class MyPageUserModel {
 
 class BookDetailModel {
   final int bookId;
+  final int publicationId;  // 추가
   final String? title;
   final String? coverImageUrl;
   final String? visibleScope;
-  final int? page;  // Nullable로 변경
+  final int? page;
   final String? createdAt;
-  final int? price;  // Nullable로 변경
+  final int? price;
   final String? titlePosition;
   final String? publishStatus;
   final String? requestAt;
@@ -43,12 +44,13 @@ class BookDetailModel {
 
   BookDetailModel({
     required this.bookId,
+    required this.publicationId,  // 추가
     required this.title,
     required this.coverImageUrl,
     required this.visibleScope,
-    this.page,  // Nullable
+    this.page,
     required this.createdAt,
-    this.price,  // Nullable
+    this.price,
     required this.titlePosition,
     required this.publishStatus,
     required this.requestAt,
@@ -58,16 +60,17 @@ class BookDetailModel {
   factory BookDetailModel.fromJson(Map<String, dynamic> json) {
     return BookDetailModel(
       bookId: json['bookId'],
+      publicationId: json['publicationId'],  // 추가
       title: json['title'] as String?,
       coverImageUrl: json['coverImageUrl'] as String?,
       visibleScope: json['visibleScope'] as String?,
-      page: json['page'] as int?,  // Null 처리
+      page: json['page'] as int?,
       createdAt: json['createdAt'],
-      price: json['price'] as int?,  // Null 처리
+      price: json['price'] as int?,
       titlePosition: json['titlePosition'] as String?,
       publishStatus: json['publishStatus'] as String?,
       requestAt: json['requestAt'] as String?,
-      willPublishedAt: json['willPublishedAt']as String?,
+      willPublishedAt: json['willPublishedAt'] as String?,
     );
   }
 }
