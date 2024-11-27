@@ -150,9 +150,10 @@ class PublishViewModel extends GetxController {
 
       // 이미지 S3 업로드
       final String imageUrl = await _imageUploadService.uploadImage(File(coverImage.value!.path), ImageUploadFolder.bookCoverImages);
+      String token = UserPreferences.getUserToken();
 
       // 출판 요청
-      var request = http.MultipartRequest('POST', Uri.parse('$baseUrl/publications'))
+      var request = http.MultipartRequest('POST', Uri.parse('$baseUrl/publications/'))
         ..fields['title'] = bookTitle.value
         ..fields['preSignedCoverImageUrl'] = imageUrl
         ..fields['titlePosition'] = titleLocation.value.toUpperCase();
@@ -161,6 +162,7 @@ class PublishViewModel extends GetxController {
       request.headers.addAll({
         'accept': '*/*',
         'Content-Type': 'multipart/form-data',
+        'Authorization': 'Bearer $token',
       });
 
       var response = await request.send();
