@@ -240,8 +240,17 @@ class ChattingScreen extends BaseScreen<ChattingViewModel> {
               ),
             ),
             onPressed: () async {
+              // 로딩 다이얼로그 표시
+              Get.dialog(
+                const Center(
+                  child: CircularProgressIndicator(),
+                ),
+                barrierDismissible: false, // 화면 터치 방지
+              );
+
               await viewModel.finishInterview();
-              Get.back();
+              Get.back(); // 로딩 다이얼로그 닫기
+              Get.back(); // 이전 화면으로 돌아가기
               Get.back();
             },
             child: Text('확인', style: FontSystem.KR14SB.copyWith(color: ColorSystem.white)),

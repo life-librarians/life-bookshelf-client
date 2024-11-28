@@ -213,7 +213,7 @@ class ChattingViewModel extends GetxController {
         // 미리 정의된 질문 사용
         //! 사전 생성 질문 개수 10개로 줄인 부분. 개수 조정 가능
         // if (currentPredefinedQuestionIndex + 1 < predefinedQuestions.length) {
-        if (currentPredefinedQuestionIndex + 1 < 11) {
+        if (currentPredefinedQuestionIndex + 1 < 2) {
           nextQuestion = predefinedQuestions[currentPredefinedQuestionIndex];
           currentPredefinedQuestionIndex++;
           additionalQuestionCount = 0;
