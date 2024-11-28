@@ -8,6 +8,7 @@ import 'package:life_bookshelf/utilities/color_system.dart';
 import 'package:life_bookshelf/utilities/font_system.dart';
 import 'package:life_bookshelf/utilities/screen_utils.dart';
 import 'package:life_bookshelf/viewModels/chatting/chatting_viewmodel.dart';
+import 'package:life_bookshelf/viewModels/home/home_viewmodel.dart';
 import 'package:life_bookshelf/views/base/base_screen.dart';
 
 class ChattingScreen extends BaseScreen<ChattingViewModel> {
@@ -249,15 +250,34 @@ class ChattingScreen extends BaseScreen<ChattingViewModel> {
               );
 
               await viewModel.finishInterview();
-              Get.back(); // 로딩 다이얼로그 닫기
-              Get.back(); // 이전 화면으로 돌아가기
-              Get.back();
+
+              // 챕터 정보 갱신
+              final homeViewModel = Get.find<HomeViewModel>();
+              await homeViewModel.fetchAllData();
+
+              navigateBackWithDelay();
             },
             child: Text('확인', style: FontSystem.KR14SB.copyWith(color: ColorSystem.white)),
           ),
         ],
       ),
     );
+  }
+
+  Future<void> navigateBackWithDelay() async {
+    Get.back(); // 로딩 다이얼로그 닫기
+    await Future.delayed(const Duration(milliseconds: 100));
+    Get.back(); // 이전 화면으로 돌아가기
+    await Future.delayed(const Duration(milliseconds: 100));
+    Get.back();
+    Get.dialog(
+      const Center(
+        child: CupertinoActivityIndicator(radius: 20), // iOS 스타일 로딩 프로그레스 서클
+      ),
+      barrierDismissible: false, // 화면 터치 방지
+    );
+    await Future.delayed(const Duration(seconds: 5)); // 5초 대기
+    Get.back(); // 로딩 다이얼로그 닫기
   }
 }
 

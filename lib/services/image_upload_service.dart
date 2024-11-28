@@ -40,6 +40,7 @@ class ImageUploadService extends GetxService {
     final String randomString = const Uuid().v4();
     final String key = '${folder.path}/$randomString/$fileName';
     imageUrl = key;
+    token = UserPreferences.getUserToken();
 
     try {
       final response = await http.post(
