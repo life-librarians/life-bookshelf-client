@@ -6,6 +6,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../services/mypage/mypage_service.dart';
 import '../home/home_viewmodel.dart';
 import 'package:life_bookshelf/viewModels/onboarding/questions.dart';
+import 'package:life_bookshelf/viewModels/mypage/mypage_viewmodel.dart';
+import 'package:life_bookshelf/viewModels/login/login_viewmodel.dart';
 
 class OnboardingViewModel extends GetxController {
   var currentQuestionIndex = 0.obs;
@@ -34,15 +36,27 @@ class OnboardingViewModel extends GetxController {
         // 온보딩 만들기
         await _userService.updateUser(user);
         await _userService.createChapter();
+
         // 회원정보 넣기
-        await _myPageApiService.fetchUserProfile(
+        final userProfile = await _myPageApiService.fetchUserProfile(
           name: answers[0],
           bornedAt: answers[1],
           gender: answers[2],
           hasChildren: answers[3].toLowerCase() == 'yes',
         );
-        await setOnboardingCompleted();
-        final viewmodel = Get.find<HomeViewModel>();
+
+        // 로그인 다시 수행하여 토큰 갱신
+        final loginViewModel = Get.find<LoginViewModel>();
+        final loginSuccess = await loginViewModel.login();
+        if (!loginSuccess) {
+          throw Exception('로그인 실패: 토큰 갱신 실패');
+        }
+
+        // HomeViewModel 인스턴스 가져오기
+        final homeViewModel = Get.find<HomeViewModel>();
+        // 챕터 정보 갱신
+        await homeViewModel.fetchAllData();
+
         Get.toNamed('/home');
       } catch (error, stackTrace) {
         // 에러와 스택 트레이스를 함께 출력
@@ -68,10 +82,8 @@ class OnboardingViewModel extends GetxController {
   }
 
   void updateCurrentQuestion() {
-    currentQuestion.value =
-        OnboardingQuestions.questions[currentQuestionIndex.value];
-    currentQuestionDetail.value =
-        OnboardingQuestions.questionsDetails[currentQuestionIndex.value];
+    currentQuestion.value = OnboardingQuestions.questions[currentQuestionIndex.value];
+    currentQuestionDetail.value = OnboardingQuestions.questionsDetails[currentQuestionIndex.value];
   }
 
   void nextQuestion() {
@@ -82,8 +94,7 @@ class OnboardingViewModel extends GetxController {
   }
 
   void validateDate() {
-    if (answers.length <= currentQuestionIndex.value &&
-        isButtonPressed.value == true) {
+    if (answers.length <= currentQuestionIndex.value && isButtonPressed.value == true) {
       isDateValid(false);
     } else {
       isDateValid(true);
@@ -91,8 +102,7 @@ class OnboardingViewModel extends GetxController {
   }
 
   void validateName(String newName) {
-    if (answers.length <= currentQuestionIndex.value &&
-        isButtonPressed.value == true) {
+    if (answers.length <= currentQuestionIndex.value && isButtonPressed.value == true) {
       isNameValid(false);
     } else {
       isNameValid(true);

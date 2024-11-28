@@ -38,6 +38,7 @@ class ChattingService extends GetxService {
   }
 
   Future<Map<String, dynamic>> getChaptersInfo() async {
+    token = UserPreferences.getUserToken();
     final response = await http.get(
       Uri.parse('$baseUrl/autobiographies/chapters?size=100'), // TODO: 추후 페이징 처리 필요
       headers: <String, String>{
@@ -273,6 +274,7 @@ class ChattingService extends GetxService {
   /// 사용자 정보 가져오기
   /// TODO: 추후 유저 정보를 전역에서 받아올 수 있게 되면, 삭제 필요
   Future<void> fetchUserInfo() async {
+    token = UserPreferences.getUserToken();
     if (userInfo.isEmpty) {
       final response = await http.get(Uri.parse('$baseUrl/members/me'), headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
@@ -286,7 +288,11 @@ class ChattingService extends GetxService {
         userInfo['gender'] = data['gender'];
         userInfo['hasChildren'] = data['hasChildren'];
       } else {
-        throw Exception('사용자 정보를 가져오는 데 실패했습니다. 상태 코드: ${response.statusCode}');
+        final errorMessage = '사용자 정보를 가져오는 데 실패했습니다. 상태 코드: ${response.statusCode}';
+        print(errorMessage);
+        print('응답 본문: ${utf8.decode(response.bodyBytes)}');
+        throw Exception(errorMessage);
+        // throw Exception('사용자 정보를 가져오는 데 실패했습니다. 상태 코드: ${response.statusCode}');
       }
 
       final Map<String, dynamic> responseData = json.decode(utf8.decode(response.bodyBytes));
