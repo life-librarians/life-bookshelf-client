@@ -15,15 +15,6 @@ class MypageScreen extends BaseScreen<MypageViewModel> {
   PreferredSizeWidget? buildAppBar(BuildContext context) {
     return AppBar(
       backgroundColor: Color(0xFFF7F7F7),
-      leading: Padding(
-        padding: const EdgeInsets.only(left: 27.0),
-        child: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: Colors.black, size: 16),
-          onPressed: () {
-            Get.back();
-          },
-        ),
-      ),
       title: Text(
         'Mypage',
         style: FontSystem.KR16_58SB.copyWith(color: Colors.black),
