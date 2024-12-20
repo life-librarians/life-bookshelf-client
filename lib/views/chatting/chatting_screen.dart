@@ -86,6 +86,17 @@ class ChattingScreen extends BaseScreen<ChattingViewModel> {
               ),
             ),
           ),
+          // 로딩 인디케이터
+          if (viewModel.isLoading.value)
+            GestureDetector(
+              onTap: () {}, // touch event blocking
+              child: Container(
+                color: Colors.black.withOpacity(0.2), // 회색 배경
+                child: const Center(
+                  child: CupertinoActivityIndicator(radius: 20),
+                ),
+              ),
+            ),
         ],
       ),
     );
@@ -138,7 +149,7 @@ class ChattingScreen extends BaseScreen<ChattingViewModel> {
       AlertDialog(
         title: const Center(
           child: Text(
-            '인터뷰가 완료되었어요',
+            '인터뷰가 완료되���어요',
             style: FontSystem.KR20B,
           ),
         ),

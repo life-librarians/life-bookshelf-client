@@ -21,6 +21,7 @@ class OnboardingScreen extends BaseScreen<OnboardingViewModel> {
       body: Stack(
         children: [
           SingleChildScrollView(
+            physics: const ClampingScrollPhysics(), // 애니메이션 자연스럽게 조정, 성능 최적화
             // 키보드가 올라올 때 자동으로 스크롤되도록
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             child: Column(
