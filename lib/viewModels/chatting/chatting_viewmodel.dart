@@ -223,6 +223,7 @@ class ChattingViewModel extends GetxController {
         } else {
           // 모든 질문이 끝난 경우
           isInterviewFinished.value = true;
+          // isLoading(true);
           Get.snackbar('알림', '모든 질문이 완료되었습니다.');
           return;
         }
