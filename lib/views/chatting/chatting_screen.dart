@@ -26,6 +26,7 @@ class ChattingScreen extends BaseScreen<ChattingViewModel> {
     ever(viewModel.isInterviewFinished, (finished) {
       if (finished) {
         _showFinishModal();
+        viewModel.isInterviewFinished.value = false; // 다시 false로 초기화하여 중복 호출 방지
       }
     });
   }
@@ -86,6 +87,19 @@ class ChattingScreen extends BaseScreen<ChattingViewModel> {
               ),
             ),
           ),
+          // 로딩 인디케이터와 반투명 배경
+          if (viewModel.isLoading.value)
+            Positioned.fill(
+              child: GestureDetector(
+                onTap: () {}, // 터치 이벤트를 막기 위해 빈 onTap 사용
+                child: Container(
+                  color: Colors.black.withOpacity(0.2), // 반투명 회색 배경
+                  child: const Center(
+                    child: CupertinoActivityIndicator(radius: 20),
+                  ),
+                ),
+              ),
+            ),
         ],
       ),
     );
@@ -138,7 +152,7 @@ class ChattingScreen extends BaseScreen<ChattingViewModel> {
       AlertDialog(
         title: const Center(
           child: Text(
-            '인터뷰가 완료되었어요',
+            '인터뷰가 완료되었어요.',
             style: FontSystem.KR20B,
           ),
         ),
