@@ -13,7 +13,7 @@
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
-	<string>9.0</string>
+	<string>10.0</string>
 	<key>CFBundleName</key>
 	<string>life_bookshelf</string>
 	<key>CFBundlePackageType</key>
