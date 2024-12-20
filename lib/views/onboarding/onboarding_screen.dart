@@ -9,7 +9,6 @@ import 'package:life_bookshelf/views/onboarding/components/cloud_window.dart';
 import 'package:life_bookshelf/views/onboarding/components/date_field.dart';
 import 'package:life_bookshelf/views/onboarding/components/disk_button.dart';
 import 'package:life_bookshelf/views/onboarding/components/name_field.dart';
-import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 
 class OnboardingScreen extends BaseScreen<OnboardingViewModel> {
   const OnboardingScreen({super.key});
@@ -17,44 +16,29 @@ class OnboardingScreen extends BaseScreen<OnboardingViewModel> {
   @override
   Widget buildBody(BuildContext context) {
     viewModel.updateCurrentQuestion();
-    return Stack(
-      children: [
-        SingleChildScrollView(
-          child: Column(
-            children: [
-              SizedBox(height: Get.height * 0.05),
-              const CloudWindow(),
-              SizedBox(height: Get.height * 0.031),
-              const _Dots(),
-              SizedBox(height: Get.height * 0.012),
-              const _QuestionTexts(),
-              const _BottomItems(),
-            ],
-          ),
-        ),
-        Positioned(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
-          left: 0,
-          right: 0,
-          child: Container(
-            color: Colors.white,
-            padding: const EdgeInsets.all(16),
+    return Scaffold(
+      resizeToAvoidBottomInset: true, // 키보드가 올라올 때 화면 리사이즈
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            // 키보드가 올라올 때 자동으로 스크롤되도록
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             child: Column(
               children: [
-                NameField(),
-                SizedBox(height: Get.height * 0.10),
-                DiskButton(
-                  onPressed: () {
-                    if (viewmodel.isNameValid.value == false) return;
-                    viewmodel.nextQuestion();
-                  },
-                  text: 'Next',
-                ),
+                SizedBox(height: Get.height * 0.05),
+                const CloudWindow(),
+                SizedBox(height: Get.height * 0.031),
+                const _Dots(),
+                SizedBox(height: Get.height * 0.012),
+                const _QuestionTexts(),
+                const _BottomItems(),
+                // 키보드 높이만큼 추가 공간 확보
+                SizedBox(height: MediaQuery.of(context).viewInsets.bottom),
               ],
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
