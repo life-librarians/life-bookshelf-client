@@ -14,6 +14,7 @@ class MypageScreen extends BaseScreen<MypageViewModel> {
   @override
   PreferredSizeWidget? buildAppBar(BuildContext context) {
     return AppBar(
+      automaticallyImplyLeading: false,
       backgroundColor: Color(0xFFF7F7F7),
       title: Text(
         'Mypage',
