@@ -76,7 +76,9 @@ class ChattingViewModel extends GetxController {
       conversations.value = loadedConversations;
       predefinedQuestions = loadedQuestions['results'].map<String>((q) => q['questionText'] as String).toList();
       currentPredefinedQuestionIndex = loadedQuestions['currentQuestionId'] - loadedQuestions['results'][0]['questionId'];
-      additionalQuestionCount = conversations.where((conv) => conv.conversationType == 'AI').length % 3; // 추가질문 개수 - 질문의 개수에서 3을 나누어 나머지로 할당
+
+      final aiQuestionCount = conversations.where((conv) => conv.conversationType == 'AI').length;
+      additionalQuestionCount = (aiQuestionCount == 0) ? 0 : (aiQuestionCount - 1) % 3; // 추가질문 개수 - 질문의 개수에서 3을 나누어 나머지로 할당
       print('현재 사전질문 인덱스: $currentPredefinedQuestionIndex');
       print('현재 추가질문 개수: $additionalQuestionCount');
       updateChatBubbles();
@@ -214,13 +216,14 @@ class ChattingViewModel extends GetxController {
         //! 사전 생성 질문 개수 10개로 줄인 부분. 개수 조정 가능
         // if (currentPredefinedQuestionIndex + 1 < predefinedQuestions.length) {
         if (currentPredefinedQuestionIndex + 1 < 2) {
-          nextQuestion = predefinedQuestions[currentPredefinedQuestionIndex];
           currentPredefinedQuestionIndex++;
+          nextQuestion = predefinedQuestions[currentPredefinedQuestionIndex];
           additionalQuestionCount = 0;
           _apiService.moveToNextQuestionIndex(interviewId!);
         } else {
           // 모든 질문이 끝난 경우
           isInterviewFinished.value = true;
+          // isLoading(true);
           Get.snackbar('알림', '모든 질문이 완료되었습니다.');
           return;
         }

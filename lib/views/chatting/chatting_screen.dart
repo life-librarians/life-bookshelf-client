@@ -23,12 +23,17 @@ class ChattingScreen extends BaseScreen<ChattingViewModel> {
     viewModel.loadConversations(currentChapter!);
     print('Chatting Screen Initialized: currentChapterId: ${currentChapter!.chapterId}');
 
-    ever(viewModel.isInterviewFinished, (finished) {
-      if (finished) {
-        _showFinishModal();
-        viewModel.isInterviewFinished.value = false; // 다시 false로 초기화하여 중복 호출 방지
-      }
-    });
+    debounce(
+      viewModel.isInterviewFinished,
+      (finished) {
+        if (finished) {
+          viewModel.isInterviewFinished.value = false;
+          _showFinishModal();
+          // viewModel.isLoading.value = false;
+        }
+      },
+      time: const Duration(milliseconds: 3000),
+    );
   }
 
   @override
@@ -182,8 +187,20 @@ class ChattingScreen extends BaseScreen<ChattingViewModel> {
                   ),
                   child: Text('없어요', style: FontSystem.KR14SB.copyWith(color: ColorSystem.chatting.modalContentColor)),
                   onPressed: () async {
+                    Get.dialog(
+                      const Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                      barrierDismissible: false, // 화면 터치 방지
+                    );
+
                     await viewModel.finishInterview();
-                    Get.back();
+
+                    // 챕터 정보 갱신
+                    final homeViewModel = Get.find<HomeViewModel>();
+                    await homeViewModel.fetchAllData();
+
+                    navigateBackWithDelay();
                   },
                 ),
               ),
