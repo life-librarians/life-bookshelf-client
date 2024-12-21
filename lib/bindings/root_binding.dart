@@ -26,6 +26,7 @@ class RootBinding extends Bindings {
 
     Get.lazyPut(() => LoginViewModel(LoginService()));
     Get.lazyPut(() => RegisterViewModel(RegisterService()));
+    // Get.lazyPut(() => OnboardingViewModel();
 
     Get.put(HomeViewModel(HomeChapterService(baseUrl), HomeAutobiographyService(baseUrl)));
     Get.put(ChatAutobiographyService());

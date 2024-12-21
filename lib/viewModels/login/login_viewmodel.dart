@@ -4,6 +4,7 @@ import 'package:life_bookshelf/views/onboarding/onboarding_screen.dart';
 import '../../services/login/login_service.dart';
 import '../../services/userpreferences_service.dart';
 import '../onboarding/onboarding_viewmodel.dart';
+
 class LoginViewModel extends GetxController {
   final LoginService loginService;
   var isLoading = false.obs;
@@ -67,10 +68,10 @@ class LoginViewModel extends GetxController {
       final OnboardingViewModel viewmodel = Get.find<OnboardingViewModel>();
       final onboardingCompleted = await viewmodel.isOnboardingCompleted();
 
-      if(onboardingCompleted) {
-        Get.toNamed('/home');
+      if (onboardingCompleted) {
+        Get.offAllNamed('/home');
       } else {
-        Get.to(OnboardingScreen());
+        Get.offAll(const OnboardingScreen());
       }
 
       return true;

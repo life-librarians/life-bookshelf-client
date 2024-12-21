@@ -57,7 +57,7 @@ class OnboardingViewModel extends GetxController {
         // 챕터 정보 갱신
         await homeViewModel.fetchAllData();
 
-        Get.toNamed('/home');
+        Get.offAllNamed('/home');
       } catch (error, stackTrace) {
         // 에러와 스택 트레이스를 함께 출력
         print("Error updating user: $error");
