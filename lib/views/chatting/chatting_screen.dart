@@ -63,35 +63,35 @@ class ChattingScreen extends BaseScreen<ChattingViewModel> {
             buttonFunction: viewModel.changeMicState,
           ),
           // 더미 프롬프트 버튼
-          Positioned(
-            right: 40,
-            bottom: 40,
-            child: Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: ColorSystem.mainBlue,
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
-                    spreadRadius: 0,
-                    blurRadius: 10,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
-              ),
-              child: CupertinoButton(
-                onPressed: () => viewModel.sendDummyPrompt(),
-                padding: EdgeInsets.zero,
-                child: const Icon(
-                  CupertinoIcons.add,
-                  color: ColorSystem.white,
-                  size: 20,
-                ),
-              ),
-            ),
-          ),
+          // Positioned(
+          //   right: 40,
+          //   bottom: 40,
+          //   child: Container(
+          //     width: 40,
+          //     height: 40,
+          //     decoration: BoxDecoration(
+          //       color: ColorSystem.mainBlue,
+          //       shape: BoxShape.circle,
+          //       boxShadow: [
+          //         BoxShadow(
+          //           color: Colors.black.withOpacity(0.2),
+          //           spreadRadius: 0,
+          //           blurRadius: 10,
+          //           offset: const Offset(0, 3),
+          //         ),
+          //       ],
+          //     ),
+          //     child: CupertinoButton(
+          //       onPressed: () => viewModel.sendDummyPrompt(),
+          //       padding: EdgeInsets.zero,
+          //       child: const Icon(
+          //         CupertinoIcons.add,
+          //         color: ColorSystem.white,
+          //         size: 20,
+          //       ),
+          //     ),
+          //   ),
+          // ),
           // 로딩 인디케이터와 반투명 배경
           if (viewModel.isLoading.value)
             Positioned.fill(
