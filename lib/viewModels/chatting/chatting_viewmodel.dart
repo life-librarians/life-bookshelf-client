@@ -61,6 +61,10 @@ class ChattingViewModel extends GetxController {
 
       // autobiography 존재하지 않으면 생성 후 다시 체크
       if (autoid == null) {
+        // 이전 챕터의 대화 기록 초기화
+        conversations.value = <Conversation>[];
+        updateChatBubbles();
+        // Autobiography 생성 및 id fetching
         await _apiService.createAutobiography(currentChapter);
         (autoid, intid) = await _apiService.checkAutobiography(chapterId);
         autobiographyId = autoid;
@@ -98,7 +102,7 @@ class ChattingViewModel extends GetxController {
             ))
         .toList();
 
-    if (chatBubbles.isEmpty) {
+    if (chatBubbles.isEmpty && predefinedQuestions.isNotEmpty) {
       conversations.add(Conversation(
         conversationType: 'AI',
         content: predefinedQuestions.first,
