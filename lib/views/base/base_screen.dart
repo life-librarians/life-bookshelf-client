@@ -14,15 +14,18 @@ abstract class BaseScreen<T extends GetxController> extends GetView<T> {
     }
 
     // SafeArea로 감싸거나 감싸지 않는 옵션에 따라 화면을 구성
-    return Container(
-      color: unSafeAreaColor,
-      child: wrapWithSafeArea
-          ? SafeArea(
-              top: setTopSafeArea,
-              bottom: setBottomSafeArea,
-              child: _buildScaffold(context),
-            )
-          : _buildScaffold(context),
+    return PopScope(
+      canPop: false,
+      child: Container(
+        color: unSafeAreaColor,
+        child: wrapWithSafeArea
+            ? SafeArea(
+                top: setTopSafeArea,
+                bottom: setBottomSafeArea,
+                child: _buildScaffold(context),
+              )
+            : _buildScaffold(context),
+      ),
     );
   }
 

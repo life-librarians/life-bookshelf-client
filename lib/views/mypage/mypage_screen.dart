@@ -6,8 +6,10 @@ import 'package:life_bookshelf/utilities/font_system.dart';
 import 'package:life_bookshelf/utilities/screen_utils.dart';
 import 'package:life_bookshelf/viewModels/mypage/mypage_viewmodel.dart';
 import 'package:life_bookshelf/views/base/base_screen.dart';
+import 'package:life_bookshelf/views/login/login_screen.dart';
 import 'package:life_bookshelf/views/mypage/components/publication_progress.dart';
 import 'package:life_bookshelf/views/mypage/components/toggle.dart';
+import 'package:life_bookshelf/viewModels/onboarding/onboarding_viewmodel.dart';
 
 class MypageScreen extends BaseScreen<MypageViewModel> {
   const MypageScreen({super.key});
@@ -15,7 +17,7 @@ class MypageScreen extends BaseScreen<MypageViewModel> {
   PreferredSizeWidget? buildAppBar(BuildContext context) {
     return AppBar(
       automaticallyImplyLeading: false,
-      backgroundColor: Color(0xFFF7F7F7),
+      backgroundColor: const Color(0xFFF7F7F7),
       title: Text(
         'Mypage',
         style: FontSystem.KR16_58SB.copyWith(color: Colors.black),
@@ -28,11 +30,11 @@ class MypageScreen extends BaseScreen<MypageViewModel> {
     final viewmodel = Get.find<MypageViewModel>();
     return Obx(() {
       if (viewmodel.isLoading.isTrue) {
-        return Center(child: CircularProgressIndicator());
+        return const Center(child: CircularProgressIndicator());
       } else {
         return Container(
           alignment: Alignment.center,
-          child: Column(
+          child: const Column(
             children: [
               _Profile(),
               PublicationProgress(),
@@ -61,32 +63,30 @@ class _Profile extends StatelessWidget {
       height: 76,
       child: Padding(
         padding: const EdgeInsets.only(left: 23, top: 16, bottom: 13),
-        child: Row(
-          children:[
-            SvgPicture.asset(
-              'assets/icons/mypage/profile.svg',
-              width: 42,
-              height: 42,
-            ),
-            SizedBox(width: 13),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  viewmodel.userModel.value?.name ?? 'Dummy',
-                  style: FontSystem.KR16M.copyWith(color: Colors.white, height: 1),
-                ),
-                SizedBox(height: 15),
-                Text(
-                  viewmodel.userModel.value?.bornedAt ?? '2001-02-24',
-                  style: FontSystem.KR11M.copyWith(color: Colors.white, height: 1),
-                ),
-              ],
-            ),
-            SizedBox(width: Get.width * 0.45),
-            SvgPicture.asset('assets/icons/mypage/pen.svg')
-          ]
-        ),
+        child: Row(children: [
+          SvgPicture.asset(
+            'assets/icons/mypage/profile.svg',
+            width: 42,
+            height: 42,
+          ),
+          const SizedBox(width: 13),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                viewmodel.userModel.value?.name ?? 'Dummy',
+                style: FontSystem.KR16M.copyWith(color: Colors.white, height: 1),
+              ),
+              const SizedBox(height: 15),
+              Text(
+                viewmodel.userModel.value?.bornedAt ?? '2001-02-24',
+                style: FontSystem.KR11M.copyWith(color: Colors.white, height: 1),
+              ),
+            ],
+          ),
+          SizedBox(width: Get.width * 0.45),
+          SvgPicture.asset('assets/icons/mypage/pen.svg')
+        ]),
       ),
     );
   }
@@ -100,20 +100,17 @@ class _BooksPublished extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(top: 31),
       width: Get.width * 0.89,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children:[
-          Text("내가 출판한 책", style: FontSystem.KR14B.copyWith(color: ColorSystem.mypage.fontBlack)),
-          Text("책의 오른쪽 상단 버튼을 터치하면 다시 비공개, 혹은 공개로 만들수있어요.",
-            style: FontSystem.KR10M.copyWith(color: ColorSystem.mypage.fontGray),
-          ),
-          _BookBoxs(),
-        ]
-      ),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Text("내가 출판한 책", style: FontSystem.KR14B.copyWith(color: ColorSystem.mypage.fontBlack)),
+        Text(
+          "책의 오른쪽 상단 버튼을 터치하면 다시 비공개, 혹은 공개로 만들수있어요.",
+          style: FontSystem.KR10M.copyWith(color: ColorSystem.mypage.fontGray),
+        ),
+        const _BookBoxs(),
+      ]),
     );
   }
 }
-
 
 class _BookBoxs extends StatelessWidget {
   const _BookBoxs({super.key});
@@ -123,19 +120,19 @@ class _BookBoxs extends StatelessWidget {
     // Access the ViewModel
     final MypageViewModel viewModel = Get.find<MypageViewModel>();
 
-    return Container(
+    return SizedBox(
       height: 41,
       child: Obx(() => ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: viewModel.bookList.value?.results.length ?? 0,  // Use actual count from bookList
-        itemBuilder: (context, index) {
-          final book = viewModel.bookList.value?.results[index];  // Get book details
-          return _BookBox(
-              title: book?.title ?? "No Title",  // Pass the title
-              // visibility: book?.visibleScope == "PUBLIC" ? "공개" : "비공개"  // Determine visibility
-          );
-        },
-      )),
+            scrollDirection: Axis.horizontal,
+            itemCount: viewModel.bookList.value?.results.length ?? 0, // Use actual count from bookList
+            itemBuilder: (context, index) {
+              final book = viewModel.bookList.value?.results[index]; // Get book details
+              return _BookBox(
+                title: book?.title ?? "No Title", // Pass the title
+                // visibility: book?.visibleScope == "PUBLIC" ? "공개" : "비공개"  // Determine visibility
+              );
+            },
+          )),
     );
   }
 }
@@ -203,7 +200,7 @@ class _BookBox extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(4.23),
           image: DecorationImage(
-            image: AssetImage("assets/icons/main/example.png"),
+            image: const AssetImage("assets/icons/main/example.png"),
             fit: BoxFit.cover,
             colorFilter: ColorFilter.mode(
               Colors.black.withOpacity(0.69),
@@ -242,27 +239,25 @@ class _More extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text("More", style: FontSystem.KR14B.copyWith(color: ColorSystem.mypage.fontBlack)),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           Container(
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(5),
             ),
             height: 157,
-            child: Column(
+            child: const Column(
               children: [
                 _Remind(),
                 _Withdrawal(),
               ],
             ),
-
           ),
         ],
       ),
     );
   }
 }
-
 
 class _Remind extends StatelessWidget {
   const _Remind({super.key});
@@ -274,12 +269,20 @@ class _Remind extends StatelessWidget {
       child: Row(
         children: [
           SvgPicture.asset('assets/icons/mypage/remind.svg'),
-          SizedBox(width: 16,),
+          const SizedBox(
+            width: 16,
+          ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("리마인드 푸시알림 설정",style:FontSystem.KR13M,),
-              Text("설정하시면 저녁 8시에 알림이 가요",style: FontSystem.KR11M.copyWith(color: ColorSystem.mypage.fontGray),),
+              const Text(
+                "리마인드 푸시알림 설정",
+                style: FontSystem.KR13M,
+              ),
+              Text(
+                "설정하시면 저녁 8시에 알림이 가요",
+                style: FontSystem.KR11M.copyWith(color: ColorSystem.mypage.fontGray),
+              ),
             ],
           ),
           SizedBox(width: Get.width * 0.18),
@@ -294,6 +297,7 @@ class _Withdrawal extends StatelessWidget {
   const _Withdrawal({super.key});
 
   void _showWithdrawalDialog(BuildContext context, MypageViewModel viewModel) {
+    final OnboardingViewModel onboardingViewModel = Get.find<OnboardingViewModel>();
     Get.dialog(
       AlertDialog(
         title: const Center(
@@ -327,7 +331,7 @@ class _Withdrawal extends StatelessWidget {
                   onPressed: () => Get.back(), // 다이얼로그 닫기
                 ),
               ),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
               Expanded(
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
@@ -341,6 +345,8 @@ class _Withdrawal extends StatelessWidget {
                   child: Text('확인', style: FontSystem.KR14SB.copyWith(color: ColorSystem.white)),
                   onPressed: () async {
                     await viewModel.deleteUser();
+                    onboardingViewModel.clearOnboardingStatus();
+                    Get.offAll(() => const LoginScreen()); // 모든 화면을 pop하고 로그인 화면으로 이동
                   },
                 ),
               ),
@@ -364,11 +370,11 @@ class _Withdrawal extends StatelessWidget {
         child: Row(
           children: [
             SvgPicture.asset('assets/icons/mypage/out.svg'),
-            SizedBox(width: 16),
+            const SizedBox(width: 16),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                const Text(
                   "회원탈퇴",
                   style: FontSystem.KR13M,
                 ),
@@ -389,4 +395,3 @@ class _Withdrawal extends StatelessWidget {
     );
   }
 }
-
