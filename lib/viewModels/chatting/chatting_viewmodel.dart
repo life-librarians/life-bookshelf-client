@@ -63,6 +63,7 @@ class ChattingViewModel extends GetxController {
       if (autoid == null) {
         // 이전 챕터의 대화 기록 초기화
         conversations.value = <Conversation>[];
+        predefinedQuestions = [];
         updateChatBubbles();
         // Autobiography 생성 및 id fetching
         await _apiService.createAutobiography(currentChapter);
