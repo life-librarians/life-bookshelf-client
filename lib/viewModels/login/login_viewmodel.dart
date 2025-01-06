@@ -66,7 +66,7 @@ class LoginViewModel extends GetxController {
       await UserPreferences.setUserToken(response.accessToken);
 
       final OnboardingViewModel viewmodel = Get.find<OnboardingViewModel>();
-      final onboardingCompleted = await viewmodel.isOnboardingCompleted();
+      final bool onboardingCompleted = await loginService.checkOnboardingStatus();
 
       if (onboardingCompleted) {
         Get.offAllNamed('/home');

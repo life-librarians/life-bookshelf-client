@@ -25,3 +25,13 @@ doc/api/
 
 .flutter-plugins
 .flutter-plugins-dependencies
+
+# macOS system files
+.DS_Store
+**/.DS_Store
+lib/.DS_Store
+lib/services/.DS_Store
+
+# iOS
+ios/Podfile.lock
+ios/Pods/

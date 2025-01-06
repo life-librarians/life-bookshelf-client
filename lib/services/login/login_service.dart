@@ -63,4 +63,30 @@ class LoginService {
       throw Exception('Failed to login with error code ${response.statusCode}');
     }
   }
+
+  Future<bool> checkOnboardingStatus() async {
+    final token = await UserPreferences.getUserToken();
+    String apiUrl = '${dotenv.env['API']}/members/me';
+
+    final response = await http.get(
+      Uri.parse(apiUrl),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Accept': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 404) {
+      final errorResponse = json.decode(utf8.decode(response.bodyBytes));
+      // MEMBER002 코드 확인
+      if (errorResponse['code'] == 'MEMBER002') {
+        return false; // 온보딩이 필요한 상태
+      }
+    } else if (response.statusCode == 200) {
+      return true; // 온보딩이 완료된 상태
+    }
+
+    // 그 외의 에러 상황에서는 false를 반환
+    return false;
+  }
 }
