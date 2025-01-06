@@ -34,20 +34,13 @@ class PublishScreen extends BaseScreen<PublishViewModel> {
             const SizedBox(height: 22),
             _publicationButton(),
             const SizedBox(height: 50),
-            _testButton(),
-            const SizedBox(height: 50),
           ],
         ),
       ),
     );
   }
 
-  Widget _testButton() {
-    return ElevatedButton(
-      onPressed: controller.test,
-      child: const Text('Chatting Screen'),
-    );
-  }
+
 
   Widget _publishHeader() {
     return SizedBox(
@@ -207,9 +200,17 @@ class PublishScreen extends BaseScreen<PublishViewModel> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('황현정', style: FontSystem.KR16SB),
-        Text('도로위의 무법자', style: FontSystem.KR12SB.copyWith(color: ColorSystem.publication.ticketContentGray80)),
-        const SizedBox(height: 65),
+        Obx(() => Text(
+          controller.memberName.value,
+          style: FontSystem.KR16SB,
+        )),
+        Obx(() => Text(
+          controller.memberBornedAt.value,
+          style: FontSystem.KR12SB.copyWith(
+              color: ColorSystem.publication.ticketContentGray80
+          ),
+        )),
+         const SizedBox(height: 65),
         _flightRow(),
         const SizedBox(height: 25),
         Row(
