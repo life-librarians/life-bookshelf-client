@@ -197,6 +197,13 @@ class PublishScreen extends BaseScreen<PublishViewModel> {
   }
 
   Column _ticketContent() {
+    String _getCurrentFormattedDate() {
+      final now = DateTime.now();
+      final months = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
+        'August', 'September', 'October', 'November', 'December'];
+      return '${months[now.month - 1]} ${now.day}, ${now.year}';
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -216,9 +223,13 @@ class PublishScreen extends BaseScreen<PublishViewModel> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            _infoBox(Icons.calendar_today, "Date", "March 24, 2024"),
-            const SizedBox(width: 10), // 박스 사이의 간격
-            _infoBox(Icons.access_time, "Time", "1 month, 1 hour"),
+            _infoBox(Icons.calendar_today, "Date", _getCurrentFormattedDate()),
+            const SizedBox(width: 10),
+            Obx(() => _infoBox(
+                Icons.access_time,
+                "Time",
+                "${controller.totalSubchapters} Subchapters"
+            )),
           ],
         ),
         const Spacer(),
@@ -226,7 +237,7 @@ class PublishScreen extends BaseScreen<PublishViewModel> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             _bookDetailRow("페이지", "123p"),
-            _bookDetailRow("예상시간", "20일"),
+            _bookDetailRow("예상시간", "10일"),
             _bookDetailRow("가격", "30,000원"),
           ],
         ),
@@ -253,7 +264,7 @@ class PublishScreen extends BaseScreen<PublishViewModel> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('2024.02.24', style: FontSystem.KR12SB.copyWith(color: ColorSystem.publication.ticketContentGray30)),
+            Text('Origin', style: FontSystem.KR12SB.copyWith(color: ColorSystem.publication.ticketContentGray30)),
             Text('첫 비행', style: FontSystem.KR16SB.copyWith(color: ColorSystem.publication.ticketContentGray80)),
             Text('0페이지', style: FontSystem.KR12SB.copyWith(color: ColorSystem.publication.ticketContentGray60)),
           ],
@@ -289,7 +300,7 @@ class PublishScreen extends BaseScreen<PublishViewModel> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Text('2024.03.24', style: FontSystem.KR12SB.copyWith(color: ColorSystem.publication.ticketContentGray30)),
+            Text('Arrival', style: FontSystem.KR12SB.copyWith(color: ColorSystem.publication.ticketContentGray30)),
             Text('출판', style: FontSystem.KR16SB.copyWith(color: ColorSystem.publication.ticketContentGray80)),
             Text('123페이지', style: FontSystem.KR12SB.copyWith(color: ColorSystem.publication.ticketContentGray60)),
           ],
@@ -329,4 +340,5 @@ Widget _infoBox(IconData icon, String title, String content) {
       ),
     ),
   );
+
 }

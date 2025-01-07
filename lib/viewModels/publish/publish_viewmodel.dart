@@ -10,6 +10,7 @@ import 'package:life_bookshelf/services/userpreferences_service.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../services/publish/publish_service.dart';
+import '../home/home_viewmodel.dart';
 
 class PublishViewModel extends GetxController {
   final PublishService _publishService = PublishService();
@@ -26,10 +27,18 @@ class PublishViewModel extends GetxController {
   final RxString memberName = ''.obs;
   final RxString memberBornedAt = ''.obs;
 
+  final RxInt totalSubchapters = 0.obs;
+
   @override
   void onInit() {
+    final homeViewModel = Get.find<HomeViewModel>();
     super.onInit();
     fetchMemberInfo();
+    ever(homeViewModel.chapters, (_) {
+      if (homeViewModel.chapters.isNotEmpty) {
+        getTotalSubChaptersCount(homeViewModel);
+      }
+    });
   }
 
   Future<void> fetchMemberInfo() async {
@@ -41,6 +50,18 @@ class PublishViewModel extends GetxController {
       print('Error in fetchMemberInfo: $e');
     }
   }
+  // 챕터 데이터를 파싱하고 서브챕터 개수를 계산하는 함수
+  Future<void> getTotalSubChaptersCount(HomeViewModel viewModel) async {
+    int totalCount = 0;
+
+    // chapters 리스트를 순회하면서 각 챕터의 subChapters 개수를 더함
+    for (var chapter in viewModel.chapters) {
+      totalCount += chapter.subChapters.length;
+    }
+    totalSubchapters.value = totalCount;
+    print('Total subchapters: $totalCount');
+  }
+
   void setBookTitle(String title) {
     bookTitle.value = title;
   }
