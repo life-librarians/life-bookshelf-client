@@ -32,15 +32,17 @@ class MypageScreen extends BaseScreen<MypageViewModel> {
       if (viewmodel.isLoading.isTrue) {
         return const Center(child: CircularProgressIndicator());
       } else {
-        return Container(
-          alignment: Alignment.center,
-          child: const Column(
-            children: [
-              _Profile(),
-              PublicationProgress(),
-              _BooksPublished(),
-              _More(),
-            ],
+        return SingleChildScrollView(
+          child: Container(
+            alignment: Alignment.center,
+            child: const Column(
+              children: [
+                _Profile(),
+                PublicationProgress(),
+                _BooksPublished(),
+                _More(),
+              ],
+            ),
           ),
         );
       }
@@ -285,7 +287,7 @@ class _Remind extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(width: Get.width * 0.18),
+          SizedBox(width: Get.width * 0.11),
           SimpleToggleSwitch(index: 0),
         ],
       ),
@@ -384,7 +386,7 @@ class _Withdrawal extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(width: Get.width * 0.18),
+            SizedBox(width: Get.width * 0.11),
             Container(
               margin: const EdgeInsets.only(top: 10),
               child: SvgPicture.asset('assets/icons/mypage/arrow.svg'),

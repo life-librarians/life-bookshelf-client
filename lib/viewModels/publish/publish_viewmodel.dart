@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -97,12 +98,30 @@ class PublishViewModel extends GetxController {
   Future<void> pickCoverImage() async {
     final ImagePicker picker = ImagePicker();
     try {
-      final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+      final XFile? image = await picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 1920,
+        maxHeight: 1080,
+        imageQuality: 85,
+        requestFullMetadata: false,
+      );
       if (image != null) {
         coverImage.value = image;
       }
+    } on PlatformException catch (e) {
+      print('Platform error picking image: ${e.message}');
+      Get.snackbar(
+        '알림',
+        '이미지를 불러오지 못했습니다. 다시 시도해주세요.',
+        duration: const Duration(seconds: 2),
+      );
     } catch (e) {
       print('Error picking image: $e');
+      Get.snackbar(
+        '알림',
+        '이미지 선택 중 오류가 발생했습니다.',
+        duration: const Duration(seconds: 2),
+      );
     }
   }
 
@@ -113,15 +132,37 @@ class PublishViewModel extends GetxController {
       }
 
       // 이미지 S3 업로드
-      final String imageUrl = await _imageUploadService.uploadImage(File(coverImage.value!.path), ImageUploadFolder.bookCoverImages);
-      String token = UserPreferences.getUserToken();
+      final String imageUrl = await _imageUploadService.uploadImage(
+          File(coverImage.value!.path),
+          ImageUploadFolder.bookCoverImages
+      );
+
+      // 위치값 변환
+      String convertTitlePosition(String koreanPosition) {
+        switch (koreanPosition) {
+          case '상단':
+            return 'TOP';
+          case '중앙':
+            return 'MID';
+          case '하단':
+            return 'BOTTOM';
+          case '좌측':
+            return 'LEFT';
+          default:
+            return 'TOP'; // 기본값
+        }
+      }
+
+      print('Sending publication request with:');
+      print('Title: ${bookTitle.value}');
+      print('Cover Image URL: $imageUrl');
+      print('Title Position: ${convertTitlePosition(titleLocation.value)}');
 
       // 출판 요청
       var request = http.MultipartRequest('POST', Uri.parse('$baseUrl/publications/'))
         ..fields['title'] = bookTitle.value
         ..fields['preSignedCoverImageUrl'] = imageUrl
-        ..fields['titlePosition'] = titleLocation.value.toUpperCase();
-      // ..fields['chapterIds'] = "[1]";
+        ..fields['titlePosition'] = convertTitlePosition(titleLocation.value);
 
       request.headers.addAll({
         'accept': '*/*',
@@ -130,21 +171,20 @@ class PublishViewModel extends GetxController {
       });
 
       var response = await request.send();
-
-      // 응답 처리
       var responseBodyBytes = await response.stream.toBytes();
       var responseBody = utf8.decode(responseBodyBytes);
 
-      print('Response: $responseBody');
+      print('Response Status Code: ${response.statusCode}');
+      print('Response Body: $responseBody');
 
       if (response.statusCode == 201) {
         Get.snackbar('성공', '출판이 성공적으로 완료되었습니다.');
       } else {
         final errorData = json.decode(responseBody);
-        throw Exception('${errorData['message']} (${errorData['code']})');
+        throw Exception('${errorData['message'] ?? errorData['error']} (${errorData['code'] ?? response.statusCode})');
       }
     } catch (e) {
-      print('Error publishing book: ${e.toString()}');
+      print('Error publishing book: $e');
       Get.snackbar('오류', e.toString());
     }
   }
