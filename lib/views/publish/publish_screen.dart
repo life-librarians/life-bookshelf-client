@@ -236,9 +236,9 @@ class PublishScreen extends BaseScreen<PublishViewModel> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            _bookDetailRow("페이지", "123p"),
+            _bookDetailRow("페이지", '${viewModel.formattedPages}p'),
             _bookDetailRow("예상시간", "10일"),
-            _bookDetailRow("가격", "30,000원"),
+            _bookDetailRow("가격", '${viewModel.formattedPrice}원'),
           ],
         ),
         const SizedBox(height: 15),

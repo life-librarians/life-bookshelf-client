@@ -11,6 +11,7 @@ import 'package:uuid/uuid.dart';
 
 import '../../services/publish/publish_service.dart';
 import '../../utilities/page_calculator.dart';
+import '../../utilities/price_calculator.dart';
 import '../home/home_viewmodel.dart';
 
 class PublishViewModel extends GetxController {
@@ -30,6 +31,7 @@ class PublishViewModel extends GetxController {
 
   final RxInt totalSubchapters = 0.obs;
   final RxInt totalPages = 0.obs;
+  final RxInt totalPrice = 0.obs;
 
   @override
   void onInit() {
@@ -44,14 +46,23 @@ class PublishViewModel extends GetxController {
   }
 
 
+  String get formattedPrice => totalPrice.value.toString().replaceAllMapped(
+      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+          (Match m) => '${m[1]},'
+  );
+
+  String get formattedPages => totalPages.value.toString();
+
   void calculateTotalPages() {
     const int CHARACTERS_PER_SUBCHAPTER = 3000;
     const int CHARACTERS_PER_PAGE = 760;
 
     int totalCharacters = totalSubchapters.value * CHARACTERS_PER_SUBCHAPTER;
     totalPages.value = (totalCharacters / CHARACTERS_PER_PAGE).ceil();
-  }
 
+    // 페이지 수 계산 후 가격 계산
+    totalPrice.value = PriceCalculator.calculateTotalPrice(totalPages.value);
+  }
   Future<void> fetchMemberInfo() async {
     try {
       final memberInfo = await _publishService.getMemberInfo();
