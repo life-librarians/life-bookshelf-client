@@ -10,6 +10,7 @@ import 'package:life_bookshelf/services/userpreferences_service.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../services/publish/publish_service.dart';
+import '../../utilities/page_calculator.dart';
 import '../home/home_viewmodel.dart';
 
 class PublishViewModel extends GetxController {
@@ -28,6 +29,7 @@ class PublishViewModel extends GetxController {
   final RxString memberBornedAt = ''.obs;
 
   final RxInt totalSubchapters = 0.obs;
+  final RxInt totalPages = 0.obs;
 
   @override
   void onInit() {
@@ -39,6 +41,15 @@ class PublishViewModel extends GetxController {
         getTotalSubChaptersCount(homeViewModel);
       }
     });
+  }
+
+
+  void calculateTotalPages() {
+    const int CHARACTERS_PER_SUBCHAPTER = 3000;
+    const int CHARACTERS_PER_PAGE = 760;
+
+    int totalCharacters = totalSubchapters.value * CHARACTERS_PER_SUBCHAPTER;
+    totalPages.value = (totalCharacters / CHARACTERS_PER_PAGE).ceil();
   }
 
   Future<void> fetchMemberInfo() async {
@@ -59,7 +70,9 @@ class PublishViewModel extends GetxController {
       totalCount += chapter.subChapters.length;
     }
     totalSubchapters.value = totalCount;
-    print('Total subchapters: $totalCount');
+
+    calculateTotalPages();
+
   }
 
   void setBookTitle(String title) {

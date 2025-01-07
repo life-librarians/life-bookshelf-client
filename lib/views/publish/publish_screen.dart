@@ -302,7 +302,7 @@ class PublishScreen extends BaseScreen<PublishViewModel> {
           children: [
             Text('Arrival', style: FontSystem.KR12SB.copyWith(color: ColorSystem.publication.ticketContentGray30)),
             Text('출판', style: FontSystem.KR16SB.copyWith(color: ColorSystem.publication.ticketContentGray80)),
-            Text('123페이지', style: FontSystem.KR12SB.copyWith(color: ColorSystem.publication.ticketContentGray60)),
+            Text('${viewModel.totalPages}페이지', style: FontSystem.KR12SB.copyWith(color: ColorSystem.publication.ticketContentGray60)),
           ],
         ),
       ],
