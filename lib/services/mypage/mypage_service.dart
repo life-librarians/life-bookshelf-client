@@ -69,6 +69,7 @@ class MyPageApiService {
   }
 
   Future<BookDetailModel> fetchBookDetails(int publicationId) async {
+    print('Fetching book details for publication ID: $publicationId');
     final token = UserPreferences.getUserToken();
     final url = '$baseUrl/publications/$publicationId/progress';
 

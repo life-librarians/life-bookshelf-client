@@ -126,7 +126,7 @@ class _PubInProgress extends StatelessWidget {
     String svgAsset;
     print('지금 보면 ${viewmodel.publishingStatus}');
 
-    if (viewmodel.publishingStatus == 'REQUESTED' || viewmodel.publishingStatus == 'REJECTED') {
+    if (viewmodel.publishingStatus == 'REQUESTED' || viewmodel.publishingStatus == 'REJECTED' || viewmodel.publishingStatus == 'NOT_PUBLISHED') {
       backgroundColor = ColorSystem.white;
       textColor1 = ColorSystem.mypage.fontGray;
       textColor2 = ColorSystem.mypage.fontGray;
