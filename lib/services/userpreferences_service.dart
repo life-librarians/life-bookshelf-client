@@ -15,4 +15,8 @@ class UserPreferences {
   static String getUserToken() {
     return _preferences.getString(_userTokenKey) ?? '';
   }
+
+  static Future<void> clearUserToken() async {
+    await _preferences.remove(_userTokenKey);
+  }
 }

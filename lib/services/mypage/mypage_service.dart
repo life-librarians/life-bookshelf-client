@@ -2,7 +2,9 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:life_bookshelf/models/mypage/mypage_model.dart';
+import '../../views/login/login_screen.dart';
 import '../userpreferences_service.dart';
+import 'package:get/get.dart';
 
 class MyPageApiService {
   String baseUrl = '${dotenv.env['API']}';
@@ -226,19 +228,46 @@ class MyPageApiService {
   }
 
   Future<void> deleteUser() async {
-    String token = UserPreferences.getUserToken();
+    try {
+      String token = UserPreferences.getUserToken();
+      print("Using token for deletion: $token");
 
-    final response = await http.delete(
-      Uri.parse('$baseUrl/auth/unregister'),
-      headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer $token'},
-    );
+      final response = await http.delete(
+        Uri.parse('$baseUrl/auth/unregister'),
+        headers: {
+          'accept': '*/*',  // accept 헤더 추가
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        },
+      );
 
-    if (response.statusCode == 204) {
-      print("회원탈퇴 성공");
-    } else {
-      var decodedBody = utf8.decode(response.bodyBytes);
-      print("회원탈퇴 실패: ${response.statusCode} - $decodedBody");
-      throw Exception('회원탈퇴 실패: ${response.statusCode} - $decodedBody');
+      print("Response status: ${response.statusCode}");
+
+      if (response.statusCode == 204) {
+        print("회원탈퇴 성공");
+        await UserPreferences.clearUserToken();
+        Get.offAll(() => LoginScreen());
+      } else {
+        var decodedBody = utf8.decode(response.bodyBytes);
+        print("Response body: $decodedBody");
+
+        if (response.statusCode == 404) {
+          throw Exception('존재하지 않는 회원입니다.');
+        } else if (response.statusCode == 409) {
+          throw Exception('이미 탈퇴한 회원입니다.');
+        } else if (response.statusCode == 500) {
+          // 500 에러 발생 시에도 토큰을 삭제하고 로그인 화면으로 이동
+          print("서버 오류가 발생했지만 로그아웃 처리를 진행합니다.");
+          await UserPreferences.clearUserToken();
+          Get.offAll(() => LoginScreen());
+          throw Exception('서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+        } else {
+          throw Exception('회원탈퇴 처리 중 오류가 발생했습니다. (${response.statusCode})');
+        }
+      }
+    } catch (e) {
+      print('Error during user deletion: $e');
+      rethrow;
     }
   }
 }
