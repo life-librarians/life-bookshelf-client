@@ -10,6 +10,11 @@ import 'package:life_bookshelf/views/login/login_screen.dart';
 import 'package:life_bookshelf/views/mypage/components/publication_progress.dart';
 import 'package:life_bookshelf/views/mypage/components/toggle.dart';
 import 'package:life_bookshelf/viewModels/onboarding/onboarding_viewmodel.dart';
+import 'package:life_bookshelf/services/userpreferences_service.dart';
+
+import '../../services/login/login_service.dart';
+import '../../utilities/app_routes.dart';
+import '../../viewModels/login/login_viewmodel.dart';
 
 class MypageScreen extends BaseScreen<MypageViewModel> {
   const MypageScreen({super.key});
@@ -32,15 +37,17 @@ class MypageScreen extends BaseScreen<MypageViewModel> {
       if (viewmodel.isLoading.isTrue) {
         return const Center(child: CircularProgressIndicator());
       } else {
-        return Container(
-          alignment: Alignment.center,
-          child: const Column(
-            children: [
-              _Profile(),
-              PublicationProgress(),
-              _BooksPublished(),
-              _More(),
-            ],
+        return SingleChildScrollView(
+          child: Container(
+            alignment: Alignment.center,
+            child: const Column(
+              children: [
+                _Profile(),
+                PublicationProgress(),
+                _BooksPublished(),
+                _More(),
+              ],
+            ),
           ),
         );
       }
@@ -245,11 +252,13 @@ class _More extends StatelessWidget {
               color: Colors.white,
               borderRadius: BorderRadius.circular(5),
             ),
-            height: 157,
+            height: 220,
             child: const Column(
               children: [
                 _Remind(),
+                _Logout(),
                 _Withdrawal(),
+
               ],
             ),
           ),
@@ -285,9 +294,137 @@ class _Remind extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(width: Get.width * 0.18),
+          SizedBox(width: Get.width * 0.11),
           SimpleToggleSwitch(index: 0),
         ],
+      ),
+    );
+  }
+}
+
+class _Logout extends StatelessWidget {
+  const _Logout({super.key});
+
+  // 로그아웃 처리 함수
+  Future<void> handleLogout(BuildContext context) async {
+    try {
+      await UserPreferences.clearUserToken();
+
+      // OnboardingViewModel이 없을 경우를 대비해 새로 생성
+      if (!Get.isRegistered<OnboardingViewModel>()) {
+        Get.put(OnboardingViewModel());
+      }
+      final onboardingViewModel = Get.find<OnboardingViewModel>();
+      onboardingViewModel.clearOnboardingStatus();
+
+      // 모든 GetX 컨트롤러와 라우트 스택을 제거
+      await Get.deleteAll(force: true);
+
+      // 새로운 LoginScreen 인스턴스로 이동
+      await Get.offAll(
+            () => const LoginScreen(),
+        predicate: (route) => false,
+        binding: BindingsBuilder(() {
+          Get.put(LoginViewModel(LoginService()));
+        }),
+      );
+    } catch (e) {
+      print('Logout error: $e');
+      // 에러가 발생해도 로그인 화면으로는 이동
+      await Get.offAll(() => const LoginScreen());
+    }
+  }
+
+  void _showLogoutDialog(BuildContext context, MypageViewModel viewModel) {
+    Get.dialog(
+      AlertDialog(
+        title: const Center(
+          child: Text(
+            '로그아웃',
+            style: FontSystem.KR20B,
+          ),
+        ),
+        content: Padding(
+          padding: const EdgeInsets.all(5),
+          child: Text(
+            '로그아웃 하시겠습니까?',
+            style: FontSystem.KR13R.copyWith(color: Colors.black),
+          ),
+        ),
+        actions: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Expanded(
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: ColorSystem.white,
+                    backgroundColor: ColorSystem.accentBlue,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
+                  ),
+                  child: Text('취소', style: FontSystem.KR14SB.copyWith(color: ColorSystem.white)),
+                  onPressed: () => Get.back(),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: ColorSystem.white,
+                    backgroundColor: ColorSystem.accentBlue,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
+                  ),
+                  child: Text('확인', style: FontSystem.KR14SB.copyWith(color: ColorSystem.white)),
+                  onPressed: () => handleLogout(context),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final MypageViewModel viewModel = Get.find<MypageViewModel>();
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () => _showLogoutDialog(context, viewModel),
+        child: Container(
+          margin: const EdgeInsets.only(left: 16, top: 23),
+          padding: const EdgeInsets.only(right: 16),
+          width: Get.width,
+          height: 50,
+          child: Row(
+            children: [
+              SvgPicture.asset('assets/icons/mypage/out.svg'),
+              const SizedBox(width: 16),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 8),
+                  const Text(
+                    "로그아웃",
+                    style: FontSystem.KR13M,
+                  ),
+                  Text(
+                    "다음에 또 만나요!",
+                    style: FontSystem.KR11M.copyWith(color: ColorSystem.mypage.fontGray),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -359,37 +496,37 @@ class _Withdrawal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final MypageViewModel viewModel = Get.find<MypageViewModel>(); // ViewModel 가져오기
+    final MypageViewModel viewModel = Get.find<MypageViewModel>();
 
-    return GestureDetector(
-      onTap: () {
-        _showWithdrawalDialog(context, viewModel); // 탈퇴 모달 띄우기
-      },
-      child: Container(
-        margin: const EdgeInsets.only(left: 16, top: 23),
-        child: Row(
-          children: [
-            SvgPicture.asset('assets/icons/mypage/out.svg'),
-            const SizedBox(width: 16),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  "회원탈퇴",
-                  style: FontSystem.KR13M,
-                ),
-                Text(
-                  "여행자님의 데이터는 30일 뒤에 삭제되어요.",
-                  style: FontSystem.KR11M.copyWith(color: ColorSystem.mypage.fontGray),
-                ),
-              ],
-            ),
-            SizedBox(width: Get.width * 0.18),
-            Container(
-              margin: const EdgeInsets.only(top: 10),
-              child: SvgPicture.asset('assets/icons/mypage/arrow.svg'),
-            ),
-          ],
+    return Material(  // InkWell을 사용하기 위해 Material 위젯 추가
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () => _showWithdrawalDialog(context, viewModel),
+        child: Container(
+          margin: const EdgeInsets.only(left: 16, top: 23),
+          padding: const EdgeInsets.only(right: 16),  // 오른쪽 여백 추가
+          width: Get.width,
+          height: 50,  // 클릭 영역을 위한 고정 높이 설정
+          child: Row(
+            children: [
+              SvgPicture.asset('assets/icons/mypage/trash.svg'),
+              const SizedBox(width: 16),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 8,),
+                  const Text(
+                    "회원탈퇴",
+                    style: FontSystem.KR13M,
+                  ),
+                  Text(
+                    "여행자님의 데이터는 30일 뒤에 삭제되어요.",
+                    style: FontSystem.KR11M.copyWith(color: ColorSystem.mypage.fontGray),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

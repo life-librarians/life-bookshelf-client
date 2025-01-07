@@ -61,7 +61,7 @@ class BookDetailModel {
     return BookDetailModel(
       bookId: json['bookId'],
       publicationId: json['publicationId'],  // 추가
-      title: utf8.decode(json['title'].toString().codeUnits),
+      title: json['title'] as String?,
       coverImageUrl: json['coverImageUrl'] as String?,
       visibleScope: json['visibleScope'] as String?,
       page: json['page'] as int?,
@@ -139,4 +139,3 @@ class NotificationModel {
     };
   }
 }
-

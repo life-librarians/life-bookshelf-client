@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -9,7 +10,14 @@ import 'package:http/http.dart' as http;
 import 'package:life_bookshelf/services/userpreferences_service.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../services/publish/publish_service.dart';
+import '../../utilities/page_calculator.dart';
+import '../../utilities/price_calculator.dart';
+import '../home/home_viewmodel.dart';
+
 class PublishViewModel extends GetxController {
+  final PublishService _publishService = PublishService();
+
   final ImageUploadService _imageUploadService = Get.find<ImageUploadService>();
   final String baseUrl = dotenv.env['API'] ?? "";
   String token = UserPreferences.getUserToken();
@@ -19,6 +27,66 @@ class PublishViewModel extends GetxController {
   final Rx<XFile?> coverImage = Rx<XFile?>(null);
   final RxList<int> chapterIds = <int>[].obs; // TODO: 챕터 ID 리스트 받아오기
 
+  final RxString memberName = ''.obs;
+  final RxString memberBornedAt = ''.obs;
+
+  final RxInt totalSubchapters = 0.obs;
+  final RxInt totalPages = 0.obs;
+  final RxInt totalPrice = 0.obs;
+
+  @override
+  void onInit() {
+    final homeViewModel = Get.find<HomeViewModel>();
+    super.onInit();
+    fetchMemberInfo();
+    ever(homeViewModel.chapters, (_) {
+      if (homeViewModel.chapters.isNotEmpty) {
+        getTotalSubChaptersCount(homeViewModel);
+      }
+    });
+  }
+
+
+  String get formattedPrice => totalPrice.value.toString().replaceAllMapped(
+      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+          (Match m) => '${m[1]},'
+  );
+
+  String get formattedPages => totalPages.value.toString();
+
+  void calculateTotalPages() {
+    const int CHARACTERS_PER_SUBCHAPTER = 3000;
+    const int CHARACTERS_PER_PAGE = 760;
+
+    int totalCharacters = totalSubchapters.value * CHARACTERS_PER_SUBCHAPTER;
+    totalPages.value = (totalCharacters / CHARACTERS_PER_PAGE).ceil();
+
+    // 페이지 수 계산 후 가격 계산
+    totalPrice.value = PriceCalculator.calculateTotalPrice(totalPages.value);
+  }
+  Future<void> fetchMemberInfo() async {
+    try {
+      final memberInfo = await _publishService.getMemberInfo();
+      memberName.value = memberInfo['name'] ?? '';
+      memberBornedAt.value = memberInfo['bornedAt'] ?? '';
+    } catch (e) {
+      print('Error in fetchMemberInfo: $e');
+    }
+  }
+  // 챕터 데이터를 파싱하고 서브챕터 개수를 계산하는 함수
+  Future<void> getTotalSubChaptersCount(HomeViewModel viewModel) async {
+    int totalCount = 0;
+
+    // chapters 리스트를 순회하면서 각 챕터의 subChapters 개수를 더함
+    for (var chapter in viewModel.chapters) {
+      totalCount += chapter.subChapters.length;
+    }
+    totalSubchapters.value = totalCount;
+
+    calculateTotalPages();
+
+  }
+
   void setBookTitle(String title) {
     bookTitle.value = title;
   }
@@ -27,118 +95,33 @@ class PublishViewModel extends GetxController {
     titleLocation.value = location;
   }
 
-  //! For Testing
-  Future<void> test() async {
-    final String baseUrl = dotenv.env['API'] ?? "";
-    print('Test');
-    try {
-      final Map<String, dynamic> requestBody = {
-        "title": "20대의 대학 생활과 프로그래머 취업",
-        "content": "20대에 대학을 다니고 졸업을 하여 프로그래머로 취업하고, 그 후 일어나는 일들.",
-        "interviewQuestions": [
-          {"order": 1, "questionText": "어떤 동기로 대학에 진학하게 되었나요?"},
-          {"order": 2, "questionText": "대학 시절 가장 기억에 남는 수업이나 교수는 누구였나요?"},
-          {"order": 3, "questionText": "대학 생활 중 특별히 어려웠던 순간은 무엇이었나요?"},
-          {"order": 4, "questionText": "프로그래밍을 처음 접하게 된 계기는 무엇인가요?"},
-          {"order": 5, "questionText": "프로그래머로서의 커리어를 결심하게 된 이유는 무엇인가요?"},
-          {"order": 6, "questionText": "첫 취업 준비 과정에서 겪은 가장 큰 도전은 무엇이었나요?"},
-          {"order": 7, "questionText": "첫 직장에서 맡은 주요 프로젝트는 무엇이었나요?"},
-          {"order": 8, "questionText": "취업 후 가장 큰 성취감이나 보람을 느낀 순간은 언제였나요?"},
-          {"order": 9, "questionText": "직장 생활을 통해 얻은 가장 큰 교훈은 무엇인가요?"},
-          {"order": 10, "questionText": "미래의 프로그래머들에게 해주고 싶은 조언이 있다면 무엇인가요?"}
-        ],
-        "chapterId": 9
-      };
-
-      print('Request Body: ${jsonEncode(requestBody)}'); // 요청 본문 로깅
-
-      final response = await http.post(
-        Uri.parse('$baseUrl/autobiographies'),
-        headers: <String, String>{
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-        body: jsonEncode(requestBody),
-      );
-
-      print('Response Status Code: ${response.statusCode}');
-      print('Response Headers: ${response.headers}');
-      print('Response Body: ${response.body}');
-
-      if (response.statusCode == 201) {
-        print('자서전이 성공적으로 생성되었습니다.');
-      } else {
-        final decodedBody = utf8.decode(response.bodyBytes);
-        print('오류 응답 본문: $decodedBody');
-
-        try {
-          final errorData = jsonDecode(decodedBody);
-          print('구조화된 오류 데이터: $errorData');
-        } catch (e) {
-          print('오류 응답을 JSON으로 파싱할 수 없습니다: $e');
-        }
-
-        throw Exception('자서전 생성 실패. 상태 코드: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('예외 발생: $e');
-      throw Exception('자서전 생성 중 오류 발생: $e');
-    }
-  }
-
-  // Future<void> test() async {
-  //   final String baseUrl = dotenv.env['API'] ?? "";
-  //   print('Test');
-  //   try {
-  //     final response = await http.post(
-  //       Uri.parse('$baseUrl/autobiographies/chapters'),
-  //       headers: <String, String>{
-  //         'accept': '*/*',
-  //         'Content-Type': 'application/json',
-  //         'Authorization': 'Bearer $token',
-  //       },
-  //       body: jsonEncode({
-  //         "chapters": [
-  //           {
-  //             "number": "1",
-  //             "name": "나의 첫번째 챕터",
-  //             "subchapters": [
-  //               {"number": "1.1", "name": "나의 첫번째 서브챕터"},
-  //               {"number": "1.2", "name": "나의 두번째 서브챕터"}
-  //             ]
-  //           },
-  //           {
-  //             "number": "2",
-  //             "name": "나의 두번째 챕터",
-  //             "subchapters": [
-  //               {"number": "2.1", "name": "나의 첫번째 서브챕터"},
-  //               {"number": "2.2", "name": "나의 두번째 서브챕터"}
-  //             ]
-  //           }
-  //         ]
-  //       }),
-  //     );
-
-  //     if (response.statusCode == 201) {
-  //       print(response.body);
-  //     } else {
-  //       print('Error response body: ${response.body}'); // 오류 응답 내용 출력
-  //       throw Exception('error on test. Status code: ${response.statusCode}');
-  //     }
-  //   } catch (e) {
-  //     throw Exception('Error on test: $e');
-  //   }
-  // }
-
   Future<void> pickCoverImage() async {
     final ImagePicker picker = ImagePicker();
     try {
-      final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+      final XFile? image = await picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 1920,
+        maxHeight: 1080,
+        imageQuality: 85,
+        requestFullMetadata: false,
+      );
       if (image != null) {
         coverImage.value = image;
       }
+    } on PlatformException catch (e) {
+      print('Platform error picking image: ${e.message}');
+      Get.snackbar(
+        '알림',
+        '이미지를 불러오지 못했습니다. 다시 시도해주세요.',
+        duration: const Duration(seconds: 2),
+      );
     } catch (e) {
       print('Error picking image: $e');
+      Get.snackbar(
+        '알림',
+        '이미지 선택 중 오류가 발생했습니다.',
+        duration: const Duration(seconds: 2),
+      );
     }
   }
 
@@ -149,15 +132,37 @@ class PublishViewModel extends GetxController {
       }
 
       // 이미지 S3 업로드
-      final String imageUrl = await _imageUploadService.uploadImage(File(coverImage.value!.path), ImageUploadFolder.bookCoverImages);
-      String token = UserPreferences.getUserToken();
+      final String imageUrl = await _imageUploadService.uploadImage(
+          File(coverImage.value!.path),
+          ImageUploadFolder.bookCoverImages
+      );
+
+      // 위치값 변환
+      String convertTitlePosition(String koreanPosition) {
+        switch (koreanPosition) {
+          case '상단':
+            return 'TOP';
+          case '중앙':
+            return 'MID';
+          case '하단':
+            return 'BOTTOM';
+          case '좌측':
+            return 'LEFT';
+          default:
+            return 'TOP'; // 기본값
+        }
+      }
+
+      print('Sending publication request with:');
+      print('Title: ${bookTitle.value}');
+      print('Cover Image URL: $imageUrl');
+      print('Title Position: ${convertTitlePosition(titleLocation.value)}');
 
       // 출판 요청
       var request = http.MultipartRequest('POST', Uri.parse('$baseUrl/publications/'))
         ..fields['title'] = bookTitle.value
         ..fields['preSignedCoverImageUrl'] = imageUrl
-        ..fields['titlePosition'] = titleLocation.value.toUpperCase();
-      // ..fields['chapterIds'] = "[1]";
+        ..fields['titlePosition'] = convertTitlePosition(titleLocation.value);
 
       request.headers.addAll({
         'accept': '*/*',
@@ -166,21 +171,20 @@ class PublishViewModel extends GetxController {
       });
 
       var response = await request.send();
-
-      // 응답 처리
       var responseBodyBytes = await response.stream.toBytes();
       var responseBody = utf8.decode(responseBodyBytes);
 
-      print('Response: $responseBody');
+      print('Response Status Code: ${response.statusCode}');
+      print('Response Body: $responseBody');
 
       if (response.statusCode == 201) {
         Get.snackbar('성공', '출판이 성공적으로 완료되었습니다.');
       } else {
         final errorData = json.decode(responseBody);
-        throw Exception('${errorData['message']} (${errorData['code']})');
+        throw Exception('${errorData['message'] ?? errorData['error']} (${errorData['code'] ?? response.statusCode})');
       }
     } catch (e) {
-      print('Error publishing book: ${e.toString()}');
+      print('Error publishing book: $e');
       Get.snackbar('오류', e.toString());
     }
   }

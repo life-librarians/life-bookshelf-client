@@ -13,7 +13,7 @@ class MypageViewModel extends GetxController {
   Rx<BookListModel?> bookList = Rx<BookListModel?>(null);
   Rx<int?> latestPublicationId = Rx<int?>(null);
   RxBool isLoading = true.obs; // 로딩 상태 관리
-  RxString publishingStatus = 'IN_PUBLISHING'.obs;
+  RxString publishingStatus = 'PUBLISHED'.obs;
   RxList<NotificationModel> notifications = <NotificationModel>[].obs;
   final MyPageApiService apiService = MyPageApiService();
   RxBool isRemindSubscribed = false.obs;
@@ -133,10 +133,17 @@ class MypageViewModel extends GetxController {
     try {
       final result = await apiService.fetchBookDetails(publicationId);
       bookDetail.value = result;
-      publishingStatus.value = result.publishStatus!;
-      print("Book details loaded for publicationId ID $publicationId: ${bookDetail.value}");
+      if (result.publishStatus != null) {
+        print("Publishing status updated to: ${result.publishStatus}");
+        publishingStatus.value = result.publishStatus!;
+      }
     } catch (e) {
       print("Failed to load book details: $e");
+      // 404 에러인 경우 NOT_PUBLISHED 상태로 설정
+      if (e.toString().contains('PUB001') || e.toString().contains('404')) {
+        publishingStatus.value = 'NOT_PUBLISHED';
+        print("Publishing status set to NOT_PUBLISHED due to PUB001 error");
+      }
     }
   }
 
@@ -145,31 +152,43 @@ class MypageViewModel extends GetxController {
       final result = await apiService.fetchPublishedBooks(page, size);
       bookList.value = result;
       print("Book list loaded: ${bookList.value}");
+      print("Results: ${bookList.value?.results}");  // 결과 배열의 내용 확인
+      print("Results length: ${bookList.value?.results?.length}");  // 결과 배열의 길이 확인
     } catch (e) {
       print("Failed to load published books: $e");
     }
   }
 
   Future<void> loadAllData() async {
+    print("Starting loadAllData..."); // 시작 로그
     isLoading.value = true;
     try {
+      print("Loading user profile..."); // 각 단계별 로그
       await loadUserProfile();
 
-      await loadPublishedBooks(0, 10);  // page는 0부터 시작하는 것 같네요
+      print("Loading published books...");
+      await loadPublishedBooks(0, 10);
 
       if (bookList.value != null &&
           bookList.value!.results != null &&
           bookList.value!.results!.isNotEmpty) {
         int firstPublicationId = bookList.value!.results![0].publicationId!;
+        print("Loading book details for publicationId: $firstPublicationId");
         await loadBookDetails(firstPublicationId);
-        latestPublicationId.value = firstPublicationId;  // 나중에 사용할 수 있도록 저장
+        latestPublicationId.value = firstPublicationId;
+      } else {
+        publishingStatus.value = 'NOT_PUBLISHED';
+        print("No published books found");
       }
+
+      print("Loading notifications...");
       await fetchNotifications();
 
     } catch (e) {
-      print("Error loading data: $e");
+      print("Error in loadAllData: $e");
     } finally {
       isLoading.value = false;
+      print("Finished loadAllData"); // 종료 로그
     }
   }
 
@@ -190,9 +209,13 @@ class MypageViewModel extends GetxController {
 
   @override
   void onInit() {
+    print("MypageViewModel onInit called"); // onInit 실행 확인
     super.onInit();
-    loadAllData(); // Load all data when initializing.
+    print("Starting loadAllData from onInit"); // loadAllData 호출 직전
+    loadAllData();
+    print("loadAllData called from onInit"); // loadAllData 호출 직후
   }
 }
+
 
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:life_bookshelf/views/onboarding/onboarding_screen.dart';
+import '../../services/image_upload_service.dart';
 import '../../services/login/login_service.dart';
 import '../../services/userpreferences_service.dart';
 import '../onboarding/onboarding_viewmodel.dart';
@@ -20,10 +21,7 @@ class LoginViewModel extends GetxController {
   var email = ''.obs;
   var password = ''.obs;
 
-  // FirebaseMessaging messaging = FirebaseMessaging.instance; // FirebaseMessaging 인스턴스 추가
-
   LoginViewModel(this.loginService) {
-    // 포커스 노드 리스너 설정
     emailFocusNode.addListener(() {
       isEmailFocused.value = emailFocusNode.hasFocus;
     });
@@ -32,64 +30,65 @@ class LoginViewModel extends GetxController {
     });
   }
 
-  // FCM 토큰 발급 메소드 추가
-  // Future<String?> getFcmToken() async {
-  //   try {
-  //     return await messaging.getToken();  // FCM 토큰 가져오기
-  //   } catch (e) {
-  //     print("Failed to get FCM token: $e");
-  //     return null;
-  //   }
-  // }
+  Future<void> initializeControllers() async {
+    // OnboardingViewModel 초기화
+    if (!Get.isRegistered<OnboardingViewModel>()) {
+      Get.put(OnboardingViewModel(), permanent: true);
+    }
 
-  @override
-  void onClose() {
-    // 리소스 정리
-    emailFocusNode.dispose();
-    passwordFocusNode.dispose();
-    super.onClose();
+    // 필수 서비스들 초기화
+    if (!Get.isRegistered<ImageUploadService>()) {
+      Get.put(ImageUploadService(), permanent: true);
+    }
   }
 
-  // 로그인을 시도하고 결과를 처리하는 메소드
   Future<bool> login() async {
     isLoading(true);
     try {
-      // String? fcmToken = await getFcmToken();  // FCM 토큰 발급
-      // if (fcmToken == null) {
-      //   throw Exception("FCM 토큰 발급 실패");
-      // }
-
-      // final response = await loginService.postLogin(email.value, password.value, fcmToken);  // FCM 토큰을 함께 전달
       final response = await loginService.postLogin(email.value, password.value);
       authToken.value = response.accessToken;
-      print('Login successful with token: ${authToken.value}');
       await UserPreferences.setUserToken(response.accessToken);
 
-      final OnboardingViewModel viewmodel = Get.find<OnboardingViewModel>();
-      final onboardingCompleted = await viewmodel.isOnboardingCompleted();
+      // 필요한 컨트롤러들 초기화
+      await initializeControllers();
 
+      // OnboardingViewModel 가져오기
+      final onboardingViewModel = Get.find<OnboardingViewModel>();
+      final bool onboardingCompleted = await loginService.checkOnboardingStatus();
+
+      // 현재 로그인 화면만 스택에서 제거
       if (onboardingCompleted) {
-        Get.offAllNamed('/home');
+        print("로그인 성공: 홈 화면으로 이동 시도");
+        await Get.offAllNamed('/home');
+        print("홈 화면 이동 완료");
       } else {
-        Get.offAll(const OnboardingScreen());
+        // 온보딩이 필요한 경우
+        print("온보딩 필요: 온보딩 화면으로 이동");
+        final onboardingScreen = OnboardingScreen();
+        await Get.offAll(() => onboardingScreen);
       }
 
       return true;
     } catch (e) {
-      loginError.value = e.toString(); // 에러 메시지를 상태로 저장
-      print('Login failed: $loginError');
+      print('Login failed: $e');
+      loginError.value = e.toString();
       return false;
     } finally {
       isLoading(false);
     }
   }
 
-  // 에러 메시지를 클리어하는 메소드
+  @override
+  void onClose() {
+    emailFocusNode.dispose();
+    passwordFocusNode.dispose();
+    super.onClose();
+  }
+
   void clearError() {
     loginError.value = null;
   }
 
-  // 로그인 상태 확인 (예: 토큰의 존재 유무)
   bool isUserLoggedIn() {
     return authToken.value != null && authToken.value!.isNotEmpty;
   }

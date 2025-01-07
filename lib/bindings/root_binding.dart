@@ -13,6 +13,8 @@ import 'package:life_bookshelf/views/chatting/chatting_screen.dart';
 import 'package:life_bookshelf/services/home/chapter_service.dart';
 import 'package:life_bookshelf/services/chat-n/autobiography_service.dart';
 import '../services/home/autobiography_service.dart';
+import '../services/image_upload_service.dart';
+import '../services/onboarding/onboarding_service.dart';
 import '../services/register/register_service.dart';
 import '../viewModels/login/login_viewmodel.dart';
 import '../viewModels/register/register_viewmodel.dart';
@@ -23,10 +25,10 @@ class RootBinding extends Bindings {
     String baseUrl = dotenv.env['API'] ?? "";
     // ParentViewModel is singleton
     Get.put(RootViewModel(), permanent: true);
-
+    Get.put(ImageUploadService(), permanent: true);
+    Get.put(OnboardingViewModel());
     Get.lazyPut(() => LoginViewModel(LoginService()));
     Get.lazyPut(() => RegisterViewModel(RegisterService()));
-    // Get.lazyPut(() => OnboardingViewModel();
 
     Get.put(HomeViewModel(HomeChapterService(baseUrl), HomeAutobiographyService(baseUrl)));
     Get.put(ChatAutobiographyService());
