@@ -218,9 +218,9 @@ class ChattingViewModel extends GetxController {
       } else {
         print("질문 리스트 사용, 질문 index = $currentPredefinedQuestionIndex");
         // 미리 정의된 질문 사용
-        //! 사전 생성 질문 개수 10개로 줄인 부분. 개수 조정 가능
-        // if (currentPredefinedQuestionIndex + 1 < predefinedQuestions.length) {
-        if (currentPredefinedQuestionIndex + 1 < 2) {
+        // ! 사전 생성 질문 개수 10개로 줄인 부분. 개수 조정 가능
+        if (currentPredefinedQuestionIndex + 1 < predefinedQuestions.length) {
+          // if (currentPredefinedQuestionIndex + 1 < 2) {
           currentPredefinedQuestionIndex++;
           nextQuestion = predefinedQuestions[currentPredefinedQuestionIndex];
           additionalQuestionCount = 0;

@@ -70,7 +70,7 @@ class ChattingScreen extends BaseScreen<ChattingViewModel> {
           //     width: 40,
           //     height: 40,
           //     decoration: BoxDecoration(
-          //       color: ColorSystem.mainBlue,
+          //       color: ColorSystem.white,
           //       shape: BoxShape.circle,
           //       boxShadow: [
           //         BoxShadow(
@@ -84,6 +84,7 @@ class ChattingScreen extends BaseScreen<ChattingViewModel> {
           //     child: CupertinoButton(
           //       onPressed: () => viewModel.sendDummyPrompt(),
           //       padding: EdgeInsets.zero,
+          //       // child: Container(width: 20, height: 20, color: Colors.white),
           //       child: const Icon(
           //         CupertinoIcons.add,
           //         color: ColorSystem.white,
