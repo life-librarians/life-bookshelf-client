@@ -86,6 +86,7 @@ class ChattingViewModel extends GetxController {
       additionalQuestionCount = (aiQuestionCount == 0) ? 0 : (aiQuestionCount - 1) % 3; // 추가질문 개수 - 질문의 개수에서 3을 나누어 나머지로 할당
       print('현재 사전질문 인덱스: $currentPredefinedQuestionIndex');
       print('현재 추가질문 개수: $additionalQuestionCount');
+      print('사전질문 리스트: $predefinedQuestions');
       updateChatBubbles();
     } catch (e) {
       Get.snackbar('오류', e.toString());
@@ -219,8 +220,8 @@ class ChattingViewModel extends GetxController {
         print("질문 리스트 사용, 질문 index = $currentPredefinedQuestionIndex");
         // 미리 정의된 질문 사용
         // ! 사전 생성 질문 개수 10개로 줄인 부분. 개수 조정 가능
-        if (currentPredefinedQuestionIndex + 1 < predefinedQuestions.length) {
-          // if (currentPredefinedQuestionIndex + 1 < 2) {
+        // if (currentPredefinedQuestionIndex + 1 < predefinedQuestions.length) {
+        if (currentPredefinedQuestionIndex + 1 < 10) {
           currentPredefinedQuestionIndex++;
           nextQuestion = predefinedQuestions[currentPredefinedQuestionIndex];
           additionalQuestionCount = 0;
