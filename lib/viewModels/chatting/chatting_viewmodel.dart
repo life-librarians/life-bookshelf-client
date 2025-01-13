@@ -46,8 +46,8 @@ class ChattingViewModel extends GetxController {
   String get currentSpeech => _currentSpeech.value;
 
   /// 현재 진행 중인 페이지에 들어갈 시 진행 중이던 대화 initializing.
-  /// TODO: 페이징 처리
-  Future<void> loadConversations(HomeChapter currentChapter, {int page = 0, int size = 40}) async {
+  /// TODO: 페이징 처리 => 300개로 임시처리
+  Future<void> loadConversations(HomeChapter currentChapter, {int page = 0, int size = 300}) async {
     this.currentChapter = currentChapter;
     int chapterId = currentChapter.chapterId;
     try {
@@ -220,8 +220,9 @@ class ChattingViewModel extends GetxController {
         print("질문 리스트 사용, 질문 index = $currentPredefinedQuestionIndex");
         // 미리 정의된 질문 사용
         // ! 사전 생성 질문 개수 10개로 줄인 부분. 개수 조정 가능
+        // ! => 대화 개수가 25개 이상(답변 13개 이상)이 되면 중지.
         // if (currentPredefinedQuestionIndex + 1 < predefinedQuestions.length) {
-        if (currentPredefinedQuestionIndex + 1 < 10) {
+        if (conversationsJson.length < 39) {
           currentPredefinedQuestionIndex++;
           nextQuestion = predefinedQuestions[currentPredefinedQuestionIndex];
           additionalQuestionCount = 0;
