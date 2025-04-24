@@ -47,21 +47,14 @@ flutter clean
 flutter pub get
 flutter run
 ```
-## Project Introduction
-
-## Architecture
-
-### 💻 demonstration video
-
 
 ### ✨ Screen
 | Title         | Img                                   | Title         | Img                                   |
 | ------------ | ---------------------------------------- | ------------ | ---------------------------------------- |
-| 메인 스크린    | ![image](https://github.com/user-attachments/assets/8cfdae94-f40e-4010-b1f5-2c45a19653a9)
-|   | |
-|     | |    | |
-|  | |    | |
-
+| 메인 스크린    | ![image](https://github.com/user-attachments/assets/8cfdae94-f40e-4010-b1f5-2c45a19653a9)| 온보딩 스크린 |![image](https://github.com/user-attachments/assets/670a1a4c-b5bd-4477-97f9-c0d6b34df07a)
+| 인터뷰 스크린 | ![image](https://github.com/user-attachments/assets/498768df-756a-452c-bcf0-f88fcc6da7f7) | n번째 자서전 스크린 |![image](https://github.com/user-attachments/assets/6dd89dab-1c15-4e6b-8a78-9db87ff428f8)
+| 교정/교열 스크린 |![image](https://github.com/user-attachments/assets/1506986a-0bce-47db-8dbd-44bef1dc8e63)| 출판 스크린 | ![image](https://github.com/user-attachments/assets/e8982368-14d1-4dbe-8a09-18ae33162ffc)
+| 마이페이지 스크린 | ![image](https://github.com/user-attachments/assets/42337c2b-9c97-4891-88bb-3314172e52bc)|
 
 ---
 
@@ -94,5 +87,8 @@ flutter run
 ## 🏆 Award
 | 수상명 | 사진 |
 | ------ | ---- |
-|  |  |
-| |  |
+| SW교육원 장려상 | <img width="600" alt="image" src="https://github.com/user-attachments/assets/a4347928-1516-4c51-b985-7fecad90a66f" /> |
+| 동국대 겨울 종합설계 발표회 최우수상 | <img width="600" alt="image" src="https://github.com/user-attachments/assets/bdff655f-74e1-425e-96be-705c434297b9" /> |
+| COSS 제주도지사상 | <img width="600" alt="image" src="https://github.com/user-attachments/assets/353c25e6-8005-4b0d-9a65-6a14ff030e92" /> |
+| SW교육원 장려상 | <img width="600" alt="image" src="https://github.com/user-attachments/assets/e4f35d82-2ce6-416d-ac63-701f35103cfe" /> |
+| 제네바 ITU 미팅 참가 | <img width="600" alt="IMG_0422" src="https://github.com/user-attachments/assets/fd261b33-bb80-49f3-a607-a14b92c6d5b2" /> |
