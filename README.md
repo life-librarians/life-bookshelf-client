@@ -52,16 +52,15 @@ flutter run
 ## Architecture
 
 ### 💻 demonstration video
- 
 
 
 ### ✨ Screen
 | Title         | Img                                   | Title         | Img                                   |
 | ------------ | ---------------------------------------- | ------------ | ---------------------------------------- |
 | 메인 스크린    | ![image](https://github.com/user-attachments/assets/8cfdae94-f40e-4010-b1f5-2c45a19653a9)
-| 유기견 상세 스크린  | <img width="344" alt="스크린샷 2024-03-24 오전 4 19 24" src="https://github.com/goormthon-Univ/2024_BEOTKKOTTHON_TEAM_9_FE/assets/59414536/9e0824dd-427c-4afa-8bab-db0d7439de65">|
-| 유기견과 채팅 스크린    |<img width="344" alt="image" src="https://github.com/goormthon-Univ/2024_BEOTKKOTTHON_TEAM_9_FE/assets/59414536/d3f0b851-9e4c-4e41-b380-1b6ffe180779">| 대화하기 스크린   | <img width="344" alt="스크린샷 2024-03-24 오전 4 21 17" src="https://github.com/goormthon-Univ/2024_BEOTKKOTTHON_TEAM_9_FE/assets/59414536/1086b69a-30ca-4a99-9cfc-07f024d09a66">|
-| 좋아요 스크린 | <img width="344" alt="스크린샷 2024-03-24 오전 4 22 23" src="https://github.com/goormthon-Univ/2024_BEOTKKOTTHON_TEAM_9_FE/assets/59414536/67a72203-baa0-445d-8a80-0e04e34c7ba0">| 마이페이지 스크린   | <img width="344" alt="스크린샷 2024-03-24 오전 4 22 40" src="https://github.com/goormthon-Univ/2024_BEOTKKOTTHON_TEAM_9_FE/assets/59414536/b812d729-309a-4688-87ad-a86da2a16b50">|
+|   | |
+|     | |    | |
+|  | |    | |
 
 
 ---
@@ -95,5 +94,5 @@ flutter run
 ## 🏆 Award
 | 수상명 | 사진 |
 | ------ | ---- |
-| 벚꽃톤 우수상 | <div align="center"><img width="600" alt="스크린샷 2025-04-24 오후 1 38 33" src="https://github.com/user-attachments/assets/0fda4dfb-a081-461b-9f51-ea0529da4325" /></div> |
-| 제주톤 대상 | <div align="center"><img width="600" alt="image" src="https://github.com/user-attachments/assets/c17ca358-3cd5-4d23-b274-f7816cedc6ad" /></div> |
+|  |  |
+| |  |
